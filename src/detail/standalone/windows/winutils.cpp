@@ -13,7 +13,7 @@
 #include "winutils.h"
 #include "helper.h"
 
-int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine, int nCmdShow)
+int main()
 {
 #ifdef _DEBUG
   freeaudio::clap_wrapper::standalone::windows::Console console;
