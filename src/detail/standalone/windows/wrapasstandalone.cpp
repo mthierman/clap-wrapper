@@ -1,11 +1,9 @@
 #include <Windows.h>
 
-#include "../entry.h"
-#include "../standalone_details.h"
-#include "../../clap/fsutil.h"
-
 #include "wrapasstandalone.h"
 #include "window.h"
+#include "detail/standalone/standalone_details.h"
+#include "detail/standalone/entry.h"
 
 int main()
 {
