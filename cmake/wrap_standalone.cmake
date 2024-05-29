@@ -96,9 +96,8 @@ function(target_add_standalone_wrapper)
                 MACOS_EMBEDDED_CLAP_LOCATION ${SA_MACOS_EMBEDDED_CLAP_LOCATION})
 
     elseif(WIN32 AND (CMAKE_CXX_COMPILER_ID MATCHES "MSVC" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
-        set_target_properties(${SA_TARGET} PROPERTIES
-            WIN32_EXECUTABLE TRUE
-            )
+        set_target_properties(${SA_TARGET} PROPERTIES WIN32_EXECUTABLE TRUE)
+        target_compile_definitions(${salib} PUBLIC CLAP_WRAPPER_HAS_WIN32)
 
         target_sources(${SA_TARGET} PRIVATE
             ${CLAP_WRAPPER_CMAKE_CURRENT_SOURCE_DIR}/src/detail/standalone/windows/wrapasstandalone.cpp
@@ -112,10 +111,6 @@ function(target_add_standalone_wrapper)
             $<$<CXX_COMPILER_ID:Clang>:
             -Wl,/entry:mainCRTStartup
             >
-        )
-
-        target_compile_definitions(${salib} PUBLIC
-            CLAP_WRAPPER_HAS_WIN32
             )
 
     elseif(UNIX)
