@@ -5,6 +5,7 @@
 #include "../../clap/fsutil.h"
 
 #include "wrapasstandalone.h"
+#include "window.h"
 #include "helper.h"
 
 int main()
