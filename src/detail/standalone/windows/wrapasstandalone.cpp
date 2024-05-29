@@ -16,7 +16,7 @@
 int main()
 {
 #ifdef _DEBUG
-  freeaudio::clap_wrapper::standalone::windows::Console console;
+  // freeaudio::clap_wrapper::standalone::windows::Console console;
 #endif
 
   const clap_plugin_entry* entry{nullptr};
