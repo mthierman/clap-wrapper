@@ -32,22 +32,22 @@ T* instance_from_wnd_proc(HWND hWnd, UINT uMsg, LPARAM lParam)
 }
 
 template <class T, HWND(T::*m_hwnd)>
-T* InstanceFromWndProc(HWND hwnd, UINT umsg, LPARAM lparam)
+T* InstanceFromWndProc(HWND hWnd, UINT uMsg, LPARAM lParam)
 {
-  T* pInstance;
+  T* self{nullptr};
 
-  if (umsg == WM_NCCREATE)
+  if (uMsg == WM_NCCREATE)
   {
-    LPCREATESTRUCT pCreateStruct{reinterpret_cast<LPCREATESTRUCT>(lparam)};
-    pInstance = reinterpret_cast<T*>(pCreateStruct->lpCreateParams);
-    ::SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pInstance));
-    pInstance->*m_hwnd = hwnd;
+    auto pCreateStruct{reinterpret_cast<LPCREATESTRUCTW>(lParam)};
+    self = reinterpret_cast<T*>(pCreateStruct->lpCreateParams);
+    ::SetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<intptr_t>(self));
+    self->*m_hwnd = hWnd;
   }
 
   else
-    pInstance = reinterpret_cast<T*>(::GetWindowLongPtr(hwnd, GWLP_USERDATA));
+    self = reinterpret_cast<T*>(::GetWindowLongPtrW(hWnd, GWLP_USERDATA));
 
-  return pInstance;
+  return self;
 }
 
 template <typename T, typename U>
