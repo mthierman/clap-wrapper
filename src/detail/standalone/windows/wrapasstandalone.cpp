@@ -57,31 +57,11 @@ int main()
 
     freeaudio::clap_wrapper::standalone::windows::Window window;
 
-    uint32_t w{0};
-    uint32_t h{0};
-    ui->get_size(p, &w, &h);
-
-    RECT r{0, 0, 0, 0};
-    r.right = w;
-    r.bottom = h;
-    ::AdjustWindowRectExForDpi(&r, WS_OVERLAPPEDWINDOW, 0, 0, ::GetDpiForWindow(window.m_hwnd));
-    ::SetWindowPos(window.m_hwnd, nullptr, 0, 0, (r.right - r.left), (r.bottom - r.top), SWP_NOMOVE);
-
-    if (!ui->can_resize(p))
-    {
-      ::SetWindowLongPtrW(window.m_hwnd, GWL_STYLE,
-                          ::GetWindowLongPtrW(window.m_hwnd, GWL_STYLE) & ~WS_OVERLAPPEDWINDOW |
-                              WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
-    }
-
     clap_window win;
     win.api = CLAP_WINDOW_API_WIN32;
     win.win32 = (void*)window.m_hwnd;
     ui->set_parent(p, &win);
-
     ui->show(p);
-
-    ::ShowWindow(window.m_hwnd, SW_SHOWDEFAULT);
   }
 
   MSG msg{};

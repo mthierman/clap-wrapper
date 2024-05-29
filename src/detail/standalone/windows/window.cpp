@@ -99,7 +99,7 @@ LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 
 int Window::OnCreate(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  ::MessageBoxW(nullptr, L"OnCreate", L"", MB_OK);
+  // ::MessageBoxW(nullptr, L"OnCreate", L"", MB_OK);
 
   auto plugin{freeaudio::clap_wrapper::standalone::getMainPlugin()};
   auto ui{plugin->_ext._gui};
@@ -112,6 +112,27 @@ int Window::OnCreate(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
   {
     // We can check here if we had a previous size but we aren't saving state yet
   }
+  else
+  {
+    ::SetWindowLongPtrW(m_hwnd, GWL_STYLE,
+                        ::GetWindowLongPtrW(m_hwnd, GWL_STYLE) & ~WS_OVERLAPPEDWINDOW | WS_OVERLAPPED |
+                            WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
+  }
+
+  uint32_t w{0};
+  uint32_t h{0};
+  ui->get_size(p, &w, &h);
+
+  RECT r{0, 0, 0, 0};
+  r.right = w;
+  r.bottom = h;
+
+  ::AdjustWindowRectExForDpi(&r, WS_OVERLAPPEDWINDOW, 0, 0, ::GetDpiForWindow(hWnd));
+
+  ::SetWindowPos(m_hwnd, nullptr, 0, 0, (r.right - r.left), (r.bottom - r.top),
+                 SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE);
+
+  ::ShowWindow(m_hwnd, SW_SHOWDEFAULT);
 
   return 0;
 }
