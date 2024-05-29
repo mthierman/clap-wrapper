@@ -7,8 +7,6 @@ Window::Window()
 {
   std::wstring clapName{widen(HOSTED_CLAP_NAME)};
 
-  ::MessageBoxW(nullptr, clapName.c_str(), clapName.c_str(), MB_OK);
-
   WNDCLASSEXW wcex{sizeof(WNDCLASSEXW)};
   wcex.lpszClassName = clapName.c_str();
   wcex.lpszMenuName = clapName.c_str();
@@ -33,42 +31,42 @@ Window::Window()
                     CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, nullptr, nullptr,
                     ::GetModuleHandleW(nullptr), this);
 
-  // auto hMenu{::GetSystemMenu(m_hwnd, FALSE)};
+  auto hMenu{::GetSystemMenu(m_hwnd, FALSE)};
 
-  // MENUITEMINFO seperator{sizeof(MENUITEMINFO)};
-  // seperator.fMask = MIIM_FTYPE;
-  // seperator.fType = MFT_SEPARATOR;
+  MENUITEMINFOW seperator{sizeof(MENUITEMINFOW)};
+  seperator.fMask = MIIM_FTYPE;
+  seperator.fType = MFT_SEPARATOR;
 
-  // MENUITEMINFO audioIn{sizeof(MENUITEMINFO)};
-  // audioIn.fMask = MIIM_STRING | MIIM_ID;
-  // audioIn.wID = IDM_SETTINGS;
-  // audioIn.dwTypeData = const_cast<LPSTR>("Settings");
+  MENUITEMINFOW audioIn{sizeof(MENUITEMINFOW)};
+  audioIn.fMask = MIIM_STRING | MIIM_ID;
+  audioIn.wID = IDM_SETTINGS;
+  audioIn.dwTypeData = const_cast<LPWSTR>(L"Settings");
 
-  // MENUITEMINFO saveState{sizeof(MENUITEMINFO)};
-  // saveState.fMask = MIIM_STRING | MIIM_ID;
-  // saveState.wID = IDM_SAVE_STATE;
-  // saveState.dwTypeData = const_cast<LPSTR>("Save state...");
+  MENUITEMINFOW saveState{sizeof(MENUITEMINFOW)};
+  saveState.fMask = MIIM_STRING | MIIM_ID;
+  saveState.wID = IDM_SAVE_STATE;
+  saveState.dwTypeData = const_cast<LPWSTR>(L"Save state...");
 
-  // MENUITEMINFO loadState{sizeof(MENUITEMINFO)};
-  // loadState.fMask = MIIM_STRING | MIIM_ID;
-  // loadState.wID = IDM_LOAD_STATE;
-  // loadState.dwTypeData = const_cast<LPSTR>("Load state...");
+  MENUITEMINFOW loadState{sizeof(MENUITEMINFOW)};
+  loadState.fMask = MIIM_STRING | MIIM_ID;
+  loadState.wID = IDM_LOAD_STATE;
+  loadState.dwTypeData = const_cast<LPWSTR>(L"Load state...");
 
-  // MENUITEMINFO resetState{sizeof(MENUITEMINFO)};
-  // resetState.fMask = MIIM_STRING | MIIM_ID;
-  // resetState.wID = IDM_RESET_STATE;
-  // resetState.dwTypeData = const_cast<LPSTR>("Reset state...");
+  MENUITEMINFOW resetState{sizeof(MENUITEMINFOW)};
+  resetState.fMask = MIIM_STRING | MIIM_ID;
+  resetState.wID = IDM_RESET_STATE;
+  resetState.dwTypeData = const_cast<LPWSTR>(L"Reset state...");
 
-  // if (hMenu != INVALID_HANDLE_VALUE)
-  // {
-  //   ::InsertMenuItem(hMenu, 1, TRUE, &seperator);
-  //   ::InsertMenuItem(hMenu, 2, TRUE, &audioIn);
-  //   ::InsertMenuItem(hMenu, 3, TRUE, &seperator);
-  //   ::InsertMenuItem(hMenu, 4, TRUE, &saveState);
-  //   ::InsertMenuItem(hMenu, 5, TRUE, &loadState);
-  //   ::InsertMenuItem(hMenu, 6, TRUE, &resetState);
-  //   ::InsertMenuItem(hMenu, 7, TRUE, &seperator);
-  // }
+  if (hMenu != INVALID_HANDLE_VALUE)
+  {
+    ::InsertMenuItemW(hMenu, 1, TRUE, &seperator);
+    ::InsertMenuItemW(hMenu, 2, TRUE, &audioIn);
+    ::InsertMenuItemW(hMenu, 3, TRUE, &seperator);
+    ::InsertMenuItemW(hMenu, 4, TRUE, &saveState);
+    ::InsertMenuItemW(hMenu, 5, TRUE, &loadState);
+    ::InsertMenuItemW(hMenu, 6, TRUE, &resetState);
+    ::InsertMenuItemW(hMenu, 7, TRUE, &seperator);
+  }
 }
 
 Window::~Window()
