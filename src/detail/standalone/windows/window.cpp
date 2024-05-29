@@ -6,9 +6,9 @@ namespace freeaudio::clap_wrapper::standalone::windows
 {
 Window::Window()
 {
-  std::string clapName{HOSTED_CLAP_NAME};
+  std::wstring clapName{widen(HOSTED_CLAP_NAME)};
 
-  WNDCLASSEX wcex{sizeof(WNDCLASSEX)};
+  WNDCLASSEXW wcex{sizeof(WNDCLASSEX)};
   wcex.lpszClassName = clapName.c_str();
   wcex.lpszMenuName = clapName.c_str();
   wcex.lpfnWndProc = Window::WndProc;
@@ -26,48 +26,48 @@ Window::Window()
       reinterpret_cast<HICON>(::LoadImage(nullptr, reinterpret_cast<LPCSTR>(IDI_APPLICATION), IMAGE_ICON,
                                           0, 0, LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED));
 
-  ::RegisterClassEx(&wcex);
+  ::RegisterClassExW(&wcex);
 
-  ::CreateWindowEx(0, clapName.c_str(), clapName.c_str(), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
-                   CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, nullptr, nullptr,
-                   ::GetModuleHandle(nullptr), this);
+  ::CreateWindowExW(0, clapName.c_str(), clapName.c_str(), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
+                    CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, nullptr, nullptr,
+                    ::GetModuleHandle(nullptr), this);
 
-  auto hMenu{::GetSystemMenu(m_hwnd, FALSE)};
+  // auto hMenu{::GetSystemMenu(m_hwnd, FALSE)};
 
-  MENUITEMINFO seperator{sizeof(MENUITEMINFO)};
-  seperator.fMask = MIIM_FTYPE;
-  seperator.fType = MFT_SEPARATOR;
+  // MENUITEMINFO seperator{sizeof(MENUITEMINFO)};
+  // seperator.fMask = MIIM_FTYPE;
+  // seperator.fType = MFT_SEPARATOR;
 
-  MENUITEMINFO audioIn{sizeof(MENUITEMINFO)};
-  audioIn.fMask = MIIM_STRING | MIIM_ID;
-  audioIn.wID = IDM_SETTINGS;
-  audioIn.dwTypeData = const_cast<LPSTR>("Settings");
+  // MENUITEMINFO audioIn{sizeof(MENUITEMINFO)};
+  // audioIn.fMask = MIIM_STRING | MIIM_ID;
+  // audioIn.wID = IDM_SETTINGS;
+  // audioIn.dwTypeData = const_cast<LPSTR>("Settings");
 
-  MENUITEMINFO saveState{sizeof(MENUITEMINFO)};
-  saveState.fMask = MIIM_STRING | MIIM_ID;
-  saveState.wID = IDM_SAVE_STATE;
-  saveState.dwTypeData = const_cast<LPSTR>("Save state...");
+  // MENUITEMINFO saveState{sizeof(MENUITEMINFO)};
+  // saveState.fMask = MIIM_STRING | MIIM_ID;
+  // saveState.wID = IDM_SAVE_STATE;
+  // saveState.dwTypeData = const_cast<LPSTR>("Save state...");
 
-  MENUITEMINFO loadState{sizeof(MENUITEMINFO)};
-  loadState.fMask = MIIM_STRING | MIIM_ID;
-  loadState.wID = IDM_LOAD_STATE;
-  loadState.dwTypeData = const_cast<LPSTR>("Load state...");
+  // MENUITEMINFO loadState{sizeof(MENUITEMINFO)};
+  // loadState.fMask = MIIM_STRING | MIIM_ID;
+  // loadState.wID = IDM_LOAD_STATE;
+  // loadState.dwTypeData = const_cast<LPSTR>("Load state...");
 
-  MENUITEMINFO resetState{sizeof(MENUITEMINFO)};
-  resetState.fMask = MIIM_STRING | MIIM_ID;
-  resetState.wID = IDM_RESET_STATE;
-  resetState.dwTypeData = const_cast<LPSTR>("Reset state...");
+  // MENUITEMINFO resetState{sizeof(MENUITEMINFO)};
+  // resetState.fMask = MIIM_STRING | MIIM_ID;
+  // resetState.wID = IDM_RESET_STATE;
+  // resetState.dwTypeData = const_cast<LPSTR>("Reset state...");
 
-  if (hMenu != INVALID_HANDLE_VALUE)
-  {
-    ::InsertMenuItem(hMenu, 1, TRUE, &seperator);
-    ::InsertMenuItem(hMenu, 2, TRUE, &audioIn);
-    ::InsertMenuItem(hMenu, 3, TRUE, &seperator);
-    ::InsertMenuItem(hMenu, 4, TRUE, &saveState);
-    ::InsertMenuItem(hMenu, 5, TRUE, &loadState);
-    ::InsertMenuItem(hMenu, 6, TRUE, &resetState);
-    ::InsertMenuItem(hMenu, 7, TRUE, &seperator);
-  }
+  // if (hMenu != INVALID_HANDLE_VALUE)
+  // {
+  //   ::InsertMenuItem(hMenu, 1, TRUE, &seperator);
+  //   ::InsertMenuItem(hMenu, 2, TRUE, &audioIn);
+  //   ::InsertMenuItem(hMenu, 3, TRUE, &seperator);
+  //   ::InsertMenuItem(hMenu, 4, TRUE, &saveState);
+  //   ::InsertMenuItem(hMenu, 5, TRUE, &loadState);
+  //   ::InsertMenuItem(hMenu, 6, TRUE, &resetState);
+  //   ::InsertMenuItem(hMenu, 7, TRUE, &seperator);
+  // }
 }
 
 Window::~Window()
@@ -88,8 +88,6 @@ LRESULT CALLBACK Window::WndProc(HWND h, UINT m, WPARAM w, LPARAM l)
         return pWindow->OnDestroy(h, m, w, l);
       case WM_DPICHANGED:
         return pWindow->OnDpiChanged(h, m, w, l);
-      case WM_KEYDOWN:
-        return pWindow->OnKeyDown(h, m, w, l);
       case WM_WINDOWPOSCHANGED:
         return pWindow->OnWindowPosChanged(h, m, w, l);
     }
@@ -100,6 +98,7 @@ LRESULT CALLBACK Window::WndProc(HWND h, UINT m, WPARAM w, LPARAM l)
 
 int Window::OnClose(HWND h, UINT m, WPARAM w, LPARAM l)
 {
+  ::MessageBoxA(nullptr, "CLOSE", "CLOSE", MB_OK | MB_ICONINFORMATION);
   ::DestroyWindow(h);
 
   return 0;
@@ -138,28 +137,6 @@ int Window::OnDpiChanged(HWND h, UINT m, WPARAM w, LPARAM l)
   return 0;
 }
 
-int Window::OnKeyDown(HWND h, UINT m, WPARAM w, LPARAM l)
-{
-  auto plugin{freeaudio::clap_wrapper::standalone::getMainPlugin()};
-  auto ui{plugin->_ext._gui};
-  auto p{plugin->_plugin};
-
-  switch (w)
-  {
-    case VK_F11:
-    {
-      if (ui->can_resize(p)) fullscreen();
-
-      break;
-    }
-
-    default:
-      return 0;
-  }
-
-  return 0;
-}
-
 int Window::OnWindowPosChanged(HWND h, UINT m, WPARAM w, LPARAM l)
 {
   auto plugin{freeaudio::clap_wrapper::standalone::getMainPlugin()};
@@ -182,38 +159,40 @@ int Window::OnWindowPosChanged(HWND h, UINT m, WPARAM w, LPARAM l)
   return 0;
 }
 
-bool Window::fullscreen()
+std::string Window::narrow(std::wstring wstring)
 {
-  auto plugin{freeaudio::clap_wrapper::standalone::getMainPlugin()};
-  auto ui{plugin->_ext._gui};
-  auto p{plugin->_plugin};
+  if (wstring.empty()) return {};
 
-  static RECT pos;
+  auto safeSize{safe_size<size_t, int>(wstring.length())};
 
-  auto style{::GetWindowLongPtr(m_hwnd, GWL_STYLE)};
+  auto length{::WideCharToMultiByte(CP_UTF8, WC_NO_BEST_FIT_CHARS | WC_ERR_INVALID_CHARS, wstring.data(),
+                                    safeSize, nullptr, 0, nullptr, nullptr)};
 
-  if (style & WS_OVERLAPPEDWINDOW)
-  {
-    MONITORINFO mi = {sizeof(mi)};
-    ::GetWindowRect(m_hwnd, &pos);
-    if (::GetMonitorInfo(::MonitorFromWindow(m_hwnd, MONITOR_DEFAULTTONEAREST), &mi))
-    {
-      ::SetWindowLongPtr(m_hwnd, GWL_STYLE, style & ~WS_OVERLAPPEDWINDOW);
-      ::SetWindowPos(m_hwnd, HWND_TOP, mi.rcMonitor.left, mi.rcMonitor.top,
-                     mi.rcMonitor.right - mi.rcMonitor.left, mi.rcMonitor.bottom - mi.rcMonitor.top,
-                     SWP_FRAMECHANGED);
-    }
+  std::string utf8(length, 0);
 
-    return true;
-  }
+  if (::WideCharToMultiByte(CP_UTF8, WC_NO_BEST_FIT_CHARS | WC_ERR_INVALID_CHARS, wstring.data(),
+                            safeSize, utf8.data(), length, nullptr, nullptr) > 0)
+    return utf8;
 
   else
-  {
-    ::SetWindowLongPtr(m_hwnd, GWL_STYLE, style | WS_OVERLAPPEDWINDOW);
-    ::SetWindowPos(m_hwnd, nullptr, pos.left, pos.top, (pos.right - pos.left), (pos.bottom - pos.top),
-                   SWP_FRAMECHANGED);
+    return {};
+}
 
-    return false;
-  }
+std::wstring Window::widen(std::string string)
+{
+  if (string.empty()) return {};
+
+  auto safeSize{safe_size<size_t, int>(string.length())};
+
+  auto length{::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, string.data(), safeSize, nullptr, 0)};
+
+  std::wstring utf16(length, 0);
+
+  if (::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, string.data(), safeSize, utf16.data(),
+                            length) > 0)
+    return utf16;
+
+  else
+    return {};
 }
-}
+}  // namespace freeaudio::clap_wrapper::standalone::windows

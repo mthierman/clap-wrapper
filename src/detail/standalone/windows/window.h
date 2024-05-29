@@ -31,19 +31,28 @@ T* instance_from_wnd_proc(HWND hWnd, UINT uMsg, LPARAM lParam)
   return self;
 }
 
+template <typename T, typename U>
+int safe_size(T value)
+{
+  constexpr int max{std::numeric_limits<U>::max()};
+  if (value > static_cast<T>(max)) throw std::overflow_error("Unsafe size");
+
+  return static_cast<U>(value);
+}
+
 struct Window
 {
   Window();
   ~Window();
 
-  static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-  virtual int OnClose(HWND, UINT, WPARAM, LPARAM);
-  virtual int OnDestroy(HWND, UINT, WPARAM, LPARAM);
-  virtual int OnDpiChanged(HWND, UINT, WPARAM, LPARAM);
-  virtual int OnKeyDown(HWND, UINT, WPARAM, LPARAM);
-  virtual int OnWindowPosChanged(HWND, UINT, WPARAM, LPARAM);
+  static std::string narrow(std::wstring utf16);
+  static std::wstring widen(std::string utf8);
 
-  bool fullscreen();
+  static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+  int OnClose(HWND, UINT, WPARAM, LPARAM);
+  int OnDestroy(HWND, UINT, WPARAM, LPARAM);
+  int OnDpiChanged(HWND, UINT, WPARAM, LPARAM);
+  int OnWindowPosChanged(HWND, UINT, WPARAM, LPARAM);
 
   HWND m_hwnd;
 };
