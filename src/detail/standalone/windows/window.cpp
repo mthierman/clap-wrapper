@@ -75,7 +75,7 @@ Window::~Window()
 
 LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  Window* pWindow = instance_from_wnd_proc<Window>(hWnd, uMsg, lParam);
+  Window* pWindow = InstanceFromWndProc<Window, Window::*m_hwnd>(hWnd, uMsg, lParam);
 
   if (pWindow)
   {

@@ -31,6 +31,25 @@ T* instance_from_wnd_proc(HWND hWnd, UINT uMsg, LPARAM lParam)
   return self;
 }
 
+template <class T, HWND(T::*m_hwnd)>
+T* InstanceFromWndProc(HWND hwnd, UINT umsg, LPARAM lparam)
+{
+  T* pInstance;
+
+  if (umsg == WM_NCCREATE)
+  {
+    LPCREATESTRUCT pCreateStruct{reinterpret_cast<LPCREATESTRUCT>(lparam)};
+    pInstance = reinterpret_cast<T*>(pCreateStruct->lpCreateParams);
+    ::SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pInstance));
+    pInstance->*m_hwnd = hwnd;
+  }
+
+  else
+    pInstance = reinterpret_cast<T*>(::GetWindowLongPtr(hwnd, GWLP_USERDATA));
+
+  return pInstance;
+}
+
 template <typename T, typename U>
 int safe_size(T value)
 {
