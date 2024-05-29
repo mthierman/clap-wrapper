@@ -41,8 +41,7 @@ struct Win32Gui
 {
   void initialize(freeaudio::clap_wrapper::standalone::StandaloneHost* sah);
   void setPlugin(std::shared_ptr<Clap::Plugin> p);
-  void createWindow();
-  void setupPlugin();
+  void activate();
   int runLoop(int argc, char** argv);
 
   std::shared_ptr<Clap::Plugin> plugin;

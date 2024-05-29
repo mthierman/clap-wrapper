@@ -21,7 +21,7 @@ void Win32Gui::setPlugin(std::shared_ptr<Clap::Plugin> p)
   plugin = p;
 }
 
-void Win32Gui::createWindow()
+void Win32Gui::activate()
 {
   std::wstring clapName{widen(HOSTED_CLAP_NAME)};
 
@@ -85,10 +85,7 @@ void Win32Gui::createWindow()
     ::InsertMenuItemW(hMenu, 6, TRUE, &resetState);
     ::InsertMenuItemW(hMenu, 7, TRUE, &seperator);
   }
-}
 
-void Win32Gui::setupPlugin()
-{
   if (plugin->_ext._gui)
   {
     auto ui{plugin->_ext._gui};
@@ -333,9 +330,7 @@ int main(int argc, char** argv)
 
   win32Gui.setPlugin(plugin);
 
-  win32Gui.createWindow();
-
-  win32Gui.setupPlugin();
+  win32Gui.activate();
 
   win32Gui.runLoop(argc, argv);
 
