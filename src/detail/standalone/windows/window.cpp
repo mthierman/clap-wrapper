@@ -75,11 +75,10 @@ Window::~Window()
 
 LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  Window* pWindow = InstanceFromWndProc<Window, Window::*m_hwnd>(hWnd, uMsg, lParam);
+  Window* pWindow = InstanceFromWndProc<Window, &Window::m_hwnd>(hWnd, uMsg, lParam);
 
   if (pWindow)
   {
-    ::MessageBoxA(nullptr, "pWindow", "pWindow", MB_OK | MB_ICONINFORMATION);
     switch (uMsg)
     {
       case WM_CLOSE:
@@ -93,22 +92,11 @@ LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
     }
   }
 
-  else
-  {
-    switch (uMsg)
-    {
-      case WM_WINDOWPOSCHANGED:
-        ::MessageBoxA(nullptr, "WM_WINDOWPOSCHANGED", "WM_WINDOWPOSCHANGED", MB_OK | MB_ICONINFORMATION);
-        return 0;
-    }
-  }
-
   return ::DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
 int Window::OnClose(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  ::MessageBoxA(nullptr, "CLOSE", "CLOSE", MB_OK | MB_ICONINFORMATION);
   ::DestroyWindow(hWnd);
 
   return 0;
