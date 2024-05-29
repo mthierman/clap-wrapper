@@ -1,16 +1,9 @@
 #if CLAP_WRAPPER_HAS_WIN32
 
-#ifdef UNICODE
-#undef UNICODE
-#endif
-
 #include <Windows.h>
-#include <dwmapi.h>
 
 #include <string>
 #include <random>
-
-#pragma comment(lib, "dwmapi")
 
 #define IDM_SETTINGS 1001
 #define IDM_SAVE_STATE 1002
@@ -108,26 +101,13 @@ std::wstring widen(std::string in)
   return {};
 }
 
-std::string randomize(std::string in)
-{
-  std::random_device rd;
-  std::mt19937 mt(rd());
-  std::uniform_real_distribution<double> dist(1.0, 10.0);
-  auto randomDouble{dist(mt)};
-  auto randomNumber{std::to_string(randomDouble)};
-  randomNumber.erase(remove(randomNumber.begin(), randomNumber.end(), '.'), randomNumber.end());
-
-  return (in + randomNumber);
-}
-
 Window::Window()
 {
   std::string clapName{HOSTED_CLAP_NAME};
-  std::string randomName{randomize(clapName)};
 
   WNDCLASSEX wcex{sizeof(WNDCLASSEX)};
-  wcex.lpszClassName = randomName.c_str();
-  wcex.lpszMenuName = randomName.c_str();
+  wcex.lpszClassName = clapName.c_str();
+  wcex.lpszMenuName = clapName.c_str();
   wcex.lpfnWndProc = Window::WndProc;
   wcex.style = 0;
   wcex.cbClsExtra = 0;
@@ -145,7 +125,7 @@ Window::Window()
 
   ::RegisterClassEx(&wcex);
 
-  ::CreateWindowEx(0, randomName.c_str(), clapName.c_str(), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
+  ::CreateWindowEx(0, clapName.c_str(), clapName.c_str(), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
                    CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, nullptr, nullptr,
                    ::GetModuleHandle(nullptr), this);
 
