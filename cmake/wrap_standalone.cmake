@@ -101,8 +101,8 @@ function(target_add_standalone_wrapper)
             )
 
         target_sources(${SA_TARGET} PRIVATE
-            ${CLAP_WRAPPER_CMAKE_CURRENT_SOURCE_DIR}/src/detail/standalone/windows/winutils.cpp
-            ${CLAP_WRAPPER_CMAKE_CURRENT_SOURCE_DIR}/src/detail/standalone/windows/win32.manifest
+            ${CLAP_WRAPPER_CMAKE_CURRENT_SOURCE_DIR}/src/detail/standalone/windows/wrapasstandalone.cpp
+            ${CLAP_WRAPPER_CMAKE_CURRENT_SOURCE_DIR}/src/detail/standalone/windows/wrapasstandalone.manifest
             )
 
         target_link_options(${SA_TARGET} PRIVATE
