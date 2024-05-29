@@ -48,11 +48,11 @@ struct Window
   static std::string narrow(std::wstring utf16);
   static std::wstring widen(std::string utf8);
 
-  static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-  int OnClose(HWND, UINT, WPARAM, LPARAM);
-  int OnDestroy(HWND, UINT, WPARAM, LPARAM);
-  int OnDpiChanged(HWND, UINT, WPARAM, LPARAM);
-  int OnWindowPosChanged(HWND, UINT, WPARAM, LPARAM);
+  static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+  int OnClose(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+  int OnDestroy(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+  int OnDpiChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+  int OnWindowPosChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
   HWND m_hwnd;
 };

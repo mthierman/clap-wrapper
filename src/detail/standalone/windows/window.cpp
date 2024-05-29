@@ -29,7 +29,7 @@ Window::Window()
 
   ::CreateWindowExW(0, clapName.c_str(), clapName.c_str(), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
                     CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, nullptr, nullptr,
-                    ::GetModuleHandle(nullptr), this);
+                    ::GetModuleHandleW(nullptr), this);
 
   // auto hMenu{::GetSystemMenu(m_hwnd, FALSE)};
 
@@ -73,37 +73,38 @@ Window::~Window()
 {
 }
 
-LRESULT CALLBACK Window::WndProc(HWND h, UINT m, WPARAM w, LPARAM l)
+LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  Window* pWindow = instance_from_wnd_proc<Window>(h, m, l);
+  Window* pWindow = instance_from_wnd_proc<Window>(hWnd, uMsg, lParam);
 
   if (pWindow)
   {
-    switch (m)
+    // ::MessageBoxA(nullptr, "pWindow", "pWindow", MB_OK | MB_ICONINFORMATION);
+    switch (uMsg)
     {
       case WM_CLOSE:
-        return pWindow->OnClose(h, m, w, l);
+        return pWindow->OnClose(hWnd, uMsg, wParam, lParam);
       case WM_DESTROY:
-        return pWindow->OnDestroy(h, m, w, l);
+        return pWindow->OnDestroy(hWnd, uMsg, wParam, lParam);
       case WM_DPICHANGED:
-        return pWindow->OnDpiChanged(h, m, w, l);
+        return pWindow->OnDpiChanged(hWnd, uMsg, wParam, lParam);
       case WM_WINDOWPOSCHANGED:
-        return pWindow->OnWindowPosChanged(h, m, w, l);
+        return pWindow->OnWindowPosChanged(hWnd, uMsg, wParam, lParam);
     }
   }
 
-  return ::DefWindowProc(h, m, w, l);
+  return ::DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-int Window::OnClose(HWND h, UINT m, WPARAM w, LPARAM l)
+int Window::OnClose(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   ::MessageBoxA(nullptr, "CLOSE", "CLOSE", MB_OK | MB_ICONINFORMATION);
-  ::DestroyWindow(h);
+  ::DestroyWindow(hWnd);
 
   return 0;
 }
 
-int Window::OnDestroy(HWND h, UINT m, WPARAM w, LPARAM l)
+int Window::OnDestroy(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   auto plugin{freeaudio::clap_wrapper::standalone::getMainPlugin()};
 
@@ -118,37 +119,37 @@ int Window::OnDestroy(HWND h, UINT m, WPARAM w, LPARAM l)
   return 0;
 }
 
-int Window::OnDpiChanged(HWND h, UINT m, WPARAM w, LPARAM l)
+int Window::OnDpiChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   auto plugin{freeaudio::clap_wrapper::standalone::getMainPlugin()};
   auto ui{plugin->_ext._gui};
   auto p{plugin->_plugin};
 
-  auto dpi{::GetDpiForWindow(h)};
+  auto dpi{::GetDpiForWindow(hWnd)};
   auto scaleFactor{static_cast<float>(dpi) / static_cast<float>(USER_DEFAULT_SCREEN_DPI)};
 
   ui->set_scale(p, scaleFactor);
 
-  auto bounds{(RECT*)l};
-  ::SetWindowPos(h, nullptr, bounds->left, bounds->top, (bounds->right - bounds->left),
+  auto bounds{(RECT*)lParam};
+  ::SetWindowPos(hWnd, nullptr, bounds->left, bounds->top, (bounds->right - bounds->left),
                  (bounds->bottom - bounds->top), SWP_NOZORDER | SWP_NOACTIVATE);
 
   return 0;
 }
 
-int Window::OnWindowPosChanged(HWND h, UINT m, WPARAM w, LPARAM l)
+int Window::OnWindowPosChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   auto plugin{freeaudio::clap_wrapper::standalone::getMainPlugin()};
   auto ui{plugin->_ext._gui};
   auto p{plugin->_plugin};
 
-  auto dpi{::GetDpiForWindow(h)};
+  auto dpi{::GetDpiForWindow(hWnd)};
   auto scaleFactor{static_cast<float>(dpi) / static_cast<float>(USER_DEFAULT_SCREEN_DPI)};
 
   if (ui->can_resize(p))
   {
     RECT r{0, 0, 0, 0};
-    ::GetClientRect(h, &r);
+    ::GetClientRect(hWnd, &r);
     uint32_t w = (r.right - r.left);
     uint32_t h = (r.bottom - r.top);
     ui->adjust_size(p, &w, &h);
