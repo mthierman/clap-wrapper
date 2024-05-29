@@ -1,5 +1,4 @@
 #include "detail/standalone/entry.h"
-
 #include "window.h"
 
 namespace freeaudio::clap_wrapper::standalone::windows
@@ -8,23 +7,23 @@ Window::Window()
 {
   std::wstring clapName{widen(HOSTED_CLAP_NAME)};
 
-  WNDCLASSEXW wcex{sizeof(WNDCLASSEX)};
+  WNDCLASSEXW wcex{sizeof(WNDCLASSEXW)};
   wcex.lpszClassName = clapName.c_str();
   wcex.lpszMenuName = clapName.c_str();
   wcex.lpfnWndProc = Window::WndProc;
   wcex.style = 0;
   wcex.cbClsExtra = 0;
   wcex.cbWndExtra = 0;
-  wcex.hInstance = ::GetModuleHandle(nullptr);
+  wcex.hInstance = ::GetModuleHandleW(nullptr);
   wcex.hbrBackground = reinterpret_cast<HBRUSH>(::GetStockObject(BLACK_BRUSH));
-  wcex.hCursor = reinterpret_cast<HCURSOR>(::LoadImage(nullptr, reinterpret_cast<LPCSTR>(IDC_ARROW),
-                                                       IMAGE_CURSOR, 0, 0, LR_SHARED | LR_DEFAULTSIZE));
-  wcex.hIcon =
-      reinterpret_cast<HICON>(::LoadImage(nullptr, reinterpret_cast<LPCSTR>(IDI_APPLICATION), IMAGE_ICON,
-                                          0, 0, LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED));
-  wcex.hIconSm =
-      reinterpret_cast<HICON>(::LoadImage(nullptr, reinterpret_cast<LPCSTR>(IDI_APPLICATION), IMAGE_ICON,
-                                          0, 0, LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED));
+  wcex.hCursor = reinterpret_cast<HCURSOR>(::LoadImageW(nullptr, reinterpret_cast<LPCWSTR>(IDC_ARROW),
+                                                        IMAGE_CURSOR, 0, 0, LR_SHARED | LR_DEFAULTSIZE));
+  wcex.hIcon = reinterpret_cast<HICON>(::LoadImageW(nullptr, reinterpret_cast<LPCWSTR>(IDI_APPLICATION),
+                                                    IMAGE_ICON, 0, 0,
+                                                    LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED));
+  wcex.hIconSm = reinterpret_cast<HICON>(
+      ::LoadImageW(nullptr, reinterpret_cast<LPCWSTR>(IDI_APPLICATION), IMAGE_ICON, 0, 0,
+                   LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED));
 
   ::RegisterClassExW(&wcex);
 

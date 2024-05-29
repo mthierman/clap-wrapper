@@ -17,15 +17,15 @@ T* instance_from_wnd_proc(HWND hWnd, UINT uMsg, LPARAM lParam)
 
   if (uMsg == WM_NCCREATE)
   {
-    auto lpCreateStruct{reinterpret_cast<::CREATESTRUCTA*>(lParam)};
+    auto lpCreateStruct{reinterpret_cast<::CREATESTRUCTW*>(lParam)};
     self = static_cast<T*>(lpCreateStruct->lpCreateParams);
-    ::SetWindowLongPtrA(hWnd, 0, reinterpret_cast<intptr_t>(self));
+    ::SetWindowLongPtrW(hWnd, 0, reinterpret_cast<intptr_t>(self));
     self->m_hwnd = hWnd;
   }
 
   else
   {
-    self = reinterpret_cast<T*>(::GetWindowLongPtrA(hWnd, 0));
+    self = reinterpret_cast<T*>(::GetWindowLongPtrW(hWnd, 0));
   }
 
   return self;
