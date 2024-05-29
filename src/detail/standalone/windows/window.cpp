@@ -79,7 +79,7 @@ LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 
   if (pWindow)
   {
-    // ::MessageBoxA(nullptr, "pWindow", "pWindow", MB_OK | MB_ICONINFORMATION);
+    ::MessageBoxA(nullptr, "pWindow", "pWindow", MB_OK | MB_ICONINFORMATION);
     switch (uMsg)
     {
       case WM_CLOSE:
@@ -90,6 +90,16 @@ LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
         return pWindow->OnDpiChanged(hWnd, uMsg, wParam, lParam);
       case WM_WINDOWPOSCHANGED:
         return pWindow->OnWindowPosChanged(hWnd, uMsg, wParam, lParam);
+    }
+  }
+
+  else
+  {
+    switch (uMsg)
+    {
+      case WM_WINDOWPOSCHANGED:
+        ::MessageBoxA(nullptr, "WM_WINDOWPOSCHANGED", "WM_WINDOWPOSCHANGED", MB_OK | MB_ICONINFORMATION);
+        return 0;
     }
   }
 
