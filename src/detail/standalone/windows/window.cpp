@@ -123,36 +123,43 @@ int Window::OnDpiChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
   auto ui{plugin->_ext._gui};
   auto p{plugin->_plugin};
 
-  auto dpi{::GetDpiForWindow(hWnd)};
-  auto scaleFactor{static_cast<float>(dpi) / static_cast<float>(USER_DEFAULT_SCREEN_DPI)};
+  ui->set_scale(
+      p, static_cast<float>(::GetDpiForWindow(hWnd)) / static_cast<float>(USER_DEFAULT_SCREEN_DPI));
 
-  ui->set_scale(p, scaleFactor);
+  uint32_t w{0};
+  uint32_t h{0};
+  ui->get_size(p, &w, &h);
 
-  auto bounds{(RECT*)lParam};
-  ::SetWindowPos(hWnd, nullptr, bounds->left, bounds->top, (bounds->right - bounds->left),
-                 (bounds->bottom - bounds->top), SWP_NOZORDER | SWP_NOACTIVATE);
+  RECT r{0, 0, 0, 0};
+  r.right = w;
+  r.bottom = h;
+
+  ::AdjustWindowRectExForDpi(&r, WS_OVERLAPPEDWINDOW, 0, 0, ::GetDpiForWindow(hWnd));
+
+  ::SetWindowPos(m_hwnd, nullptr, 0, 0, (r.right - r.left), (r.bottom - r.top),
+                 SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE);
 
   return 0;
 }
 
 int Window::OnWindowPosChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  auto plugin{freeaudio::clap_wrapper::standalone::getMainPlugin()};
-  auto ui{plugin->_ext._gui};
-  auto p{plugin->_plugin};
+  // auto plugin{freeaudio::clap_wrapper::standalone::getMainPlugin()};
+  // auto ui{plugin->_ext._gui};
+  // auto p{plugin->_plugin};
 
-  auto dpi{::GetDpiForWindow(hWnd)};
-  auto scaleFactor{static_cast<float>(dpi) / static_cast<float>(USER_DEFAULT_SCREEN_DPI)};
+  // auto dpi{::GetDpiForWindow(hWnd)};
+  // auto scaleFactor{static_cast<float>(dpi) / static_cast<float>(USER_DEFAULT_SCREEN_DPI)};
 
-  if (ui->can_resize(p))
-  {
-    RECT r{0, 0, 0, 0};
-    ::GetClientRect(hWnd, &r);
-    uint32_t w = (r.right - r.left);
-    uint32_t h = (r.bottom - r.top);
-    ui->adjust_size(p, &w, &h);
-    ui->set_size(p, w, h);
-  }
+  // if (ui->can_resize(p))
+  // {
+  //   RECT r{0, 0, 0, 0};
+  //   ::GetClientRect(hWnd, &r);
+  //   uint32_t w = (r.right - r.left);
+  //   uint32_t h = (r.bottom - r.top);
+  //   ui->adjust_size(p, &w, &h);
+  //   ui->set_size(p, w, h);
+  // }
 
   return 0;
 }
