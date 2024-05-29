@@ -7,6 +7,8 @@ Window::Window()
 {
   std::wstring clapName{widen(HOSTED_CLAP_NAME)};
 
+  ::MessageBoxW(nullptr, clapName.c_str(), clapName.c_str(), MB_OK);
+
   WNDCLASSEXW wcex{sizeof(WNDCLASSEXW)};
   wcex.lpszClassName = clapName.c_str();
   wcex.lpszMenuName = clapName.c_str();
@@ -92,7 +94,7 @@ LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
     }
   }
 
-  return ::DefWindowProc(hWnd, uMsg, wParam, lParam);
+  return ::DefWindowProcW(hWnd, uMsg, wParam, lParam);
 }
 
 int Window::OnClose(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
