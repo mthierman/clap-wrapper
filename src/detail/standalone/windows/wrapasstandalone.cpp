@@ -80,9 +80,9 @@ int main()
 
     if (!ui->can_resize(p))
     {
-      ::SetWindowLongPtr(window.m_hwnd, GWL_STYLE,
-                         ::GetWindowLongPtr(window.m_hwnd, GWL_STYLE) & ~WS_OVERLAPPEDWINDOW |
-                             WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
+      ::SetWindowLongPtrW(window.m_hwnd, GWL_STYLE,
+                          ::GetWindowLongPtrW(window.m_hwnd, GWL_STYLE) & ~WS_OVERLAPPEDWINDOW |
+                              WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
     }
 
     clap_window win;
@@ -98,15 +98,17 @@ int main()
   MSG msg{};
   int r{0};
 
-  while ((r = ::GetMessage(&msg, nullptr, 0, 0)) != 0)
+  while ((r = ::GetMessageW(&msg, nullptr, 0, 0)) != 0)
   {
     if (r == -1)
+    {
       return 0;
+    }
 
     else
     {
       ::TranslateMessage(&msg);
-      ::DispatchMessage(&msg);
+      ::DispatchMessageW(&msg);
     }
   }
 
