@@ -13,7 +13,7 @@ Window::Window()
   wcex.lpfnWndProc = Window::WndProc;
   wcex.style = 0;
   wcex.cbClsExtra = 0;
-  wcex.cbWndExtra = 0;
+  wcex.cbWndExtra = sizeof(intptr_t);
   wcex.hInstance = ::GetModuleHandleW(nullptr);
   wcex.hbrBackground = reinterpret_cast<HBRUSH>(::GetStockObject(BLACK_BRUSH));
   wcex.hCursor = reinterpret_cast<HCURSOR>(::LoadImageW(nullptr, reinterpret_cast<LPCWSTR>(IDC_ARROW),
@@ -75,7 +75,7 @@ Window::~Window()
 
 LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  Window* pWindow = InstanceFromWndProc<Window, &Window::m_hwnd>(hWnd, uMsg, lParam);
+  Window* pWindow = instance_from_wnd_proc<Window>(hWnd, uMsg, lParam);
 
   if (pWindow)
   {

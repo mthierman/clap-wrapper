@@ -17,7 +17,7 @@ T* instance_from_wnd_proc(HWND hWnd, UINT uMsg, LPARAM lParam)
 
   if (uMsg == WM_NCCREATE)
   {
-    auto lpCreateStruct{reinterpret_cast<::CREATESTRUCTW*>(lParam)};
+    auto lpCreateStruct{reinterpret_cast<::LPCREATESTRUCTW>(lParam)};
     self = static_cast<T*>(lpCreateStruct->lpCreateParams);
     ::SetWindowLongPtrW(hWnd, 0, reinterpret_cast<intptr_t>(self));
     self->m_hwnd = hWnd;
@@ -27,25 +27,6 @@ T* instance_from_wnd_proc(HWND hWnd, UINT uMsg, LPARAM lParam)
   {
     self = reinterpret_cast<T*>(::GetWindowLongPtrW(hWnd, 0));
   }
-
-  return self;
-}
-
-template <class T, HWND(T::*m_hwnd)>
-T* InstanceFromWndProc(HWND hWnd, UINT uMsg, LPARAM lParam)
-{
-  T* self{nullptr};
-
-  if (uMsg == WM_NCCREATE)
-  {
-    auto pCreateStruct{reinterpret_cast<LPCREATESTRUCTW>(lParam)};
-    self = reinterpret_cast<T*>(pCreateStruct->lpCreateParams);
-    ::SetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<intptr_t>(self));
-    self->*m_hwnd = hWnd;
-  }
-
-  else
-    self = reinterpret_cast<T*>(::GetWindowLongPtrW(hWnd, GWLP_USERDATA));
 
   return self;
 }
