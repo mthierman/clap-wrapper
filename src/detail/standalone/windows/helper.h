@@ -122,7 +122,7 @@ std::string randomize(std::string in)
 
 Window::Window()
 {
-  std::string clapName{WIN32_NAME};
+  std::string clapName{HOSTED_CLAP_NAME};
   std::string randomName{randomize(clapName)};
 
   WNDCLASSEX wcex{sizeof(WNDCLASSEX)};

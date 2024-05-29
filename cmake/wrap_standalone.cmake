@@ -116,7 +116,6 @@ function(target_add_standalone_wrapper)
 
         target_compile_definitions(${salib} PUBLIC
             CLAP_WRAPPER_HAS_WIN32
-            WIN32_NAME="${SA_OUTPUT_NAME}"
             )
 
     elseif(UNIX)
