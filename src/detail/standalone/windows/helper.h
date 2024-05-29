@@ -1,5 +1,3 @@
-#if CLAP_WRAPPER_HAS_WIN32
-
 #include <Windows.h>
 
 #include <string>
@@ -27,14 +25,6 @@ struct Window
   bool fullscreen();
 
   HWND m_hwnd;
-  bool isConsoleAttached{false};
-};
-
-struct Console
-{
-  Console();
-  ~Console();
-  FILE* f;
 };
 
 template <class T, HWND(T::*m_hwnd)>
@@ -276,16 +266,6 @@ int Window::OnWindowPosChanged(HWND h, UINT m, WPARAM w, LPARAM l)
     ui->set_size(p, w, h);
   }
 
-#ifdef _DEBUG
-  if (isConsoleAttached)
-  {
-    RECT wr{0, 0, 0, 0};
-    ::GetWindowRect(h, &wr);
-    ::SetWindowPos(::GetConsoleWindow(), nullptr, wr.left, wr.bottom, (wr.right - wr.left), 200,
-                   SWP_NOZORDER | SWP_ASYNCWINDOWPOS);
-  }
-#endif
-
   return 0;
 }
 
@@ -323,26 +303,4 @@ bool Window::fullscreen()
     return false;
   }
 }
-
-Console::Console()
-{
-  ::AllocConsole();
-  ::EnableMenuItem(::GetSystemMenu(::GetConsoleWindow(), FALSE), SC_CLOSE,
-                   MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
-  ::freopen_s(&f, "CONOUT$", "w", stdout);
-  ::freopen_s(&f, "CONOUT$", "w", stderr);
-  ::freopen_s(&f, "CONIN$", "r", stdin);
-  std::cout.clear();
-  std::clog.clear();
-  std::cerr.clear();
-  std::cin.clear();
-}
-
-Console::~Console()
-{
-  ::fclose(f);
-  ::FreeConsole();
-}
 }  // namespace freeaudio::clap_wrapper::standalone::windows
-
-#endif
