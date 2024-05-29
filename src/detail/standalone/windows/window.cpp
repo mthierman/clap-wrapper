@@ -1,5 +1,6 @@
+#include "detail/standalone/entry.h"
+
 #include "window.h"
-#include "helper.h"
 
 namespace freeaudio::clap_wrapper::standalone::windows
 {
@@ -75,7 +76,7 @@ Window::~Window()
 
 LRESULT CALLBACK Window::WndProc(HWND h, UINT m, WPARAM w, LPARAM l)
 {
-  Window* pWindow = InstanceFromWndProc<Window, &Window::m_hwnd>(h, m, l);
+  Window* pWindow = instance_from_wnd_proc<Window>(h, m, l);
 
   if (pWindow)
   {

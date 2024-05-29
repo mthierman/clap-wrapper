@@ -20,7 +20,7 @@ T* instance_from_wnd_proc(HWND hWnd, UINT uMsg, LPARAM lParam)
     auto lpCreateStruct{reinterpret_cast<::CREATESTRUCTA*>(lParam)};
     self = static_cast<T*>(lpCreateStruct->lpCreateParams);
     ::SetWindowLongPtrA(hWnd, 0, reinterpret_cast<intptr_t>(self));
-    self->m_hwnd.reset(hWnd);
+    self->m_hwnd = hWnd;
   }
 
   else
