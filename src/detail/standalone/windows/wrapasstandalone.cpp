@@ -1,9 +1,3 @@
-#if CLAP_WRAPPER_HAS_WIN32
-
-#ifdef UNICODE
-#undef UNICODE
-#endif
-
 #include <Windows.h>
 
 #include "../entry.h"
@@ -124,5 +118,3 @@ int main()
 
   return 0;
 }
-
-#endif
