@@ -68,6 +68,7 @@ struct Window
   static std::wstring widen(std::string utf8);
 
   static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+  int OnCreate(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
   int OnClose(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
   int OnDestroy(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
   int OnDpiChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

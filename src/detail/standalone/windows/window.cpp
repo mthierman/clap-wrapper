@@ -81,6 +81,8 @@ LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
   {
     switch (uMsg)
     {
+      case WM_CREATE:
+        return pWindow->OnCreate(hWnd, uMsg, wParam, lParam);
       case WM_CLOSE:
         return pWindow->OnClose(hWnd, uMsg, wParam, lParam);
       case WM_DESTROY:
@@ -93,6 +95,25 @@ LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
   }
 
   return ::DefWindowProcW(hWnd, uMsg, wParam, lParam);
+}
+
+int Window::OnCreate(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+  ::MessageBoxW(nullptr, L"OnCreate", L"", MB_OK);
+
+  auto plugin{freeaudio::clap_wrapper::standalone::getMainPlugin()};
+  auto ui{plugin->_ext._gui};
+  auto p{plugin->_plugin};
+
+  ui->set_scale(
+      p, static_cast<float>(::GetDpiForWindow(hWnd)) / static_cast<float>(USER_DEFAULT_SCREEN_DPI));
+
+  if (ui->can_resize(p))
+  {
+    // We can check here if we had a previous size but we aren't saving state yet
+  }
+
+  return 0;
 }
 
 int Window::OnClose(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

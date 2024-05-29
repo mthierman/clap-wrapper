@@ -57,15 +57,6 @@ int main()
 
     freeaudio::clap_wrapper::standalone::windows::Window window;
 
-    auto dpi{::GetDpiForWindow(window.m_hwnd)};
-    auto scaleFactor{static_cast<float>(dpi) / static_cast<float>(USER_DEFAULT_SCREEN_DPI)};
-    ui->set_scale(p, scaleFactor);
-
-    if (ui->can_resize(p))
-    {
-      // We can check here if we had a previous size but we aren't saving state yet
-    }
-
     uint32_t w{0};
     uint32_t h{0};
     ui->get_size(p, &w, &h);
@@ -73,7 +64,7 @@ int main()
     RECT r{0, 0, 0, 0};
     r.right = w;
     r.bottom = h;
-    ::AdjustWindowRectExForDpi(&r, WS_OVERLAPPEDWINDOW, 0, 0, dpi);
+    ::AdjustWindowRectExForDpi(&r, WS_OVERLAPPEDWINDOW, 0, 0, ::GetDpiForWindow(window.m_hwnd));
     ::SetWindowPos(window.m_hwnd, nullptr, 0, 0, (r.right - r.left), (r.bottom - r.top), SWP_NOMOVE);
 
     if (!ui->can_resize(p))
