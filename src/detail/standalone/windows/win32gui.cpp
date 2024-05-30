@@ -227,9 +227,6 @@ int Win32Gui::onWindowPosChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
   auto pluginGui{m_plugin->_ext._gui};
   auto plugin{m_plugin->_plugin};
 
-  auto dpi{::GetDpiForWindow(hWnd)};
-  auto scaleFactor{static_cast<float>(dpi) / static_cast<float>(USER_DEFAULT_SCREEN_DPI)};
-
   if (pluginGui)
   {
     if (pluginGui->can_resize(plugin))
