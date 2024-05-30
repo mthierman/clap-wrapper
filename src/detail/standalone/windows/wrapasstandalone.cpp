@@ -1,5 +1,3 @@
-#include <Windows.h>
-
 #include "wrapasstandalone.h"
 #include "detail/standalone/standalone_details.h"
 #include "detail/standalone/entry.h"
