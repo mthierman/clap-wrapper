@@ -254,34 +254,34 @@ int Win32Gui::onWindowPosChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 
       pluginGui->adjust_size(plugin, &w, &h);
       pluginGui->set_size(plugin, w, h);
-
-      clap_gui_resize_hints_t hints;
-      pluginGui->get_resize_hints(plugin, &hints);
-      if (hints.preserve_aspect_ratio)
-      {
-        LOG << "preserve aspect ratio" << std::endl;
-      }
-
-      if (hints.can_resize_horizontally)
-      {
-        LOG << "can_resize_horizontally" << std::endl;
-      }
-
-      if (hints.can_resize_vertically)
-      {
-        LOG << "can_resize_vertically" << std::endl;
-      }
-
-      if (hints.aspect_ratio_height)
-      {
-        LOG << hints.aspect_ratio_height << std::endl;
-      }
-
-      if (hints.aspect_ratio_width)
-      {
-        LOG << hints.aspect_ratio_width << std::endl;
-      }
     }
+  }
+
+  clap_gui_resize_hints_t hints;
+  pluginGui->get_resize_hints(plugin, &hints);
+  if (hints.preserve_aspect_ratio)
+  {
+    LOG << "preserve aspect ratio" << std::endl;
+  }
+
+  if (hints.can_resize_horizontally)
+  {
+    LOG << "can_resize_horizontally" << std::endl;
+  }
+
+  if (hints.can_resize_vertically)
+  {
+    LOG << "can_resize_vertically" << std::endl;
+  }
+
+  if (hints.aspect_ratio_height)
+  {
+    LOG << hints.aspect_ratio_height << std::endl;
+  }
+
+  if (hints.aspect_ratio_width)
+  {
+    LOG << hints.aspect_ratio_width << std::endl;
   }
 
   return 0;
