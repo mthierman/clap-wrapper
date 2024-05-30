@@ -45,7 +45,7 @@ int main(int argc, char** argv)
 
   freeaudio::clap_wrapper::standalone::mainStartAudio();
 
-  win32Gui.createWindow();
+  win32Gui.createHostWindow();
 
   win32Gui.setupPlugin();
 

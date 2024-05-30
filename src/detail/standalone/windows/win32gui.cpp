@@ -14,7 +14,8 @@ void Win32Gui::initialize(freeaudio::clap_wrapper::standalone::StandaloneHost* s
 {
   sah->win32Gui = this;
 
-  sah->onRequestResize = [=](uint32_t width, uint32_t height) { return setWindowSize(width, height); };
+  sah->onRequestResize = [this](uint32_t width, uint32_t height)
+  { return setWindowSize(width, height); };
 }
 
 void Win32Gui::setPlugin(std::shared_ptr<Clap::Plugin> p)
@@ -31,7 +32,7 @@ clap_window Win32Gui::createClapWindow()
   return clapWindow;
 }
 
-void Win32Gui::createWindow()
+void Win32Gui::createHostWindow()
 {
   std::wstring clapName{widen(OUTPUT_NAME)};
 
