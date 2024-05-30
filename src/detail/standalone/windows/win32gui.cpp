@@ -304,11 +304,15 @@ int Win32Gui::onWindowPosChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
       RECT r{0, 0, 0, 0};
       ::GetClientRect(hWnd, &r);
 
-      uint32_t w = (r.right - r.left);
-      uint32_t h = (r.bottom - r.top);
+      uint32_t width = (r.right - r.left);
+      uint32_t height = (r.bottom - r.top);
 
-      pluginGui->adjust_size(plugin, &w, &h);
-      pluginGui->set_size(plugin, w, h);
+      pluginGui->adjust_size(plugin, &width, &height);
+      pluginGui->set_size(plugin, width, height);
+
+      // We can constrain aspect ratio like this, but it's very janky...
+      // pluginGui->get_size(plugin, &width, &height);
+      // setWindowSize(width, height);
     }
   }
 
