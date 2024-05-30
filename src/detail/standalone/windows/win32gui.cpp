@@ -108,11 +108,7 @@ void Win32Gui::setupPlugin()
     pluginGui->set_scale(plugin, static_cast<float>(::GetDpiForWindow(m_hwnd)) /
                                      static_cast<float>(USER_DEFAULT_SCREEN_DPI));
 
-    // We can check here if we had a previous size but we aren't saving state yet
-    if (pluginGui->can_resize(plugin))
-    {
-    }
-    else
+    if (!pluginGui->can_resize(plugin))
     {
       ::SetWindowLongPtrW(m_hwnd, GWL_STYLE,
                           ::GetWindowLongPtrW(m_hwnd, GWL_STYLE) & ~WS_OVERLAPPEDWINDOW | WS_OVERLAPPED |
@@ -122,11 +118,8 @@ void Win32Gui::setupPlugin()
     uint32_t width{0};
     uint32_t height{0};
     pluginGui->get_size(plugin, &width, &height);
-
     setWindowSize(width, height);
-
     pluginGui->set_parent(plugin, &clapWindow);
-
     pluginGui->show(plugin);
 
     ::ShowWindow(m_hwnd, SW_SHOWDEFAULT);
