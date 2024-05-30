@@ -13,11 +13,13 @@ struct Win32Gui
   void setPlugin(std::shared_ptr<Clap::Plugin> p);
 
   void createWindow();
-  void activate();
-  void runLoop();
-  void setScale();
+  void setupPlugin();
   bool setWindowSize(uint32_t width, uint32_t height);
-  void resizeWindow();
+
+  void runLoop();
+
+  // void setScale();
+  // void resizeWindow();
 
   static LRESULT CALLBACK wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
   int onDestroy(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

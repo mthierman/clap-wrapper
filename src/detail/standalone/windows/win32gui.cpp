@@ -88,7 +88,7 @@ void Win32Gui::createWindow()
   }
 }
 
-void Win32Gui::activate()
+void Win32Gui::setupPlugin()
 {
   auto pluginGui{m_plugin->_ext._gui};
   auto plugin{m_plugin->_plugin};
@@ -101,12 +101,12 @@ void Win32Gui::activate()
     }
 
     pluginGui->create(plugin, CLAP_WINDOW_API_WIN32, false);
-
     clap_window clapWindow;
     clapWindow.api = CLAP_WINDOW_API_WIN32;
     clapWindow.win32 = static_cast<void*>(m_hwnd);
 
-    setScale();
+    pluginGui->set_scale(plugin, static_cast<float>(::GetDpiForWindow(m_hwnd)) /
+                                     static_cast<float>(USER_DEFAULT_SCREEN_DPI));
 
     // We can check here if we had a previous size but we aren't saving state yet
     if (pluginGui->can_resize(plugin))
@@ -128,9 +128,27 @@ void Win32Gui::activate()
     pluginGui->set_parent(plugin, &clapWindow);
 
     pluginGui->show(plugin);
+
+    ::ShowWindow(m_hwnd, SW_SHOWDEFAULT);
+  }
+}
+
+bool Win32Gui::setWindowSize(uint32_t width, uint32_t height)
+{
+  RECT r{0, 0, 0, 0};
+  r.right = width;
+  r.bottom = height;
+
+  if (m_hwnd)
+  {
+    ::AdjustWindowRectExForDpi(&r, ::GetWindowLongPtrW(m_hwnd, GWL_STYLE), 0, 0,
+                               ::GetDpiForWindow(m_hwnd));
+
+    ::SetWindowPos(m_hwnd, nullptr, 0, 0, (r.right - r.left), (r.bottom - r.top),
+                   SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE);
   }
 
-  ::ShowWindow(m_hwnd, SW_SHOWDEFAULT);
+  return true;
 }
 
 void Win32Gui::runLoop()
@@ -153,45 +171,27 @@ void Win32Gui::runLoop()
   }
 }
 
-void Win32Gui::setScale()
-{
-  auto pluginGui{m_plugin->_ext._gui};
-  auto plugin{m_plugin->_plugin};
+// void Win32Gui::setScale()
+// {
+//   auto pluginGui{m_plugin->_ext._gui};
+//   auto plugin{m_plugin->_plugin};
 
-  pluginGui->set_scale(plugin, static_cast<float>(::GetDpiForWindow(m_hwnd)) /
-                                   static_cast<float>(USER_DEFAULT_SCREEN_DPI));
-  // pluginGui->set_scale(plugin, 1);
-}
+//   pluginGui->set_scale(plugin, static_cast<float>(::GetDpiForWindow(m_hwnd)) /
+//                                    static_cast<float>(USER_DEFAULT_SCREEN_DPI));
+//   // pluginGui->set_scale(plugin, 1);
+// }
 
-bool Win32Gui::setWindowSize(uint32_t width, uint32_t height)
-{
-  RECT r{0, 0, 0, 0};
-  r.right = width;
-  r.bottom = height;
+// void Win32Gui::resizeWindow()
+// {
+//   setScale();
 
-  if (m_hwnd)
-  {
-    ::AdjustWindowRectExForDpi(&r, ::GetWindowLongPtrW(m_hwnd, GWL_STYLE), 0, 0,
-                               ::GetDpiForWindow(m_hwnd));
-
-    ::SetWindowPos(m_hwnd, nullptr, 0, 0, (r.right - r.left), (r.bottom - r.top),
-                   SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE);
-  }
-
-  return true;
-}
-
-void Win32Gui::resizeWindow()
-{
-  setScale();
-
-  auto pluginGui{m_plugin->_ext._gui};
-  auto plugin{m_plugin->_plugin};
-  uint32_t width{0};
-  uint32_t height{0};
-  pluginGui->get_size(plugin, &width, &height);
-  setWindowSize(width, height);
-}
+//   auto pluginGui{m_plugin->_ext._gui};
+//   auto plugin{m_plugin->_plugin};
+//   uint32_t width{0};
+//   uint32_t height{0};
+//   pluginGui->get_size(plugin, &width, &height);
+//   setWindowSize(width, height);
+// }
 
 LRESULT CALLBACK Win32Gui::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -232,7 +232,7 @@ int Win32Gui::onDestroy(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 int Win32Gui::onDpiChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  resizeWindow();
+  // resizeWindow();
 
   return 0;
 }
@@ -336,7 +336,7 @@ int main(int argc, char** argv)
 
   win32Gui.createWindow();
 
-  win32Gui.activate();
+  win32Gui.setupPlugin();
 
   win32Gui.runLoop();
 
