@@ -46,6 +46,9 @@ struct Win32Gui
   void setPlugin(std::shared_ptr<Clap::Plugin> p);
   void activate();
   void runLoop();
+  void setScale();
+  void setWindowSize();
+  void resizeWindow();
 
   static LRESULT CALLBACK wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
   int onDestroy(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

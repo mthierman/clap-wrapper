@@ -136,32 +136,20 @@ void Win32Gui::activate()
     pluginGui->show(plugin);
   }
 
-  pluginGui->set_scale(plugin, static_cast<float>(::GetDpiForWindow(m_hwnd)) /
-                                   static_cast<float>(USER_DEFAULT_SCREEN_DPI));
+  setScale();
 
   if (pluginGui->can_resize(plugin))
   {
     // We can check here if we had a previous size but we aren't saving state yet
   }
-  else
-  {
-    ::SetWindowLongPtrW(m_hwnd, GWL_STYLE,
-                        ::GetWindowLongPtrW(m_hwnd, GWL_STYLE) & ~WS_OVERLAPPEDWINDOW | WS_OVERLAPPED |
-                            WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
-  }
+  // else
+  // {
+  //   ::SetWindowLongPtrW(m_hwnd, GWL_STYLE,
+  //                       ::GetWindowLongPtrW(m_hwnd, GWL_STYLE) & ~WS_OVERLAPPEDWINDOW | WS_OVERLAPPED |
+  //                           WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
+  // }
 
-  uint32_t w{0};
-  uint32_t h{0};
-  pluginGui->get_size(plugin, &w, &h);
-
-  RECT r{0, 0, 0, 0};
-  r.right = w;
-  r.bottom = h;
-
-  ::AdjustWindowRectExForDpi(&r, WS_OVERLAPPEDWINDOW, 0, 0, ::GetDpiForWindow(m_hwnd));
-
-  ::SetWindowPos(m_hwnd, nullptr, 0, 0, (r.right - r.left), (r.bottom - r.top),
-                 SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE);
+  setWindowSize();
 
   ::ShowWindow(m_hwnd, SW_SHOWDEFAULT);
 }
@@ -184,6 +172,40 @@ void Win32Gui::runLoop()
       ::DispatchMessageW(&msg);
     }
   }
+}
+
+void Win32Gui::setScale()
+{
+  auto pluginGui{m_plugin->_ext._gui};
+  auto plugin{m_plugin->_plugin};
+
+  pluginGui->set_scale(plugin, static_cast<float>(::GetDpiForWindow(m_hwnd)) /
+                                   static_cast<float>(USER_DEFAULT_SCREEN_DPI));
+}
+
+void Win32Gui::setWindowSize()
+{
+  auto pluginGui{m_plugin->_ext._gui};
+  auto plugin{m_plugin->_plugin};
+
+  uint32_t w{0};
+  uint32_t h{0};
+  pluginGui->get_size(plugin, &w, &h);
+
+  RECT r{0, 0, 0, 0};
+  r.right = w;
+  r.bottom = h;
+
+  ::AdjustWindowRectExForDpi(&r, WS_OVERLAPPEDWINDOW, 0, 0, ::GetDpiForWindow(m_hwnd));
+
+  ::SetWindowPos(m_hwnd, nullptr, 0, 0, (r.right - r.left), (r.bottom - r.top),
+                 SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE);
+}
+
+void Win32Gui::resizeWindow()
+{
+  setScale();
+  setWindowSize();
 }
 
 LRESULT CALLBACK Win32Gui::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -225,43 +247,30 @@ int Win32Gui::onDestroy(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 int Win32Gui::onDpiChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  m_plugin->_ext._gui->set_scale(m_plugin->_plugin, static_cast<float>(::GetDpiForWindow(hWnd)) /
-                                                        static_cast<float>(USER_DEFAULT_SCREEN_DPI));
-
-  uint32_t w{0};
-  uint32_t h{0};
-  m_plugin->_ext._gui->get_size(m_plugin->_plugin, &w, &h);
-
-  RECT r{0, 0, 0, 0};
-  r.right = w;
-  r.bottom = h;
-
-  ::AdjustWindowRectExForDpi(&r, WS_OVERLAPPEDWINDOW, 0, 0, ::GetDpiForWindow(hWnd));
-
-  ::SetWindowPos(m_hwnd, nullptr, 0, 0, (r.right - r.left), (r.bottom - r.top),
-                 SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE);
+  resizeWindow();
 
   return 0;
 }
 
 int Win32Gui::onWindowPosChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  // auto plugin{freeaudio::clap_wrapper::standalone::getMainPlugin()};
-  // auto ui{plugin->_ext._gui};
-  // auto p{plugin->_plugin};
+  auto pluginGui{m_plugin->_ext._gui};
+  auto plugin{m_plugin->_plugin};
 
-  // auto dpi{::GetDpiForWindow(hWnd)};
-  // auto scaleFactor{static_cast<float>(dpi) / static_cast<float>(USER_DEFAULT_SCREEN_DPI)};
+  auto dpi{::GetDpiForWindow(hWnd)};
+  auto scaleFactor{static_cast<float>(dpi) / static_cast<float>(USER_DEFAULT_SCREEN_DPI)};
 
-  // if (ui->can_resize(p))
-  // {
-  //   RECT r{0, 0, 0, 0};
-  //   ::GetClientRect(hWnd, &r);
-  //   uint32_t w = (r.right - r.left);
-  //   uint32_t h = (r.bottom - r.top);
-  //   ui->adjust_size(p, &w, &h);
-  //   ui->set_size(p, w, h);
-  // }
+  if (pluginGui->can_resize(plugin))
+  {
+    RECT r{0, 0, 0, 0};
+    ::GetClientRect(hWnd, &r);
+
+    uint32_t w = (r.right - r.left);
+    uint32_t h = (r.bottom - r.top);
+
+    pluginGui->adjust_size(plugin, &w, &h);
+    pluginGui->set_size(plugin, w, h);
+  }
 
   return 0;
 }
