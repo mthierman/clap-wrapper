@@ -120,6 +120,8 @@ void Win32Gui::setupPlugin()
 
     if (pluginGui->can_resize(plugin))
     {
+      ::SetWindowLongPtrW(m_hwnd, GWL_STYLE, ::GetWindowLongPtrW(m_hwnd, GWL_STYLE));
+
       // if resizable and has known size from previous session:
       // We should load size here, width = previousWidth, height = previousHeight
       // pluginGui->set_size(plugin, previousWidth, previousHeight);
