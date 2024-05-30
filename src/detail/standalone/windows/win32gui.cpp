@@ -188,13 +188,16 @@ void Win32Gui::setupPlugin()
 
     if (pluginGui->can_resize(plugin))
     {
-      // ::SetWindowLongPtrW(m_hwnd, GWL_STYLE, ::GetWindowLongPtrW(m_hwnd, GWL_STYLE));
       // if resizable and has known size from previous session:
-      // We should load size here, width = previousWidth, height = previousHeight
+      // We should load size here, width = previousWidth, height = previousHeight instead of hardcoded values:
+      // width = 1000;
+      // height = 1000;
+      // pluginGui->adjust_size(plugin, &width, &height);
       // pluginGui->set_size(plugin, width, height);
     }
     else
     {
+      // We can't resize, so disable WS_THICKFRAME and WS_MAXIMIZEBOX
       ::SetWindowLongPtrW(m_hwnd, GWL_STYLE,
                           ::GetWindowLongPtrW(m_hwnd, GWL_STYLE) & ~WS_OVERLAPPEDWINDOW | WS_OVERLAPPED |
                               WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
