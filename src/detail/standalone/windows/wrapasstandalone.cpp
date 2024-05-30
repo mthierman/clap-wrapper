@@ -126,6 +126,11 @@ void Win32Gui::activate()
 
   if (pluginGui)
   {
+    if (!pluginGui->is_api_supported(plugin, CLAP_WINDOW_API_WIN32, false))
+    {
+      LOG << "NO WIN32 " << std::endl;
+    }
+
     pluginGui->create(plugin, CLAP_WINDOW_API_WIN32, false);
 
     clap_window clapWindow;
