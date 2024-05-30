@@ -42,10 +42,9 @@ struct Win32Gui
   void initialize(freeaudio::clap_wrapper::standalone::StandaloneHost* sah);
   void setPlugin(std::shared_ptr<Clap::Plugin> p);
   void activate();
-  int runLoop();
+  void runLoop();
 
   static LRESULT CALLBACK wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-  int onCreate(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
   int onClose(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
   int onDestroy(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
   int onDpiChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

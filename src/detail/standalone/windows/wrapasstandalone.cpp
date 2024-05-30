@@ -23,8 +23,6 @@ void Win32Gui::setPlugin(std::shared_ptr<Clap::Plugin> p)
 
 void Win32Gui::activate()
 {
-  freeaudio::clap_wrapper::standalone::mainStartAudio();
-
   std::wstring clapName{widen(HOSTED_CLAP_NAME)};
 
   WNDCLASSEXW wcex{sizeof(WNDCLASSEXW)};
@@ -129,7 +127,7 @@ void Win32Gui::activate()
   ::ShowWindow(m_hwnd, SW_SHOWDEFAULT);
 }
 
-int Win32Gui::runLoop()
+void Win32Gui::runLoop()
 {
   MSG msg{};
   int r{0};
@@ -138,7 +136,7 @@ int Win32Gui::runLoop()
   {
     if (r == -1)
     {
-      return -1;
+      break;
     }
 
     else
@@ -147,10 +145,6 @@ int Win32Gui::runLoop()
       ::DispatchMessageW(&msg);
     }
   }
-
-  freeaudio::clap_wrapper::standalone::mainFinish();
-
-  return 0;
 }
 
 LRESULT CALLBACK Win32Gui::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -161,8 +155,6 @@ LRESULT CALLBACK Win32Gui::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
   {
     switch (uMsg)
     {
-      case WM_CREATE:
-        return pWin32Gui->onCreate(hWnd, uMsg, wParam, lParam);
       case WM_CLOSE:
         return pWin32Gui->onClose(hWnd, uMsg, wParam, lParam);
       case WM_DESTROY:
@@ -175,11 +167,6 @@ LRESULT CALLBACK Win32Gui::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
   }
 
   return ::DefWindowProcW(hWnd, uMsg, wParam, lParam);
-}
-
-int Win32Gui::onCreate(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-  return 0;
 }
 
 int Win32Gui::onClose(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -325,7 +312,13 @@ int main(int argc, char** argv)
   win32Gui.setPlugin(freeaudio::clap_wrapper::standalone::mainCreatePlugin(
       entry, std::string{PLUGIN_ID}, PLUGIN_INDEX, 1, (char**)argv));
 
+  freeaudio::clap_wrapper::standalone::mainStartAudio();
+
   win32Gui.activate();
 
-  return win32Gui.runLoop();
+  win32Gui.runLoop();
+
+  freeaudio::clap_wrapper::standalone::mainFinish();
+
+  return 0;
 }
