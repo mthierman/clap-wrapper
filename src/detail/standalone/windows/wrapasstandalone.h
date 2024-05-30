@@ -37,6 +37,9 @@ int safe_size(T value)
   return static_cast<U>(value);
 }
 
+std::string narrow(std::wstring utf16);
+std::wstring widen(std::string utf8);
+
 struct Win32Gui
 {
   void initialize(freeaudio::clap_wrapper::standalone::StandaloneHost* sah);
@@ -50,9 +53,7 @@ struct Win32Gui
   int onDpiChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
   int onWindowPosChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-  static std::string narrow(std::wstring utf16);
-  static std::wstring widen(std::string utf8);
-
+  std::wstring m_clapName{widen(HOSTED_CLAP_NAME)};
   std::shared_ptr<Clap::Plugin> m_plugin;
   HWND m_hwnd;
 };
