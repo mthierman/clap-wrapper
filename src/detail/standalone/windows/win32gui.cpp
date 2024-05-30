@@ -124,8 +124,8 @@ void Win32Gui::setupPlugin()
 
       // if resizable and has known size from previous session:
       // We should load size here, width = previousWidth, height = previousHeight
-      // pluginGui->set_size(plugin, previousWidth, previousHeight);
-      // setWindowSize(previousWidth, previousHeight);
+      // pluginGui->set_size(plugin, width, height);
+      // setWindowSize(width, height);
     }
     else
     {
