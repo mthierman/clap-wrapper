@@ -4,7 +4,7 @@
 
 namespace freeaudio::clap_wrapper::standalone::windows
 {
-void SettingsWindow::createSettingsWindow()
+void SettingsWindow::createWindow()
 {
   std::wstring windowName{L"Audio/MIDI Settings"};
 
@@ -33,14 +33,19 @@ void SettingsWindow::createSettingsWindow()
                     ::GetModuleHandleW(nullptr), this);
 }
 
-void SettingsWindow::showSettingsWindow()
+void SettingsWindow::showWindow()
 {
   ::ShowWindow(m_hwnd, SW_SHOW);
 }
 
-void SettingsWindow::hideSettingsWindow()
+void SettingsWindow::hideWindow()
 {
   ::ShowWindow(m_hwnd, SW_HIDE);
+}
+
+bool SettingsWindow::checkVisibility()
+{
+  return ::IsWindowVisible(m_hwnd);
 }
 
 LRESULT CALLBACK SettingsWindow::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

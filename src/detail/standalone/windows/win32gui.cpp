@@ -91,6 +91,11 @@ void Win32Gui::createHostWindow()
   }
 }
 
+void Win32Gui::createSettingsWindow()
+{
+  m_settingsWindow.createWindow();
+}
+
 clap_window Win32Gui::createClapWindow()
 {
   clap_window clapWindow;
@@ -169,7 +174,27 @@ void Win32Gui::runLoop()
 
 void Win32Gui::showHostWindow()
 {
-  ::ShowWindow(m_hwnd, SW_SHOWDEFAULT);
+  ::ShowWindow(m_hwnd, SW_SHOW);
+}
+
+void Win32Gui::hideHostWindow()
+{
+  ::ShowWindow(m_hwnd, SW_HIDE);
+}
+
+void Win32Gui::showSettingsWindow()
+{
+  m_settingsWindow.showWindow();
+}
+
+void Win32Gui::hideSettingsWindow()
+{
+  m_settingsWindow.hideWindow();
+}
+
+bool Win32Gui::checkSettingsVisibility()
+{
+  return m_settingsWindow.checkVisibility();
 }
 
 bool Win32Gui::setWindowSize(uint32_t width, uint32_t height)
@@ -255,13 +280,11 @@ int Win32Gui::onWindowPosChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 
 int Win32Gui::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  LOG << "onCommand: " << std::endl;
-
   switch (wParam)
   {
-    case SC_MOVE:
+    case IDM_SETTINGS:
     {
-      LOG << "onCommand: SC_MOVE" << std::endl;
+      checkSettingsVisibility() ? hideSettingsWindow() : showSettingsWindow();
 
       return 0;
     }

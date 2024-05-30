@@ -4,6 +4,7 @@
 
 #include <clap_proxy.h>
 #include "detail/standalone/standalone_host.h"
+#include "settings_window.h"
 
 namespace freeaudio::clap_wrapper::standalone::windows
 {
@@ -13,6 +14,7 @@ struct Win32Gui
   void setPlugin(std::shared_ptr<Clap::Plugin> p);
 
   void createHostWindow();
+  void createSettingsWindow();
 
   clap_window createClapWindow();
   void setupPlugin();
@@ -20,6 +22,12 @@ struct Win32Gui
   void runLoop();
 
   void showHostWindow();
+  void hideHostWindow();
+
+  void showSettingsWindow();
+  void hideSettingsWindow();
+  bool checkSettingsVisibility();
+
   bool setWindowSize(uint32_t width, uint32_t height);
 
   static LRESULT CALLBACK wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -28,6 +36,7 @@ struct Win32Gui
   int onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
   int onDestroy(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
+  SettingsWindow m_settingsWindow;
   std::shared_ptr<Clap::Plugin> m_plugin;
   HWND m_hwnd;
 };
