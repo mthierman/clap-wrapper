@@ -137,7 +137,8 @@ void Win32Gui::setupPlugin()
       setWindowSize(width, height);
     }
 
-    pluginGui->set_parent(plugin, &createClapWindow());
+    auto clapWindow{createClapWindow()};
+    pluginGui->set_parent(plugin, &clapWindow);
 
     pluginGui->show(plugin);
   }
