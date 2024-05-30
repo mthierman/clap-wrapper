@@ -36,22 +36,13 @@ void SettingsWindow::createWindow()
   ::MONITORINFO mi{sizeof(::MONITORINFO)};
   ::GetMonitorInfoA(::MonitorFromWindow(m_hwnd, MONITOR_DEFAULTTONEAREST), &mi);
 
-  LOG << "rcMonitor WIDTH: " << mi.rcMonitor.right - mi.rcMonitor.left << std::endl;
-  LOG << "rcMonitor HEIGHT: " << mi.rcMonitor.bottom - mi.rcMonitor.top << std::endl;
+  int width{600};
+  int height{400};
 
-  LOG << "rcWork WIDTH: " << mi.rcWork.right - mi.rcWork.left << std::endl;
-  LOG << "rcWork HEIGHT: " << mi.rcWork.bottom - mi.rcWork.top << std::endl;
+  auto x = (static_cast<int>(mi.rcWork.right - mi.rcWork.left) - width) / 2;
+  auto y = (static_cast<int>(mi.rcWork.bottom - mi.rcWork.top) - height) / 2;
 
-  auto screenWidth = static_cast<int>(mi.rcWork.right - mi.rcWork.left);
-  auto screenHeight = static_cast<int>(mi.rcWork.bottom - mi.rcWork.top);
-
-  auto x = (screenWidth - 600) / 2;
-  auto y = (screenHeight - 400) / 2;
-
-  LOG << "SETTINGS X:" << x << std::endl;
-  LOG << "SETTINGS Y:" << y << std::endl;
-
-  ::SetWindowPos(m_hwnd, nullptr, x, y, 600, 400, 0);
+  ::SetWindowPos(m_hwnd, nullptr, x, y, width, height, 0);
 }
 
 void SettingsWindow::showWindow()
