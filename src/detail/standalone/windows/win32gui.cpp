@@ -13,13 +13,9 @@ namespace freeaudio::clap_wrapper::standalone::windows
 void Win32Gui::initialize(freeaudio::clap_wrapper::standalone::StandaloneHost* sah)
 {
   sah->win32Gui = this;
+
   sah->onRequestResize = [=](uint32_t w, uint32_t h)
   {
-    LOG << w << std::endl;
-    LOG << h << std::endl;
-
-    // setWindowSize();
-
     RECT r{0, 0, 0, 0};
     r.right = w;
     r.bottom = h;
