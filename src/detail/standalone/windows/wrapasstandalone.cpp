@@ -148,8 +148,6 @@ int Win32Gui::runLoop()
     }
   }
 
-  m_plugin = nullptr;
-
   freeaudio::clap_wrapper::standalone::mainFinish();
 
   return 0;
@@ -169,8 +167,6 @@ LRESULT CALLBACK Win32Gui::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
         return pWin32Gui->OnClose(hWnd, uMsg, wParam, lParam);
       case WM_DESTROY:
         return pWin32Gui->OnDestroy(hWnd, uMsg, wParam, lParam);
-      case WM_QUIT:
-        return pWin32Gui->OnQuit(hWnd, uMsg, wParam, lParam);
       case WM_DPICHANGED:
         return pWin32Gui->OnDpiChanged(hWnd, uMsg, wParam, lParam);
       case WM_WINDOWPOSCHANGED:
@@ -199,15 +195,11 @@ int Win32Gui::OnDestroy(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
   {
     m_plugin->_ext._gui->hide(m_plugin->_plugin);
     m_plugin->_ext._gui->destroy(m_plugin->_plugin);
+    m_plugin = nullptr;
   }
 
   ::PostQuitMessage(0);
 
-  return 0;
-}
-
-int Win32Gui::OnQuit(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
   return 0;
 }
 

@@ -48,7 +48,6 @@ struct Win32Gui
   int OnCreate(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
   int OnClose(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
   int OnDestroy(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-  int OnQuit(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
   int OnDpiChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
   int OnWindowPosChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
