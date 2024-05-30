@@ -13,7 +13,6 @@ struct Win32Gui
   void setPlugin(std::shared_ptr<Clap::Plugin> p);
 
   void createHostWindow();
-  void createSettingsWindow();
 
   clap_window createClapWindow();
   void setupPlugin();

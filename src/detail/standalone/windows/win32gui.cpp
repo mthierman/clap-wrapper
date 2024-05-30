@@ -25,11 +25,11 @@ void Win32Gui::setPlugin(std::shared_ptr<Clap::Plugin> p)
 
 void Win32Gui::createHostWindow()
 {
-  std::wstring clapName{widen(OUTPUT_NAME)};
+  std::wstring windowName{widen(OUTPUT_NAME)};
 
   WNDCLASSEXW wcex{sizeof(WNDCLASSEXW)};
-  wcex.lpszClassName = clapName.c_str();
-  wcex.lpszMenuName = clapName.c_str();
+  wcex.lpszClassName = windowName.c_str();
+  wcex.lpszMenuName = windowName.c_str();
   wcex.lpfnWndProc = Win32Gui::wndProc;
   wcex.style = 0;
   wcex.cbClsExtra = 0;
@@ -47,77 +47,11 @@ void Win32Gui::createHostWindow()
 
   ::RegisterClassExW(&wcex);
 
-  ::CreateWindowExW(0, clapName.c_str(), clapName.c_str(), WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
+  ::CreateWindowExW(0, windowName.c_str(), windowName.c_str(), WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
                     CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, nullptr, nullptr,
                     ::GetModuleHandleW(nullptr), this);
 
   // https://www.codeproject.com/Articles/7503/An-examination-of-menus-from-a-beginner-s-point-of#systemmenu
-
-  auto hMenu{::GetSystemMenu(m_hwnd, FALSE)};
-
-  MENUITEMINFOW seperator{sizeof(MENUITEMINFOW)};
-  seperator.fMask = MIIM_FTYPE;
-  seperator.fType = MFT_SEPARATOR;
-
-  MENUITEMINFOW audioIn{sizeof(MENUITEMINFOW)};
-  audioIn.fMask = MIIM_STRING | MIIM_ID;
-  audioIn.wID = IDM_SETTINGS;
-  audioIn.dwTypeData = const_cast<LPWSTR>(L"Settings");
-
-  MENUITEMINFOW saveState{sizeof(MENUITEMINFOW)};
-  saveState.fMask = MIIM_STRING | MIIM_ID;
-  saveState.wID = IDM_SAVE_STATE;
-  saveState.dwTypeData = const_cast<LPWSTR>(L"Save state...");
-
-  MENUITEMINFOW loadState{sizeof(MENUITEMINFOW)};
-  loadState.fMask = MIIM_STRING | MIIM_ID;
-  loadState.wID = IDM_LOAD_STATE;
-  loadState.dwTypeData = const_cast<LPWSTR>(L"Load state...");
-
-  MENUITEMINFOW resetState{sizeof(MENUITEMINFOW)};
-  resetState.fMask = MIIM_STRING | MIIM_ID;
-  resetState.wID = IDM_RESET_STATE;
-  resetState.dwTypeData = const_cast<LPWSTR>(L"Reset state...");
-
-  if (hMenu != INVALID_HANDLE_VALUE)
-  {
-    ::InsertMenuItemW(hMenu, 1, TRUE, &seperator);
-    ::InsertMenuItemW(hMenu, 2, TRUE, &audioIn);
-    ::InsertMenuItemW(hMenu, 3, TRUE, &seperator);
-    ::InsertMenuItemW(hMenu, 4, TRUE, &saveState);
-    ::InsertMenuItemW(hMenu, 5, TRUE, &loadState);
-    ::InsertMenuItemW(hMenu, 6, TRUE, &resetState);
-    ::InsertMenuItemW(hMenu, 7, TRUE, &seperator);
-  }
-}
-
-void Win32Gui::createSettingsWindow()
-{
-  std::wstring settingsName{L"Audio/MIDI Settings"};
-
-  WNDCLASSEXW wcex{sizeof(WNDCLASSEXW)};
-  wcex.lpszClassName = settingsName.c_str();
-  wcex.lpszMenuName = settingsName.c_str();
-  wcex.lpfnWndProc = Win32Gui::wndProc;
-  wcex.style = 0;
-  wcex.cbClsExtra = 0;
-  wcex.cbWndExtra = sizeof(intptr_t);
-  wcex.hInstance = ::GetModuleHandleW(nullptr);
-  wcex.hbrBackground = reinterpret_cast<HBRUSH>(::GetStockObject(BLACK_BRUSH));
-  wcex.hCursor = reinterpret_cast<HCURSOR>(::LoadImageW(nullptr, reinterpret_cast<LPCWSTR>(IDC_ARROW),
-                                                        IMAGE_CURSOR, 0, 0, LR_SHARED | LR_DEFAULTSIZE));
-  wcex.hIcon = reinterpret_cast<HICON>(::LoadImageW(nullptr, reinterpret_cast<LPCWSTR>(IDI_APPLICATION),
-                                                    IMAGE_ICON, 0, 0,
-                                                    LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED));
-  wcex.hIconSm = reinterpret_cast<HICON>(
-      ::LoadImageW(nullptr, reinterpret_cast<LPCWSTR>(IDI_APPLICATION), IMAGE_ICON, 0, 0,
-                   LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED));
-
-  ::RegisterClassExW(&wcex);
-
-  ::CreateWindowExW(0, settingsName.c_str(), settingsName.c_str(), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
-                    CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, nullptr, nullptr,
-                    ::GetModuleHandleW(nullptr), this);
 
   auto hMenu{::GetSystemMenu(m_hwnd, FALSE)};
 
@@ -258,20 +192,20 @@ bool Win32Gui::setWindowSize(uint32_t width, uint32_t height)
 
 LRESULT CALLBACK Win32Gui::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  Win32Gui* pWin32Gui = instance_from_wnd_proc<Win32Gui>(hWnd, uMsg, lParam);
+  auto self{instance_from_wnd_proc<Win32Gui>(hWnd, uMsg, lParam)};
 
-  if (pWin32Gui)
+  if (self)
   {
     switch (uMsg)
     {
       case WM_DPICHANGED:
-        return pWin32Gui->onDpiChanged(hWnd, uMsg, wParam, lParam);
+        return self->onDpiChanged(hWnd, uMsg, wParam, lParam);
       case WM_WINDOWPOSCHANGED:
-        return pWin32Gui->onWindowPosChanged(hWnd, uMsg, wParam, lParam);
+        return self->onWindowPosChanged(hWnd, uMsg, wParam, lParam);
       case WM_SYSCOMMAND:
-        return pWin32Gui->onSysCommand(hWnd, uMsg, wParam, lParam);
+        return self->onSysCommand(hWnd, uMsg, wParam, lParam);
       case WM_DESTROY:
-        return pWin32Gui->onDestroy(hWnd, uMsg, wParam, lParam);
+        return self->onDestroy(hWnd, uMsg, wParam, lParam);
     }
   }
 
