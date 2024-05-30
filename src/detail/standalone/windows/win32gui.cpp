@@ -101,9 +101,6 @@ void Win32Gui::setupPlugin()
     }
 
     pluginGui->create(plugin, CLAP_WINDOW_API_WIN32, false);
-    clap_window clapWindow;
-    clapWindow.api = CLAP_WINDOW_API_WIN32;
-    clapWindow.win32 = static_cast<void*>(m_hwnd);
 
     pluginGui->set_scale(plugin, static_cast<float>(::GetDpiForWindow(m_hwnd)) /
                                      static_cast<float>(USER_DEFAULT_SCREEN_DPI));
@@ -119,7 +116,12 @@ void Win32Gui::setupPlugin()
     uint32_t height{0};
     pluginGui->get_size(plugin, &width, &height);
     setWindowSize(width, height);
+
+    clap_window clapWindow;
+    clapWindow.api = CLAP_WINDOW_API_WIN32;
+    clapWindow.win32 = static_cast<void*>(m_hwnd);
     pluginGui->set_parent(plugin, &clapWindow);
+
     pluginGui->show(plugin);
 
     ::ShowWindow(m_hwnd, SW_SHOWDEFAULT);
