@@ -138,16 +138,16 @@ void Win32Gui::activate()
 
   setScale();
 
+  // We can check here if we had a previous size but we aren't saving state yet
   if (pluginGui->can_resize(plugin))
   {
-    // We can check here if we had a previous size but we aren't saving state yet
   }
-  // else
-  // {
-  //   ::SetWindowLongPtrW(m_hwnd, GWL_STYLE,
-  //                       ::GetWindowLongPtrW(m_hwnd, GWL_STYLE) & ~WS_OVERLAPPEDWINDOW | WS_OVERLAPPED |
-  //                           WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
-  // }
+  else
+  {
+    ::SetWindowLongPtrW(m_hwnd, GWL_STYLE,
+                        ::GetWindowLongPtrW(m_hwnd, GWL_STYLE) & ~WS_OVERLAPPEDWINDOW | WS_OVERLAPPED |
+                            WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
+  }
 
   setWindowSize();
 
@@ -196,7 +196,8 @@ void Win32Gui::setWindowSize()
   r.right = w;
   r.bottom = h;
 
-  ::AdjustWindowRectExForDpi(&r, WS_OVERLAPPEDWINDOW, 0, 0, ::GetDpiForWindow(m_hwnd));
+  ::AdjustWindowRectExForDpi(&r, ::GetWindowLongPtrW(m_hwnd, GWL_STYLE), 0, 0,
+                             ::GetDpiForWindow(m_hwnd));
 
   ::SetWindowPos(m_hwnd, nullptr, 0, 0, (r.right - r.left), (r.bottom - r.top),
                  SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE);
