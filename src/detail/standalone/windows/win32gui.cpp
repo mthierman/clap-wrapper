@@ -23,15 +23,6 @@ void Win32Gui::setPlugin(std::shared_ptr<Clap::Plugin> p)
   m_plugin = p;
 }
 
-clap_window Win32Gui::createClapWindow()
-{
-  clap_window clapWindow;
-  clapWindow.api = CLAP_WINDOW_API_WIN32;
-  clapWindow.win32 = static_cast<void*>(m_hwnd);
-
-  return clapWindow;
-}
-
 void Win32Gui::createHostWindow()
 {
   std::wstring clapName{widen(OUTPUT_NAME)};
@@ -98,6 +89,15 @@ void Win32Gui::createHostWindow()
   }
 }
 
+clap_window Win32Gui::createClapWindow()
+{
+  clap_window clapWindow;
+  clapWindow.api = CLAP_WINDOW_API_WIN32;
+  clapWindow.win32 = static_cast<void*>(m_hwnd);
+
+  return clapWindow;
+}
+
 void Win32Gui::setupPlugin()
 {
   auto pluginGui{m_plugin->_ext._gui};
@@ -136,27 +136,7 @@ void Win32Gui::setupPlugin()
     pluginGui->set_parent(plugin, &createClapWindow());
 
     pluginGui->show(plugin);
-
-    ::ShowWindow(m_hwnd, SW_SHOWDEFAULT);
   }
-}
-
-bool Win32Gui::setWindowSize(uint32_t width, uint32_t height)
-{
-  RECT r{0, 0, 0, 0};
-  r.right = width;
-  r.bottom = height;
-
-  if (m_hwnd)
-  {
-    ::AdjustWindowRectExForDpi(&r, ::GetWindowLongPtrW(m_hwnd, GWL_STYLE), 0, 0,
-                               ::GetDpiForWindow(m_hwnd));
-
-    ::SetWindowPos(m_hwnd, nullptr, 0, 0, (r.right - r.left), (r.bottom - r.top),
-                   SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE);
-  }
-
-  return true;
 }
 
 void Win32Gui::runLoop()
@@ -177,6 +157,29 @@ void Win32Gui::runLoop()
       ::DispatchMessageW(&msg);
     }
   }
+}
+
+void Win32Gui::showHostWindow()
+{
+  ::ShowWindow(m_hwnd, SW_SHOWDEFAULT);
+}
+
+bool Win32Gui::setWindowSize(uint32_t width, uint32_t height)
+{
+  RECT r{0, 0, 0, 0};
+  r.right = width;
+  r.bottom = height;
+
+  if (m_hwnd)
+  {
+    ::AdjustWindowRectExForDpi(&r, ::GetWindowLongPtrW(m_hwnd, GWL_STYLE), 0, 0,
+                               ::GetDpiForWindow(m_hwnd));
+
+    ::SetWindowPos(m_hwnd, nullptr, 0, 0, (r.right - r.left), (r.bottom - r.top),
+                   SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE);
+  }
+
+  return true;
 }
 
 LRESULT CALLBACK Win32Gui::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
