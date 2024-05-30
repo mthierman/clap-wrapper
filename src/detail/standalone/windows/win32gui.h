@@ -17,8 +17,6 @@ struct Win32Gui
   bool setWindowSize(uint32_t width, uint32_t height);
 
   void runLoop();
-
-  // void setScale();
   // void resizeWindow();
 
   static LRESULT CALLBACK wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

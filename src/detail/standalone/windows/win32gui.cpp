@@ -171,16 +171,6 @@ void Win32Gui::runLoop()
   }
 }
 
-// void Win32Gui::setScale()
-// {
-//   auto pluginGui{m_plugin->_ext._gui};
-//   auto plugin{m_plugin->_plugin};
-
-//   pluginGui->set_scale(plugin, static_cast<float>(::GetDpiForWindow(m_hwnd)) /
-//                                    static_cast<float>(USER_DEFAULT_SCREEN_DPI));
-//   // pluginGui->set_scale(plugin, 1);
-// }
-
 // void Win32Gui::resizeWindow()
 // {
 //   setScale();
@@ -232,7 +222,14 @@ int Win32Gui::onDestroy(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 int Win32Gui::onDpiChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  // resizeWindow();
+  auto pluginGui{m_plugin->_ext._gui};
+  auto plugin{m_plugin->_plugin};
+
+  if (m_plugin && pluginGui)
+  {
+    pluginGui->set_scale(plugin, static_cast<float>(::GetDpiForWindow(m_hwnd)) /
+                                     static_cast<float>(USER_DEFAULT_SCREEN_DPI));
+  }
 
   return 0;
 }
