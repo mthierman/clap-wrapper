@@ -49,6 +49,25 @@ std::wstring widen(std::string string)
 void Win32Gui::initialize(freeaudio::clap_wrapper::standalone::StandaloneHost* sah)
 {
   sah->win32Gui = this;
+  sah->onRequestResize = [=](uint32_t w, uint32_t h)
+  {
+    LOG << w << std::endl;
+    LOG << h << std::endl;
+
+    // setWindowSize();
+
+    RECT r{0, 0, 0, 0};
+    r.right = w;
+    r.bottom = h;
+
+    ::AdjustWindowRectExForDpi(&r, ::GetWindowLongPtrW(m_hwnd, GWL_STYLE), 0, 0,
+                               ::GetDpiForWindow(m_hwnd));
+
+    ::SetWindowPos(m_hwnd, nullptr, 0, 0, (r.right - r.left), (r.bottom - r.top),
+                   SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE);
+
+    return true;
+  };
 }
 
 void Win32Gui::setPlugin(std::shared_ptr<Clap::Plugin> p)
@@ -58,7 +77,9 @@ void Win32Gui::setPlugin(std::shared_ptr<Clap::Plugin> p)
 
 void Win32Gui::activate()
 {
-  std::wstring clapName{widen(HOSTED_CLAP_NAME)};
+  std::wstring clapName{widen(OUTPUT_NAME)};
+
+  LOG << OUTPUT_NAME << std::endl;
 
   WNDCLASSEXW wcex{sizeof(WNDCLASSEXW)};
   wcex.lpszClassName = clapName.c_str();
@@ -187,6 +208,7 @@ void Win32Gui::setScale()
 
   pluginGui->set_scale(plugin, static_cast<float>(::GetDpiForWindow(m_hwnd)) /
                                    static_cast<float>(USER_DEFAULT_SCREEN_DPI));
+  // pluginGui->set_scale(plugin, 1);
 }
 
 void Win32Gui::setWindowSize()

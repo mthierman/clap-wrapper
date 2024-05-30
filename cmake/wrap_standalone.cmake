@@ -109,8 +109,9 @@ function(target_add_standalone_wrapper)
   elseif(WIN32 AND (CMAKE_CXX_COMPILER_ID MATCHES "MSVC"
                     OR CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
     set_target_properties(${SA_TARGET} PROPERTIES WIN32_EXECUTABLE TRUE)
-    target_compile_definitions(${salib} PUBLIC CLAP_WRAPPER_HAS_WIN32 NOMINMAX
-                                               WIN32_LEAN_AND_MEAN)
+    target_compile_definitions(
+      ${salib} PUBLIC CLAP_WRAPPER_HAS_WIN32 NOMINMAX WIN32_LEAN_AND_MEAN
+                      OUTPUT_NAME="${SA_OUTPUT_NAME}")
 
     target_sources(
       ${SA_TARGET}
