@@ -47,8 +47,8 @@ void Win32Gui::createHostWindow()
 
   ::RegisterClassExW(&wcex);
 
-  ::CreateWindowExW(0, clapName.c_str(), clapName.c_str(), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
-                    CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, nullptr, nullptr,
+  ::CreateWindowExW(0, clapName.c_str(), clapName.c_str(), WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
+                    CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, nullptr, nullptr,
                     ::GetModuleHandleW(nullptr), this);
 
   // https://www.codeproject.com/Articles/7503/An-examination-of-menus-from-a-beginner-s-point-of#systemmenu
@@ -168,10 +168,10 @@ clap_window Win32Gui::createClapWindow()
 
 void Win32Gui::setupPlugin()
 {
-  auto pluginGui{m_plugin->_ext._gui};
   auto plugin{m_plugin->_plugin};
+  auto pluginGui{m_plugin->_ext._gui};
 
-  if (pluginGui)
+  if (plugin && pluginGui)
   {
     if (!pluginGui->is_api_supported(plugin, CLAP_WINDOW_API_WIN32, false))
     {
@@ -188,22 +188,20 @@ void Win32Gui::setupPlugin()
 
     if (pluginGui->can_resize(plugin))
     {
-      ::SetWindowLongPtrW(m_hwnd, GWL_STYLE, ::GetWindowLongPtrW(m_hwnd, GWL_STYLE));
-
+      // ::SetWindowLongPtrW(m_hwnd, GWL_STYLE, ::GetWindowLongPtrW(m_hwnd, GWL_STYLE));
       // if resizable and has known size from previous session:
       // We should load size here, width = previousWidth, height = previousHeight
       // pluginGui->set_size(plugin, width, height);
-      // setWindowSize(width, height);
     }
     else
     {
       ::SetWindowLongPtrW(m_hwnd, GWL_STYLE,
                           ::GetWindowLongPtrW(m_hwnd, GWL_STYLE) & ~WS_OVERLAPPEDWINDOW | WS_OVERLAPPED |
                               WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
-
-      pluginGui->get_size(plugin, &width, &height);
-      setWindowSize(width, height);
     }
+
+    pluginGui->get_size(plugin, &width, &height);
+    setWindowSize(width, height);
 
     auto clapWindow{createClapWindow()};
     pluginGui->set_parent(plugin, &clapWindow);
@@ -263,43 +261,26 @@ LRESULT CALLBACK Win32Gui::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
   {
     switch (uMsg)
     {
-      case WM_DESTROY:
-        return pWin32Gui->onDestroy(hWnd, uMsg, wParam, lParam);
       case WM_DPICHANGED:
         return pWin32Gui->onDpiChanged(hWnd, uMsg, wParam, lParam);
       case WM_WINDOWPOSCHANGED:
         return pWin32Gui->onWindowPosChanged(hWnd, uMsg, wParam, lParam);
       case WM_SYSCOMMAND:
         return pWin32Gui->onSysCommand(hWnd, uMsg, wParam, lParam);
+      case WM_DESTROY:
+        return pWin32Gui->onDestroy(hWnd, uMsg, wParam, lParam);
     }
   }
 
   return ::DefWindowProcW(hWnd, uMsg, wParam, lParam);
 }
 
-int Win32Gui::onDestroy(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-  auto pluginGui{m_plugin->_ext._gui};
-  auto plugin{m_plugin->_plugin};
-
-  if (m_plugin && pluginGui)
-  {
-    pluginGui->hide(plugin);
-    pluginGui->destroy(plugin);
-    m_plugin = nullptr;
-  }
-
-  ::PostQuitMessage(0);
-
-  return 0;
-}
-
 int Win32Gui::onDpiChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  auto pluginGui{m_plugin->_ext._gui};
   auto plugin{m_plugin->_plugin};
+  auto pluginGui{m_plugin->_ext._gui};
 
-  if (m_plugin && pluginGui)
+  if (plugin && pluginGui)
   {
     pluginGui->set_scale(plugin, static_cast<float>(::GetDpiForWindow(m_hwnd)) /
                                      static_cast<float>(USER_DEFAULT_SCREEN_DPI));
@@ -310,10 +291,10 @@ int Win32Gui::onDpiChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 int Win32Gui::onWindowPosChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  auto pluginGui{m_plugin->_ext._gui};
   auto plugin{m_plugin->_plugin};
+  auto pluginGui{m_plugin->_ext._gui};
 
-  if (pluginGui)
+  if (plugin && pluginGui)
   {
     if (pluginGui->can_resize(plugin))
     {
@@ -328,36 +309,6 @@ int Win32Gui::onWindowPosChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
     }
   }
 
-  clap_gui_resize_hints_t resizeHints;
-  pluginGui->get_resize_hints(plugin, &resizeHints);
-  if (resizeHints.preserve_aspect_ratio)
-  {
-    LOG << "resizeHints.preserve_aspect_ratio: "
-        << "TRUE" << std::endl;
-  }
-
-  if (resizeHints.can_resize_horizontally)
-  {
-    LOG << "resizeHints.can_resize_horizontally: "
-        << "TRUE" << std::endl;
-  }
-
-  if (resizeHints.can_resize_vertically)
-  {
-    LOG << "resizeHints.can_resize_vertically: "
-        << "TRUE" << std::endl;
-  }
-
-  if (resizeHints.aspect_ratio_height)
-  {
-    LOG << "resizeHints.aspect_ratio_height: " << resizeHints.aspect_ratio_height << std::endl;
-  }
-
-  if (resizeHints.aspect_ratio_width)
-  {
-    LOG << "resizeHints.aspect_ratio_width: " << resizeHints.aspect_ratio_width << std::endl;
-  }
-
   return 0;
 }
 
@@ -370,12 +321,28 @@ int Win32Gui::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case SC_MOVE:
     {
       LOG << "onCommand: SC_MOVE" << std::endl;
+
       return 0;
     }
   }
 
   return ::DefWindowProcW(hWnd, uMsg, wParam, lParam);
+}
 
-  // return 0;
+int Win32Gui::onDestroy(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+  auto plugin{m_plugin->_plugin};
+  auto pluginGui{m_plugin->_ext._gui};
+
+  if (plugin && pluginGui)
+  {
+    pluginGui->hide(plugin);
+    pluginGui->destroy(plugin);
+    m_plugin.reset();
+  }
+
+  ::PostQuitMessage(0);
+
+  return 0;
 }
 }  // namespace freeaudio::clap_wrapper::standalone::windows
