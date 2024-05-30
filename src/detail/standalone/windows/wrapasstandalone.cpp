@@ -137,24 +137,25 @@ void Win32Gui::activate()
     clapWindow.api = CLAP_WINDOW_API_WIN32;
     clapWindow.win32 = static_cast<void*>(m_hwnd);
 
+    setScale();
+
+    // We can check here if we had a previous size but we aren't saving state yet
+    if (pluginGui->can_resize(plugin))
+    {
+    }
+    else
+    {
+      ::SetWindowLongPtrW(m_hwnd, GWL_STYLE,
+                          ::GetWindowLongPtrW(m_hwnd, GWL_STYLE) & ~WS_OVERLAPPEDWINDOW | WS_OVERLAPPED |
+                              WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
+    }
+
+    setWindowSize();
+
     pluginGui->set_parent(plugin, &clapWindow);
+
     pluginGui->show(plugin);
   }
-
-  setScale();
-
-  // We can check here if we had a previous size but we aren't saving state yet
-  if (pluginGui->can_resize(plugin))
-  {
-  }
-  else
-  {
-    ::SetWindowLongPtrW(m_hwnd, GWL_STYLE,
-                        ::GetWindowLongPtrW(m_hwnd, GWL_STYLE) & ~WS_OVERLAPPEDWINDOW | WS_OVERLAPPED |
-                            WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
-  }
-
-  setWindowSize();
 
   ::ShowWindow(m_hwnd, SW_SHOWDEFAULT);
 }
