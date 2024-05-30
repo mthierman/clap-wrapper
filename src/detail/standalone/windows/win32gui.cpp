@@ -174,8 +174,8 @@ bool Win32Gui::setWindowSize(uint32_t width, uint32_t height)
 
   if (m_hwnd)
   {
-    ::AdjustWindowRectExForDpi(&r, ::GetWindowLongPtrW(m_hwnd, GWL_STYLE), 0, 0,
-                               ::GetDpiForWindow(m_hwnd));
+    ::AdjustWindowRectExForDpi(&r, ::GetWindowLongPtrW(m_hwnd, GWL_STYLE), ::GetMenu(m_hwnd) != nullptr,
+                               ::GetWindowLongPtrW(m_hwnd, GWL_EXSTYLE), ::GetDpiForWindow(m_hwnd));
 
     ::SetWindowPos(m_hwnd, nullptr, 0, 0, (r.right - r.left), (r.bottom - r.top),
                    SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE);
