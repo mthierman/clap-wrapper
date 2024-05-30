@@ -194,8 +194,6 @@ LRESULT CALLBACK Win32Gui::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
   {
     switch (uMsg)
     {
-      case WM_CLOSE:
-        return pWin32Gui->onClose(hWnd, uMsg, wParam, lParam);
       case WM_DESTROY:
         return pWin32Gui->onDestroy(hWnd, uMsg, wParam, lParam);
       case WM_DPICHANGED:
@@ -208,19 +206,15 @@ LRESULT CALLBACK Win32Gui::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
   return ::DefWindowProcW(hWnd, uMsg, wParam, lParam);
 }
 
-int Win32Gui::onClose(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-  ::DestroyWindow(hWnd);
-
-  return 0;
-}
-
 int Win32Gui::onDestroy(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  if (m_plugin && m_plugin->_ext._gui)
+  auto pluginGui{m_plugin->_ext._gui};
+  auto plugin{m_plugin->_plugin};
+
+  if (m_plugin && pluginGui)
   {
-    m_plugin->_ext._gui->hide(m_plugin->_plugin);
-    m_plugin->_ext._gui->destroy(m_plugin->_plugin);
+    pluginGui->hide(plugin);
+    pluginGui->destroy(plugin);
     m_plugin = nullptr;
   }
 
