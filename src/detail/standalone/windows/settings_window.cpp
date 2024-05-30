@@ -1,5 +1,6 @@
 #include "settings_window.h"
 #include "helpers.h"
+#include "detail/standalone/standalone_details.h"
 #include <string>
 
 namespace freeaudio::clap_wrapper::standalone::windows
@@ -31,6 +32,26 @@ void SettingsWindow::createWindow()
   ::CreateWindowExW(0, windowName.c_str(), windowName.c_str(), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
                     CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, nullptr, nullptr,
                     ::GetModuleHandleW(nullptr), this);
+
+  ::MONITORINFO mi{sizeof(::MONITORINFO)};
+  ::GetMonitorInfoA(::MonitorFromWindow(m_hwnd, MONITOR_DEFAULTTONEAREST), &mi);
+
+  LOG << "rcMonitor WIDTH: " << mi.rcMonitor.right - mi.rcMonitor.left << std::endl;
+  LOG << "rcMonitor HEIGHT: " << mi.rcMonitor.bottom - mi.rcMonitor.top << std::endl;
+
+  LOG << "rcWork WIDTH: " << mi.rcWork.right - mi.rcWork.left << std::endl;
+  LOG << "rcWork HEIGHT: " << mi.rcWork.bottom - mi.rcWork.top << std::endl;
+
+  auto screenWidth = static_cast<int>(mi.rcWork.right - mi.rcWork.left);
+  auto screenHeight = static_cast<int>(mi.rcWork.bottom - mi.rcWork.top);
+
+  auto x = (screenWidth - 600) / 2;
+  auto y = (screenHeight - 400) / 2;
+
+  LOG << "SETTINGS X:" << x << std::endl;
+  LOG << "SETTINGS Y:" << y << std::endl;
+
+  ::SetWindowPos(m_hwnd, nullptr, x, y, 600, 400, 0);
 }
 
 void SettingsWindow::showWindow()
@@ -58,9 +79,18 @@ LRESULT CALLBACK SettingsWindow::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LP
     {
       // case WM_CREATE:
       // return self->onCreate(hWnd, uMsg, wParam, lParam);
+      case WM_CLOSE:
+        return self->onClose(hWnd, uMsg, wParam, lParam);
     }
   }
 
   return ::DefWindowProcW(hWnd, uMsg, wParam, lParam);
+}
+
+int SettingsWindow::onClose(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+  hideWindow();
+
+  return 0;
 }
 }  // namespace freeaudio::clap_wrapper::standalone::windows
