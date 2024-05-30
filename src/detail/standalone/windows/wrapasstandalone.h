@@ -42,19 +42,20 @@ struct Win32Gui
   void initialize(freeaudio::clap_wrapper::standalone::StandaloneHost* sah);
   void setPlugin(std::shared_ptr<Clap::Plugin> p);
   void activate();
+  int runLoop();
 
-  std::shared_ptr<Clap::Plugin> plugin;
+  static LRESULT CALLBACK wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+  int OnCreate(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+  int OnClose(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+  int OnDestroy(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+  int OnQuit(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+  int OnDpiChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+  int OnWindowPosChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
   static std::string narrow(std::wstring utf16);
   static std::wstring widen(std::string utf8);
 
-  static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-  int OnCreate(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-  int OnClose(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-  int OnDestroy(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-  int OnDpiChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-  int OnWindowPosChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-
+  std::shared_ptr<Clap::Plugin> m_plugin;
   HWND m_hwnd;
 };
 }  // namespace freeaudio::clap_wrapper::standalone::windows

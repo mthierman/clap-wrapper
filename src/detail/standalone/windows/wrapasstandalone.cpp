@@ -18,7 +18,7 @@ void Win32Gui::initialize(freeaudio::clap_wrapper::standalone::StandaloneHost* s
 
 void Win32Gui::setPlugin(std::shared_ptr<Clap::Plugin> p)
 {
-  plugin = p;
+  m_plugin = p;
 }
 
 void Win32Gui::activate()
@@ -28,7 +28,7 @@ void Win32Gui::activate()
   WNDCLASSEXW wcex{sizeof(WNDCLASSEXW)};
   wcex.lpszClassName = clapName.c_str();
   wcex.lpszMenuName = clapName.c_str();
-  wcex.lpfnWndProc = Win32Gui::WndProc;
+  wcex.lpfnWndProc = Win32Gui::wndProc;
   wcex.style = 0;
   wcex.cbClsExtra = 0;
   wcex.cbWndExtra = sizeof(intptr_t);
@@ -86,26 +86,21 @@ void Win32Gui::activate()
     ::InsertMenuItemW(hMenu, 7, TRUE, &seperator);
   }
 
-  if (plugin->_ext._gui)
+  if (m_plugin->_ext._gui)
   {
-    auto ui{plugin->_ext._gui};
-    auto p{plugin->_plugin};
+    m_plugin->_ext._gui->create(m_plugin->_plugin, CLAP_WINDOW_API_WIN32, false);
 
-    ui->create(p, CLAP_WINDOW_API_WIN32, false);
-
-    // freeaudio::clap_wrapper::standalone::windows::Window window;
-
-    clap_window win;
-    win.api = CLAP_WINDOW_API_WIN32;
-    win.win32 = (void*)m_hwnd;
-    ui->set_parent(p, &win);
-    ui->show(p);
+    clap_window clapWindow;
+    clapWindow.api = CLAP_WINDOW_API_WIN32;
+    clapWindow.win32 = (void*)m_hwnd;
+    m_plugin->_ext._gui->set_parent(m_plugin->_plugin, &clapWindow);
+    m_plugin->_ext._gui->show(m_plugin->_plugin);
   }
 
-  plugin->_ext._gui->set_scale(plugin->_plugin, static_cast<float>(::GetDpiForWindow(m_hwnd)) /
-                                                    static_cast<float>(USER_DEFAULT_SCREEN_DPI));
+  m_plugin->_ext._gui->set_scale(m_plugin->_plugin, static_cast<float>(::GetDpiForWindow(m_hwnd)) /
+                                                        static_cast<float>(USER_DEFAULT_SCREEN_DPI));
 
-  if (plugin->_ext._gui->can_resize(plugin->_plugin))
+  if (m_plugin->_ext._gui->can_resize(m_plugin->_plugin))
   {
     // We can check here if we had a previous size but we aren't saving state yet
   }
@@ -118,7 +113,7 @@ void Win32Gui::activate()
 
   uint32_t w{0};
   uint32_t h{0};
-  plugin->_ext._gui->get_size(plugin->_plugin, &w, &h);
+  m_plugin->_ext._gui->get_size(m_plugin->_plugin, &w, &h);
 
   RECT r{0, 0, 0, 0};
   r.right = w;
@@ -132,7 +127,31 @@ void Win32Gui::activate()
   ::ShowWindow(m_hwnd, SW_SHOWDEFAULT);
 }
 
-LRESULT CALLBACK Win32Gui::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+int Win32Gui::runLoop()
+{
+  MSG msg{};
+  int r{0};
+
+  while ((r = ::GetMessageW(&msg, nullptr, 0, 0)) != 0)
+  {
+    if (r == -1)
+    {
+      return -1;
+    }
+
+    else
+    {
+      ::TranslateMessage(&msg);
+      ::DispatchMessageW(&msg);
+    }
+  }
+
+  freeaudio::clap_wrapper::standalone::mainFinish();
+
+  return 0;
+}
+
+LRESULT CALLBACK Win32Gui::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   Win32Gui* pWin32Gui = instance_from_wnd_proc<Win32Gui>(hWnd, uMsg, lParam);
 
@@ -146,6 +165,8 @@ LRESULT CALLBACK Win32Gui::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
         return pWin32Gui->OnClose(hWnd, uMsg, wParam, lParam);
       case WM_DESTROY:
         return pWin32Gui->OnDestroy(hWnd, uMsg, wParam, lParam);
+      case WM_QUIT:
+        return pWin32Gui->OnQuit(hWnd, uMsg, wParam, lParam);
       case WM_DPICHANGED:
         return pWin32Gui->OnDpiChanged(hWnd, uMsg, wParam, lParam);
       case WM_WINDOWPOSCHANGED:
@@ -170,12 +191,10 @@ int Win32Gui::OnClose(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 int Win32Gui::OnDestroy(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  auto plugin{freeaudio::clap_wrapper::standalone::getMainPlugin()};
-
-  if (plugin && plugin->_ext._gui)
+  if (m_plugin && m_plugin->_ext._gui)
   {
-    plugin->_ext._gui->hide(plugin->_plugin);
-    plugin->_ext._gui->destroy(plugin->_plugin);
+    m_plugin->_ext._gui->hide(m_plugin->_plugin);
+    m_plugin->_ext._gui->destroy(m_plugin->_plugin);
   }
 
   ::PostQuitMessage(0);
@@ -183,18 +202,19 @@ int Win32Gui::OnDestroy(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
   return 0;
 }
 
+int Win32Gui::OnQuit(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+  return 0;
+}
+
 int Win32Gui::OnDpiChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  auto plugin{freeaudio::clap_wrapper::standalone::getMainPlugin()};
-  auto ui{plugin->_ext._gui};
-  auto p{plugin->_plugin};
-
-  ui->set_scale(
-      p, static_cast<float>(::GetDpiForWindow(hWnd)) / static_cast<float>(USER_DEFAULT_SCREEN_DPI));
+  m_plugin->_ext._gui->set_scale(m_plugin->_plugin, static_cast<float>(::GetDpiForWindow(hWnd)) /
+                                                        static_cast<float>(USER_DEFAULT_SCREEN_DPI));
 
   uint32_t w{0};
   uint32_t h{0};
-  ui->get_size(p, &w, &h);
+  m_plugin->_ext._gui->get_size(m_plugin->_plugin, &w, &h);
 
   RECT r{0, 0, 0, 0};
   r.right = w;
@@ -276,7 +296,8 @@ int main(int argc, char** argv)
   extern const clap_plugin_entry clap_entry;
   entry = &clap_entry;
 #else
-  std::string clapName{HOSTED_CLAP_NAME};
+  auto clapName{std::string{HOSTED_CLAP_NAME}};
+  LOG << "Loading " << clapName << std::endl;
 
   auto searchPaths{Clap::getValidCLAPSearchPaths()};
 
@@ -296,7 +317,8 @@ int main(int argc, char** argv)
 
   if (!entry)
   {
-    return 0;
+    std::cerr << "Clap Standalone: No Entry as configured" << std::endl;
+    return 3;
   }
 
   freeaudio::clap_wrapper::standalone::windows::Win32Gui win32Gui{};
@@ -315,24 +337,5 @@ int main(int argc, char** argv)
 
   win32Gui.activate();
 
-  MSG msg{};
-  int r{0};
-
-  while ((r = ::GetMessageW(&msg, nullptr, 0, 0)) != 0)
-  {
-    if (r == -1)
-    {
-      return 0;
-    }
-
-    else
-    {
-      ::TranslateMessage(&msg);
-      ::DispatchMessageW(&msg);
-    }
-  }
-
-  freeaudio::clap_wrapper::standalone::mainFinish();
-
-  return 0;
+  return win32Gui.runLoop();
 }
