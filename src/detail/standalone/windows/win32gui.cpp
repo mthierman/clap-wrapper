@@ -22,6 +22,15 @@ void Win32Gui::setPlugin(std::shared_ptr<Clap::Plugin> p)
   m_plugin = p;
 }
 
+clap_window Win32Gui::createClapWindow()
+{
+  clap_window clapWindow;
+  clapWindow.api = CLAP_WINDOW_API_WIN32;
+  clapWindow.win32 = static_cast<void*>(m_hwnd);
+
+  return clapWindow;
+}
+
 void Win32Gui::createWindow()
 {
   std::wstring clapName{widen(OUTPUT_NAME)};
@@ -117,10 +126,7 @@ void Win32Gui::setupPlugin()
     pluginGui->get_size(plugin, &width, &height);
     setWindowSize(width, height);
 
-    clap_window clapWindow;
-    clapWindow.api = CLAP_WINDOW_API_WIN32;
-    clapWindow.win32 = static_cast<void*>(m_hwnd);
-    pluginGui->set_parent(plugin, &clapWindow);
+    pluginGui->set_parent(plugin, &createClapWindow());
 
     pluginGui->show(plugin);
 
