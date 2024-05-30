@@ -11,10 +11,12 @@ struct Win32Gui
 {
   void initialize(freeaudio::clap_wrapper::standalone::StandaloneHost* sah);
   void setPlugin(std::shared_ptr<Clap::Plugin> p);
+
+  void createWindow();
   void activate();
   void runLoop();
   void setScale();
-  void setWindowSize();
+  bool setWindowSize(uint32_t width, uint32_t height);
   void resizeWindow();
 
   static LRESULT CALLBACK wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

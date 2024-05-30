@@ -14,20 +14,7 @@ void Win32Gui::initialize(freeaudio::clap_wrapper::standalone::StandaloneHost* s
 {
   sah->win32Gui = this;
 
-  sah->onRequestResize = [=](uint32_t w, uint32_t h)
-  {
-    RECT r{0, 0, 0, 0};
-    r.right = w;
-    r.bottom = h;
-
-    ::AdjustWindowRectExForDpi(&r, ::GetWindowLongPtrW(m_hwnd, GWL_STYLE), 0, 0,
-                               ::GetDpiForWindow(m_hwnd));
-
-    ::SetWindowPos(m_hwnd, nullptr, 0, 0, (r.right - r.left), (r.bottom - r.top),
-                   SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE);
-
-    return true;
-  };
+  sah->onRequestResize = [=](uint32_t width, uint32_t height) { return setWindowSize(width, height); };
 }
 
 void Win32Gui::setPlugin(std::shared_ptr<Clap::Plugin> p)
@@ -35,11 +22,9 @@ void Win32Gui::setPlugin(std::shared_ptr<Clap::Plugin> p)
   m_plugin = p;
 }
 
-void Win32Gui::activate()
+void Win32Gui::createWindow()
 {
   std::wstring clapName{widen(OUTPUT_NAME)};
-
-  LOG << OUTPUT_NAME << std::endl;
 
   WNDCLASSEXW wcex{sizeof(WNDCLASSEXW)};
   wcex.lpszClassName = clapName.c_str();
@@ -101,7 +86,10 @@ void Win32Gui::activate()
     ::InsertMenuItemW(hMenu, 6, TRUE, &resetState);
     ::InsertMenuItemW(hMenu, 7, TRUE, &seperator);
   }
+}
 
+void Win32Gui::activate()
+{
   auto pluginGui{m_plugin->_ext._gui};
   auto plugin{m_plugin->_plugin};
 
@@ -131,7 +119,11 @@ void Win32Gui::activate()
                               WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
     }
 
-    setWindowSize();
+    uint32_t width{0};
+    uint32_t height{0};
+    pluginGui->get_size(plugin, &width, &height);
+
+    setWindowSize(width, height);
 
     pluginGui->set_parent(plugin, &clapWindow);
 
@@ -171,30 +163,34 @@ void Win32Gui::setScale()
   // pluginGui->set_scale(plugin, 1);
 }
 
-void Win32Gui::setWindowSize()
+bool Win32Gui::setWindowSize(uint32_t width, uint32_t height)
 {
-  auto pluginGui{m_plugin->_ext._gui};
-  auto plugin{m_plugin->_plugin};
-
-  uint32_t w{0};
-  uint32_t h{0};
-  pluginGui->get_size(plugin, &w, &h);
-
   RECT r{0, 0, 0, 0};
-  r.right = w;
-  r.bottom = h;
+  r.right = width;
+  r.bottom = height;
 
-  ::AdjustWindowRectExForDpi(&r, ::GetWindowLongPtrW(m_hwnd, GWL_STYLE), 0, 0,
-                             ::GetDpiForWindow(m_hwnd));
+  if (m_hwnd)
+  {
+    ::AdjustWindowRectExForDpi(&r, ::GetWindowLongPtrW(m_hwnd, GWL_STYLE), 0, 0,
+                               ::GetDpiForWindow(m_hwnd));
 
-  ::SetWindowPos(m_hwnd, nullptr, 0, 0, (r.right - r.left), (r.bottom - r.top),
-                 SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE);
+    ::SetWindowPos(m_hwnd, nullptr, 0, 0, (r.right - r.left), (r.bottom - r.top),
+                   SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE);
+  }
+
+  return true;
 }
 
 void Win32Gui::resizeWindow()
 {
   setScale();
-  setWindowSize();
+
+  auto pluginGui{m_plugin->_ext._gui};
+  auto plugin{m_plugin->_plugin};
+  uint32_t width{0};
+  uint32_t height{0};
+  pluginGui->get_size(plugin, &width, &height);
+  setWindowSize(width, height);
 }
 
 LRESULT CALLBACK Win32Gui::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -337,6 +333,8 @@ int main(int argc, char** argv)
       entry, std::string{PLUGIN_ID}, PLUGIN_INDEX, 1, (char**)argv));
 
   freeaudio::clap_wrapper::standalone::mainStartAudio();
+
+  win32Gui.createWindow();
 
   win32Gui.activate();
 
