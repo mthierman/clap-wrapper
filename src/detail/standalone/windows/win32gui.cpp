@@ -115,17 +115,23 @@ void Win32Gui::setupPlugin()
     pluginGui->set_scale(plugin, static_cast<float>(::GetDpiForWindow(m_hwnd)) /
                                      static_cast<float>(USER_DEFAULT_SCREEN_DPI));
 
-    if (!pluginGui->can_resize(plugin))
+    if (pluginGui->can_resize(plugin))
+    {
+      // if resizable and has known size from previous session:
+      // pluginGui->set_size(plugin, previousWidth, previousHeight);
+      // setWindowSize(previousWidth, previousHeight);
+    }
+    else
     {
       ::SetWindowLongPtrW(m_hwnd, GWL_STYLE,
                           ::GetWindowLongPtrW(m_hwnd, GWL_STYLE) & ~WS_OVERLAPPEDWINDOW | WS_OVERLAPPED |
                               WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
-    }
 
-    uint32_t width{0};
-    uint32_t height{0};
-    pluginGui->get_size(plugin, &width, &height);
-    setWindowSize(width, height);
+      uint32_t width{0};
+      uint32_t height{0};
+      pluginGui->get_size(plugin, &width, &height);
+      setWindowSize(width, height);
+    }
 
     pluginGui->set_parent(plugin, &createClapWindow());
 
