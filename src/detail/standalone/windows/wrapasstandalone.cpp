@@ -23,6 +23,8 @@ void Win32Gui::setPlugin(std::shared_ptr<Clap::Plugin> p)
 
 void Win32Gui::activate()
 {
+  freeaudio::clap_wrapper::standalone::mainStartAudio();
+
   std::wstring clapName{widen(HOSTED_CLAP_NAME)};
 
   WNDCLASSEXW wcex{sizeof(WNDCLASSEXW)};
@@ -325,15 +327,8 @@ int main(int argc, char** argv)
 
   win32Gui.initialize(freeaudio::clap_wrapper::standalone::getStandaloneHost());
 
-  std::string pid{PLUGIN_ID};
-  int pindex{PLUGIN_INDEX};
-
-  auto plugin{
-      freeaudio::clap_wrapper::standalone::mainCreatePlugin(entry, pid, pindex, 1, (char**)argv)};
-
-  freeaudio::clap_wrapper::standalone::mainStartAudio();
-
-  win32Gui.setPlugin(plugin);
+  win32Gui.setPlugin(freeaudio::clap_wrapper::standalone::mainCreatePlugin(
+      entry, std::string{PLUGIN_ID}, PLUGIN_INDEX, 1, (char**)argv));
 
   win32Gui.activate();
 
