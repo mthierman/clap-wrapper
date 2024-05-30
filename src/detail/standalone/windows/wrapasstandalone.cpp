@@ -148,6 +148,8 @@ int Win32Gui::runLoop()
     }
   }
 
+  m_plugin = nullptr;
+
   freeaudio::clap_wrapper::standalone::mainFinish();
 
   return 0;
@@ -298,6 +300,7 @@ int main(int argc, char** argv)
   extern const clap_plugin_entry clap_entry;
   entry = &clap_entry;
 #else
+  // Library shenanigans t/k
   auto clapName{std::string{HOSTED_CLAP_NAME}};
   LOG << "Loading " << clapName << std::endl;
 
