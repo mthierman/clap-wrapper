@@ -13,6 +13,7 @@ struct Win32Gui
   void setPlugin(std::shared_ptr<Clap::Plugin> p);
 
   void createHostWindow();
+  void createSettingsWindow();
 
   clap_window createClapWindow();
   void setupPlugin();
@@ -26,6 +27,7 @@ struct Win32Gui
   int onDestroy(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
   int onDpiChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
   int onWindowPosChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+  int onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
   std::shared_ptr<Clap::Plugin> m_plugin;
   HWND m_hwnd;
