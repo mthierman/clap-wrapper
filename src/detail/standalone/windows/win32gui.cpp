@@ -171,18 +171,6 @@ void Win32Gui::runLoop()
   }
 }
 
-// void Win32Gui::resizeWindow()
-// {
-//   setScale();
-
-//   auto pluginGui{m_plugin->_ext._gui};
-//   auto plugin{m_plugin->_plugin};
-//   uint32_t width{0};
-//   uint32_t height{0};
-//   pluginGui->get_size(plugin, &width, &height);
-//   setWindowSize(width, height);
-// }
-
 LRESULT CALLBACK Win32Gui::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   Win32Gui* pWin32Gui = instance_from_wnd_proc<Win32Gui>(hWnd, uMsg, lParam);
