@@ -53,7 +53,6 @@ struct Win32Gui
   int onDpiChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
   int onWindowPosChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-  std::wstring m_clapName{widen(HOSTED_CLAP_NAME)};
   std::shared_ptr<Clap::Plugin> m_plugin;
   HWND m_hwnd;
 };

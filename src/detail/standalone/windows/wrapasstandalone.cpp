@@ -58,9 +58,11 @@ void Win32Gui::setPlugin(std::shared_ptr<Clap::Plugin> p)
 
 void Win32Gui::activate()
 {
+  std::wstring clapName{widen(HOSTED_CLAP_NAME)};
+
   WNDCLASSEXW wcex{sizeof(WNDCLASSEXW)};
-  wcex.lpszClassName = m_clapName.c_str();
-  wcex.lpszMenuName = m_clapName.c_str();
+  wcex.lpszClassName = clapName.c_str();
+  wcex.lpszMenuName = clapName.c_str();
   wcex.lpfnWndProc = Win32Gui::wndProc;
   wcex.style = 0;
   wcex.cbClsExtra = 0;
@@ -78,7 +80,7 @@ void Win32Gui::activate()
 
   ::RegisterClassExW(&wcex);
 
-  ::CreateWindowExW(0, m_clapName.c_str(), m_clapName.c_str(), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
+  ::CreateWindowExW(0, clapName.c_str(), clapName.c_str(), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
                     CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, nullptr, nullptr,
                     ::GetModuleHandleW(nullptr), this);
 
@@ -119,21 +121,25 @@ void Win32Gui::activate()
     ::InsertMenuItemW(hMenu, 7, TRUE, &seperator);
   }
 
-  if (m_plugin->_ext._gui)
+  auto pluginGui{m_plugin->_ext._gui};
+  auto plugin{m_plugin->_plugin};
+
+  if (pluginGui)
   {
-    m_plugin->_ext._gui->create(m_plugin->_plugin, CLAP_WINDOW_API_WIN32, false);
+    pluginGui->create(plugin, CLAP_WINDOW_API_WIN32, false);
 
     clap_window clapWindow;
     clapWindow.api = CLAP_WINDOW_API_WIN32;
-    clapWindow.win32 = (void*)m_hwnd;
-    m_plugin->_ext._gui->set_parent(m_plugin->_plugin, &clapWindow);
-    m_plugin->_ext._gui->show(m_plugin->_plugin);
+    clapWindow.win32 = static_cast<void*>(m_hwnd);
+
+    pluginGui->set_parent(plugin, &clapWindow);
+    pluginGui->show(plugin);
   }
 
-  m_plugin->_ext._gui->set_scale(m_plugin->_plugin, static_cast<float>(::GetDpiForWindow(m_hwnd)) /
-                                                        static_cast<float>(USER_DEFAULT_SCREEN_DPI));
+  pluginGui->set_scale(plugin, static_cast<float>(::GetDpiForWindow(m_hwnd)) /
+                                   static_cast<float>(USER_DEFAULT_SCREEN_DPI));
 
-  if (m_plugin->_ext._gui->can_resize(m_plugin->_plugin))
+  if (pluginGui->can_resize(plugin))
   {
     // We can check here if we had a previous size but we aren't saving state yet
   }
@@ -146,7 +152,7 @@ void Win32Gui::activate()
 
   uint32_t w{0};
   uint32_t h{0};
-  m_plugin->_ext._gui->get_size(m_plugin->_plugin, &w, &h);
+  pluginGui->get_size(plugin, &w, &h);
 
   RECT r{0, 0, 0, 0};
   r.right = w;
