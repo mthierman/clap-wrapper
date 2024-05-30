@@ -143,7 +143,16 @@ void Win32Gui::setupPlugin()
     }
 
     pluginGui->get_size(plugin, &width, &height);
+
     setWindowSize(width, height);
+
+    ::MONITORINFO mi{sizeof(::MONITORINFO)};
+    ::GetMonitorInfoA(::MonitorFromWindow(m_hwnd, MONITOR_DEFAULTTONEAREST), &mi);
+
+    auto x = (static_cast<int>(mi.rcWork.right - mi.rcWork.left) - width) / 2;
+    auto y = (static_cast<int>(mi.rcWork.bottom - mi.rcWork.top) - height) / 2;
+
+    ::SetWindowPos(m_hwnd, nullptr, x, y, 0, 0, SWP_NOSIZE);
 
     auto clapWindow{createClapWindow()};
     pluginGui->set_parent(plugin, &clapWindow);

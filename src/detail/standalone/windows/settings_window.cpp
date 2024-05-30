@@ -68,8 +68,6 @@ LRESULT CALLBACK SettingsWindow::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LP
   {
     switch (uMsg)
     {
-      // case WM_CREATE:
-      // return self->onCreate(hWnd, uMsg, wParam, lParam);
       case WM_CLOSE:
         return self->onClose(hWnd, uMsg, wParam, lParam);
     }
