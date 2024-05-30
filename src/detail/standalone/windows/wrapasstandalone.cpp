@@ -162,34 +162,34 @@ LRESULT CALLBACK Win32Gui::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
     switch (uMsg)
     {
       case WM_CREATE:
-        return pWin32Gui->OnCreate(hWnd, uMsg, wParam, lParam);
+        return pWin32Gui->onCreate(hWnd, uMsg, wParam, lParam);
       case WM_CLOSE:
-        return pWin32Gui->OnClose(hWnd, uMsg, wParam, lParam);
+        return pWin32Gui->onClose(hWnd, uMsg, wParam, lParam);
       case WM_DESTROY:
-        return pWin32Gui->OnDestroy(hWnd, uMsg, wParam, lParam);
+        return pWin32Gui->onDestroy(hWnd, uMsg, wParam, lParam);
       case WM_DPICHANGED:
-        return pWin32Gui->OnDpiChanged(hWnd, uMsg, wParam, lParam);
+        return pWin32Gui->onDpiChanged(hWnd, uMsg, wParam, lParam);
       case WM_WINDOWPOSCHANGED:
-        return pWin32Gui->OnWindowPosChanged(hWnd, uMsg, wParam, lParam);
+        return pWin32Gui->onWindowPosChanged(hWnd, uMsg, wParam, lParam);
     }
   }
 
   return ::DefWindowProcW(hWnd, uMsg, wParam, lParam);
 }
 
-int Win32Gui::OnCreate(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+int Win32Gui::onCreate(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   return 0;
 }
 
-int Win32Gui::OnClose(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+int Win32Gui::onClose(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   ::DestroyWindow(hWnd);
 
   return 0;
 }
 
-int Win32Gui::OnDestroy(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+int Win32Gui::onDestroy(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   if (m_plugin && m_plugin->_ext._gui)
   {
@@ -203,7 +203,7 @@ int Win32Gui::OnDestroy(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
   return 0;
 }
 
-int Win32Gui::OnDpiChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+int Win32Gui::onDpiChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   m_plugin->_ext._gui->set_scale(m_plugin->_plugin, static_cast<float>(::GetDpiForWindow(hWnd)) /
                                                         static_cast<float>(USER_DEFAULT_SCREEN_DPI));
@@ -224,7 +224,7 @@ int Win32Gui::OnDpiChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
   return 0;
 }
 
-int Win32Gui::OnWindowPosChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+int Win32Gui::onWindowPosChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   // auto plugin{freeaudio::clap_wrapper::standalone::getMainPlugin()};
   // auto ui{plugin->_ext._gui};

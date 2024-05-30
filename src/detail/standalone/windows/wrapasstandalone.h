@@ -45,11 +45,11 @@ struct Win32Gui
   int runLoop();
 
   static LRESULT CALLBACK wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-  int OnCreate(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-  int OnClose(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-  int OnDestroy(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-  int OnDpiChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-  int OnWindowPosChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+  int onCreate(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+  int onClose(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+  int onDestroy(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+  int onDpiChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+  int onWindowPosChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
   static std::string narrow(std::wstring utf16);
   static std::wstring widen(std::string utf8);
