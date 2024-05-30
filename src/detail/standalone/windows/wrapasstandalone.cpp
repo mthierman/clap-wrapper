@@ -267,42 +267,45 @@ int Win32Gui::onWindowPosChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
   auto dpi{::GetDpiForWindow(hWnd)};
   auto scaleFactor{static_cast<float>(dpi) / static_cast<float>(USER_DEFAULT_SCREEN_DPI)};
 
-  if (pluginGui->can_resize(plugin))
+  if (pluginGui)
   {
-    RECT r{0, 0, 0, 0};
-    ::GetClientRect(hWnd, &r);
-
-    uint32_t w = (r.right - r.left);
-    uint32_t h = (r.bottom - r.top);
-
-    pluginGui->adjust_size(plugin, &w, &h);
-    pluginGui->set_size(plugin, w, h);
-
-    clap_gui_resize_hints_t hints;
-    pluginGui->get_resize_hints(plugin, &hints);
-    if (hints.preserve_aspect_ratio)
+    if (pluginGui->can_resize(plugin))
     {
-      LOG << "preserve aspect ratio" << std::endl;
-    }
+      RECT r{0, 0, 0, 0};
+      ::GetClientRect(hWnd, &r);
 
-    if (hints.can_resize_horizontally)
-    {
-      LOG << "can_resize_horizontally" << std::endl;
-    }
+      uint32_t w = (r.right - r.left);
+      uint32_t h = (r.bottom - r.top);
 
-    if (hints.can_resize_vertically)
-    {
-      LOG << "can_resize_vertically" << std::endl;
-    }
+      pluginGui->adjust_size(plugin, &w, &h);
+      pluginGui->set_size(plugin, w, h);
 
-    if (hints.aspect_ratio_height)
-    {
-      LOG << hints.aspect_ratio_height << std::endl;
-    }
+      clap_gui_resize_hints_t hints;
+      pluginGui->get_resize_hints(plugin, &hints);
+      if (hints.preserve_aspect_ratio)
+      {
+        LOG << "preserve aspect ratio" << std::endl;
+      }
 
-    if (hints.aspect_ratio_width)
-    {
-      LOG << hints.aspect_ratio_width << std::endl;
+      if (hints.can_resize_horizontally)
+      {
+        LOG << "can_resize_horizontally" << std::endl;
+      }
+
+      if (hints.can_resize_vertically)
+      {
+        LOG << "can_resize_vertically" << std::endl;
+      }
+
+      if (hints.aspect_ratio_height)
+      {
+        LOG << hints.aspect_ratio_height << std::endl;
+      }
+
+      if (hints.aspect_ratio_width)
+      {
+        LOG << hints.aspect_ratio_width << std::endl;
+      }
     }
   }
 
