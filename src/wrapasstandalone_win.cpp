@@ -1,5 +1,3 @@
-#include <iostream>
-#include <Windows.h>
 #include "detail/standalone/windows/app.h"
 
 int main(int argc, char* argv[])
