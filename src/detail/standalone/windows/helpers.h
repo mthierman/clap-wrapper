@@ -5,6 +5,8 @@
 #include <string>
 #include <stdexcept>
 
+#include "detail/standalone/entry.h"
+
 namespace freeaudio::clap_wrapper::standalone::windows
 {
 template <typename T>
@@ -37,6 +39,7 @@ int safe_size(T value)
   return static_cast<U>(value);
 }
 
+const clap_plugin_entry* getClapPluginEntry();
 std::string narrow(std::wstring wstring);
 std::wstring widen(std::string string);
 void messageBox(std::string message);

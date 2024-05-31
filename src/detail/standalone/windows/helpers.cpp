@@ -2,6 +2,31 @@
 
 namespace freeaudio::clap_wrapper::standalone::windows
 {
+const clap_plugin_entry* getClapPluginEntry()
+{
+  static const clap_plugin_entry* entry{nullptr};
+#ifdef STATICALLY_LINKED_CLAP_ENTRY
+  static extern const clap_plugin_entry clap_entry;
+  entry = &clap_entry;
+#else
+  static auto lib{Clap::Library()};
+  auto clapFilename{std::string(HOSTED_CLAP_NAME).append(".clap")};
+
+  for (const auto& searchPath : Clap::getValidCLAPSearchPaths())
+  {
+    auto clapPath{searchPath / clapFilename};
+
+    if (fs::exists(clapPath) && !entry)
+    {
+      lib.load(clapPath);
+      entry = lib._pluginEntry;
+    }
+  }
+#endif
+
+  return entry;
+}
+
 std::string narrow(std::wstring wstring)
 {
   if (wstring.empty()) return {};
