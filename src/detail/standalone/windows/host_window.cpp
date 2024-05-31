@@ -78,7 +78,7 @@ HostWindow::HostWindow() : m_standaloneHost{freeaudio::clap_wrapper::standalone:
     ::InsertMenuItemW(hMenu, 7, TRUE, &seperator);
   }
 
-  EnableMenuItem(hMenu, IDM_RESET_STATE, MF_DISABLED);
+  ::EnableMenuItem(hMenu, IDM_RESET_STATE, MF_DISABLED);
 
   m_standaloneHost->onRequestResize = [this](uint32_t width, uint32_t height)
   { return setWindowSize(width, height); };
