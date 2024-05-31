@@ -6,7 +6,7 @@
 #define IDM_SETTINGS 1001
 #define IDM_SAVE_STATE 1002
 #define IDM_LOAD_STATE 1003
-// #define IDM_RESET_STATE 1004
+#define IDM_RESET_STATE 1004
 
 namespace freeaudio::clap_wrapper::standalone::windows
 {
@@ -74,10 +74,10 @@ void Win32Gui::createHostWindow()
   loadState.wID = IDM_LOAD_STATE;
   loadState.dwTypeData = const_cast<LPWSTR>(L"Load state...");
 
-  // MENUITEMINFOW resetState{sizeof(MENUITEMINFOW)};
-  // resetState.fMask = MIIM_STRING | MIIM_ID;
-  // resetState.wID = IDM_RESET_STATE;
-  // resetState.dwTypeData = const_cast<LPWSTR>(L"Reset state...");
+  MENUITEMINFOW resetState{sizeof(MENUITEMINFOW)};
+  resetState.fMask = MIIM_STRING | MIIM_ID;
+  resetState.wID = IDM_RESET_STATE;
+  resetState.dwTypeData = const_cast<LPWSTR>(L"Reset state...");
 
   if (hMenu != INVALID_HANDLE_VALUE)
   {
@@ -86,10 +86,8 @@ void Win32Gui::createHostWindow()
     ::InsertMenuItemW(hMenu, 3, TRUE, &seperator);
     ::InsertMenuItemW(hMenu, 4, TRUE, &saveState);
     ::InsertMenuItemW(hMenu, 5, TRUE, &loadState);
-    ::InsertMenuItemW(hMenu, 6, TRUE, &seperator);
-
-    // ::InsertMenuItemW(hMenu, 6, TRUE, &resetState);
-    // ::InsertMenuItemW(hMenu, 7, TRUE, &seperator);
+    ::InsertMenuItemW(hMenu, 6, TRUE, &resetState);
+    ::InsertMenuItemW(hMenu, 7, TRUE, &seperator);
   }
 }
 
@@ -351,12 +349,12 @@ int Win32Gui::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
       return 0;
     }
 
-      // case IDM_RESET_STATE:
-      // {
-      //   LOG << "IDM_RESET_STATE" << std::endl;
+    case IDM_RESET_STATE:
+    {
+      //
 
-      //   return 0;
-      // }
+      return 0;
+    }
   }
 
   return ::DefWindowProcW(hWnd, uMsg, wParam, lParam);
