@@ -22,6 +22,7 @@ struct HostWindow
   static LRESULT CALLBACK wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
   int onDpiChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
   int onWindowPosChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+  int onKeyDown(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
   int onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
   int onDestroy(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
