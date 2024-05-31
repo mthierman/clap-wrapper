@@ -6,7 +6,7 @@
 #define IDM_SETTINGS 1001
 #define IDM_SAVE_STATE 1002
 #define IDM_LOAD_STATE 1003
-#define IDM_RESET_STATE 1004
+// #define IDM_RESET_STATE 1004
 
 namespace freeaudio::clap_wrapper::standalone::windows
 {
@@ -74,10 +74,10 @@ void Win32Gui::createHostWindow()
   loadState.wID = IDM_LOAD_STATE;
   loadState.dwTypeData = const_cast<LPWSTR>(L"Load state...");
 
-  MENUITEMINFOW resetState{sizeof(MENUITEMINFOW)};
-  resetState.fMask = MIIM_STRING | MIIM_ID;
-  resetState.wID = IDM_RESET_STATE;
-  resetState.dwTypeData = const_cast<LPWSTR>(L"Reset state...");
+  // MENUITEMINFOW resetState{sizeof(MENUITEMINFOW)};
+  // resetState.fMask = MIIM_STRING | MIIM_ID;
+  // resetState.wID = IDM_RESET_STATE;
+  // resetState.dwTypeData = const_cast<LPWSTR>(L"Reset state...");
 
   if (hMenu != INVALID_HANDLE_VALUE)
   {
@@ -86,8 +86,10 @@ void Win32Gui::createHostWindow()
     ::InsertMenuItemW(hMenu, 3, TRUE, &seperator);
     ::InsertMenuItemW(hMenu, 4, TRUE, &saveState);
     ::InsertMenuItemW(hMenu, 5, TRUE, &loadState);
-    ::InsertMenuItemW(hMenu, 6, TRUE, &resetState);
-    ::InsertMenuItemW(hMenu, 7, TRUE, &seperator);
+    ::InsertMenuItemW(hMenu, 6, TRUE, &seperator);
+
+    // ::InsertMenuItemW(hMenu, 6, TRUE, &resetState);
+    // ::InsertMenuItemW(hMenu, 7, TRUE, &seperator);
   }
 }
 
@@ -289,6 +291,11 @@ int Win32Gui::onWindowPosChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 
 int Win32Gui::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+  auto sah{freeaudio::clap_wrapper::standalone::getStandaloneHost()};
+
+  auto plugin{m_plugin->_plugin};
+  auto pluginState{m_plugin->_ext._state};
+
   switch (wParam)
   {
     case IDM_SETTINGS:
@@ -297,6 +304,63 @@ int Win32Gui::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
       return 0;
     }
+
+    case IDM_SAVE_STATE:
+    {
+      LOG << "IDM_SAVE_STATE" << std::endl;
+      auto pt{getStandaloneSettingsPath()};
+      if (pt.has_value())
+      {
+        auto savePath{*pt / plugin->desc->id};
+        LOG << "Saving settings to '" << savePath << "'" << std::endl;
+        try
+        {
+          fs::create_directories(savePath);
+          sah->saveStandaloneAndPluginSettings(savePath, "settings.clapwrapper");
+        }
+        catch (const fs::filesystem_error& e)
+        {
+          // Oh well - whatcha gonna do?
+        }
+      }
+      else
+      {
+        LOG << "No Standalone Settings Path; not streaming" << std::endl;
+      }
+
+      return 0;
+    }
+
+    case IDM_LOAD_STATE:
+    {
+      LOG << "IDM_LOAD_STATE" << std::endl;
+      auto pt{getStandaloneSettingsPath()};
+      if (pt.has_value())
+      {
+        auto loadPath{*pt / plugin->desc->id};
+        try
+        {
+          if (fs::exists(loadPath / "settings.clapwrapper"))
+          {
+            LOG << "Trying to load from clap wrapper settings" << std::endl;
+            sah->tryLoadStandaloneAndPluginSettings(loadPath, "settings.clapwrapper");
+          }
+        }
+        catch (const fs::filesystem_error& e)
+        {
+          // Oh well - whatcha gonna do?
+        }
+      }
+
+      return 0;
+    }
+
+      // case IDM_RESET_STATE:
+      // {
+      //   LOG << "IDM_RESET_STATE" << std::endl;
+
+      //   return 0;
+      // }
   }
 
   return ::DefWindowProcW(hWnd, uMsg, wParam, lParam);
