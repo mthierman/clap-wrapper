@@ -15,11 +15,9 @@ int app(int argc, char* argv[])
   entry = &clap_entry;
 #else
   auto lib{Clap::Library()};
-
-  auto searchPaths{Clap::getValidCLAPSearchPaths()};
   auto clapFilename{std::string(HOSTED_CLAP_NAME).append(".clap")};
 
-  for (const auto& searchPath : searchPaths)
+  for (const auto& searchPath : Clap::getValidCLAPSearchPaths())
   {
     auto clapPath{searchPath / clapFilename};
 
@@ -37,16 +35,12 @@ int app(int argc, char* argv[])
     return 3;
   }
 
-  auto plugin{
-      freeaudio::clap_wrapper::standalone::mainCreatePlugin(entry, PLUGIN_ID, PLUGIN_INDEX, argc, argv)};
+  HostWindow hostWindow(argc, argv, entry);
 
-  freeaudio::clap_wrapper::standalone::mainStartAudio();
-
-  HostWindow hostWindow;
-
-  hostWindow.setPlugin(plugin);
   hostWindow.setupPlugin();
   hostWindow.setWindowVisibility(true);
+
+  freeaudio::clap_wrapper::standalone::mainStartAudio();
 
   MSG msg{};
   int r{};

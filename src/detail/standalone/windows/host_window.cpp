@@ -9,8 +9,13 @@
 
 namespace freeaudio::clap_wrapper::standalone::windows
 {
-HostWindow::HostWindow() : m_standaloneHost{freeaudio::clap_wrapper::standalone::getStandaloneHost()}
+HostWindow::HostWindow(int argc, char* argv[], const clap_plugin_entry* entry)
+  : m_entry{entry}, m_standaloneHost{freeaudio::clap_wrapper::standalone::getStandaloneHost()}
 {
+  auto plugin{freeaudio::clap_wrapper::standalone::mainCreatePlugin(m_entry, PLUGIN_ID, PLUGIN_INDEX,
+                                                                    argc, argv)};
+  setPlugin(plugin);
+
   std::wstring windowName{widen(OUTPUT_NAME)};
 
   auto icon{loadIconFromResource()};
