@@ -363,16 +363,7 @@ int HostWindow::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
     case IDM_RESET_STATE:
     {
-      pluginGui->destroy(plugin);
-      m_standaloneHost->stopAudioThread();
-      m_standaloneHost->stopMIDIThread();
-      m_plugin->deactivate();
-      m_plugin->terminate();
-
-      auto plugin{freeaudio::clap_wrapper::standalone::mainCreatePlugin(entry, PLUGIN_ID, PLUGIN_INDEX,
-                                                                        argc, argv)};
-
-      setPlugin(m_plugin);
+      //
 
       return 0;
     }
