@@ -2,5 +2,5 @@
 
 namespace freeaudio::clap_wrapper::standalone::windows
 {
-int run(int argc, char* argv[]);
+int app(int argc, char* argv[]);
 }  // namespace freeaudio::clap_wrapper::standalone::windows

@@ -1,10 +1,6 @@
-#include <Windows.h>
-#include <string>
+#include "detail/standalone/entry.h"
 #include "host_window.h"
 #include "helpers.h"
-// #include "helpers.h"
-// #include "detail/standalone/standalone_details.h"
-#include "detail/standalone/entry.h"
 
 #define IDM_SETTINGS 1001
 #define IDM_SAVE_STATE 1002
@@ -159,6 +155,11 @@ bool HostWindow::setWindowVisibility(bool visible)
   return visible ? true : false;
 }
 
+bool HostWindow::getWindowVisibility()
+{
+  return ::IsWindowVisible(m_hwnd);
+}
+
 bool HostWindow::setWindowSize(uint32_t width, uint32_t height)
 {
   RECT r{0, 0, 0, 0};
@@ -256,7 +257,7 @@ int HostWindow::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
   {
     case IDM_SETTINGS:
     {
-      // checkSettingsVisibility() ? hideSettingsWindow() : showSettingsWindow();
+      m_settingsWindow.setWindowVisibility(!m_settingsWindow.getWindowVisibility());
 
       return 0;
     }
@@ -334,24 +335,4 @@ int HostWindow::onDestroy(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
   return 0;
 }
-
-// void Win32Gui::createSettingsWindow()
-// {
-//   m_settingsWindow.createWindow();
-// }
-
-// void Win32Gui::showSettingsWindow()
-// {
-//   m_settingsWindow.showWindow();
-// }
-
-// void Win32Gui::hideSettingsWindow()
-// {
-//   m_settingsWindow.hideWindow();
-// }
-
-// bool Win32Gui::checkSettingsVisibility()
-// {
-//   return m_settingsWindow.checkVisibility();
-// }
 }  // namespace freeaudio::clap_wrapper::standalone::windows

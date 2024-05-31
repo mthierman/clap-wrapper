@@ -2,5 +2,5 @@
 
 int main(int argc, char* argv[])
 {
-  return freeaudio::clap_wrapper::standalone::windows::run(argc, argv);
+  return freeaudio::clap_wrapper::standalone::windows::app(argc, argv);
 }

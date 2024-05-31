@@ -6,10 +6,10 @@ namespace freeaudio::clap_wrapper::standalone::windows
 {
 struct SettingsWindow
 {
-  void createWindow();
-  void showWindow();
-  void hideWindow();
-  bool checkVisibility();
+  SettingsWindow();
+
+  bool setWindowVisibility(bool visible);
+  bool getWindowVisibility();
 
   static LRESULT CALLBACK wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
   int onCreate(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

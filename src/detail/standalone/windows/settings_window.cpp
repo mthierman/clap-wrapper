@@ -1,7 +1,8 @@
+#include <string>
+
+#include "detail/standalone/standalone_details.h"
 #include "settings_window.h"
 #include "helpers.h"
-#include "detail/standalone/standalone_details.h"
-#include <string>
 
 #define ID_COMBOBOX1 101
 #define ID_COMBOBOX2 102
@@ -11,7 +12,7 @@
 
 namespace freeaudio::clap_wrapper::standalone::windows
 {
-void SettingsWindow::createWindow()
+SettingsWindow::SettingsWindow()
 {
   std::wstring windowName{L"Audio/MIDI Settings"};
 
@@ -51,17 +52,14 @@ void SettingsWindow::createWindow()
   ::SetWindowPos(m_hwnd, nullptr, x, y, width, height, 0);
 }
 
-void SettingsWindow::showWindow()
+bool SettingsWindow::setWindowVisibility(bool visible)
 {
-  ::ShowWindow(m_hwnd, SW_SHOW);
+  ::ShowWindow(m_hwnd, visible ? SW_SHOW : SW_HIDE);
+
+  return visible ? true : false;
 }
 
-void SettingsWindow::hideWindow()
-{
-  ::ShowWindow(m_hwnd, SW_HIDE);
-}
-
-bool SettingsWindow::checkVisibility()
+bool SettingsWindow::getWindowVisibility()
 {
   return ::IsWindowVisible(m_hwnd);
 }
@@ -103,7 +101,7 @@ int SettingsWindow::onCreate(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 int SettingsWindow::onClose(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  hideWindow();
+  setWindowVisibility(false);
 
   return 0;
 }

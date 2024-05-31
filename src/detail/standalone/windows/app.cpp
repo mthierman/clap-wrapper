@@ -7,7 +7,7 @@
 
 namespace freeaudio::clap_wrapper::standalone::windows
 {
-int run(int argc, char* argv[])
+int app(int argc, char* argv[])
 {
   const clap_plugin_entry* entry{nullptr};
 #ifdef STATICALLY_LINKED_CLAP_ENTRY

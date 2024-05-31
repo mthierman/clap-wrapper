@@ -1,10 +1,9 @@
 #pragma once
 
-// #include <Windows.h>
+#include <Windows.h>
 
-// #include <clap_proxy.h>
 #include "detail/standalone/standalone_host.h"
-// #include "settings_window.h"
+#include "settings_window.h"
 
 namespace freeaudio::clap_wrapper::standalone::windows
 {
@@ -17,12 +16,8 @@ struct HostWindow
   void setupPlugin();
 
   bool setWindowVisibility(bool visible);
+  bool getWindowVisibility();
   bool setWindowSize(uint32_t width, uint32_t height);
-
-  // void createSettingsWindow();
-  // void showSettingsWindow();
-  // void hideSettingsWindow();
-  // bool checkSettingsVisibility();
 
   static LRESULT CALLBACK wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
   int onDpiChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -30,10 +25,9 @@ struct HostWindow
   int onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
   int onDestroy(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-  // SettingsWindow m_settingsWindow;
   freeaudio::clap_wrapper::standalone::StandaloneHost* m_standaloneHost;
   std::shared_ptr<Clap::Plugin> m_plugin;
-
   HWND m_hwnd;
+  SettingsWindow m_settingsWindow;
 };
 }  // namespace freeaudio::clap_wrapper::standalone::windows
