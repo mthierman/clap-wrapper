@@ -1,4 +1,5 @@
 #include <Windows.h>
+
 #include "detail/standalone/entry.h"
 #include "app.h"
 #include "host_window.h"
