@@ -96,21 +96,25 @@ function(target_add_standalone_wrapper)
                 MACOS_EMBEDDED_CLAP_LOCATION ${SA_MACOS_EMBEDDED_CLAP_LOCATION})
 
     elseif(WIN32 AND (CMAKE_CXX_COMPILER_ID MATCHES "MSVC" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
-        set_target_properties(${SA_TARGET} PROPERTIES WIN32_EXECUTABLE TRUE)
+        set_target_properties(${SA_TARGET} PROPERTIES
+                WIN32_EXECUTABLE TRUE
+                )
 
         target_compile_definitions(${salib} PUBLIC
                 NOMINMAX
-                WIN32_LEAN_AND_MEAN        
+                WIN32_LEAN_AND_MEAN
                 CLAP_WRAPPER_HAS_WIN32
                 OUTPUT_NAME="${SA_OUTPUT_NAME}"
                 )
 
         target_sources(${SA_TARGET} PRIVATE
-                ${CLAP_WRAPPER_CMAKE_CURRENT_SOURCE_DIR}/src/detail/standalone/windows/main.cpp
-                ${CLAP_WRAPPER_CMAKE_CURRENT_SOURCE_DIR}/src/detail/standalone/windows/win32gui.cpp
-                ${CLAP_WRAPPER_CMAKE_CURRENT_SOURCE_DIR}/src/detail/standalone/windows/settings_window.cpp
-                ${CLAP_WRAPPER_CMAKE_CURRENT_SOURCE_DIR}/src/detail/standalone/windows/helpers.cpp
-                ${CLAP_WRAPPER_CMAKE_CURRENT_SOURCE_DIR}/src/detail/standalone/windows/win32gui.manifest
+                ${CLAP_WRAPPER_CMAKE_CURRENT_SOURCE_DIR}/src/wrapasstandalone_win.cpp
+                ${CLAP_WRAPPER_CMAKE_CURRENT_SOURCE_DIR}/src/detail/standalone/windows/app.cpp
+                # ${CLAP_WRAPPER_CMAKE_CURRENT_SOURCE_DIR}/src/detail/standalone/windows/main.cpp
+                # ${CLAP_WRAPPER_CMAKE_CURRENT_SOURCE_DIR}/src/detail/standalone/windows/win32gui.cpp
+                # ${CLAP_WRAPPER_CMAKE_CURRENT_SOURCE_DIR}/src/detail/standalone/windows/settings_window.cpp
+                # ${CLAP_WRAPPER_CMAKE_CURRENT_SOURCE_DIR}/src/detail/standalone/windows/helpers.cpp
+                # ${CLAP_WRAPPER_CMAKE_CURRENT_SOURCE_DIR}/src/detail/standalone/windows/win32gui.manifest
                 )
 
         target_link_options(
