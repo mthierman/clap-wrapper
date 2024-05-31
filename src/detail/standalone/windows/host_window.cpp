@@ -78,7 +78,7 @@ HostWindow::HostWindow() : m_standaloneHost{freeaudio::clap_wrapper::standalone:
     ::InsertMenuItemW(hMenu, 7, TRUE, &seperator);
   }
 
-  ::EnableMenuItem(hMenu, IDM_RESET_STATE, MF_DISABLED);
+  // ::EnableMenuItem(hMenu, IDM_RESET_STATE, MF_DISABLED);
 
   m_standaloneHost->onRequestResize = [this](uint32_t width, uint32_t height)
   { return setWindowSize(width, height); };
@@ -303,6 +303,7 @@ int HostWindow::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
   auto sah{freeaudio::clap_wrapper::standalone::getStandaloneHost()};
 
   auto plugin{m_plugin->_plugin};
+  auto pluginGui{m_plugin->_ext._gui};
   auto pluginState{m_plugin->_ext._state};
 
   switch (wParam)
@@ -362,7 +363,16 @@ int HostWindow::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
     case IDM_RESET_STATE:
     {
-      //
+      pluginGui->destroy(plugin);
+      m_standaloneHost->stopAudioThread();
+      m_standaloneHost->stopMIDIThread();
+      m_plugin->deactivate();
+      m_plugin->terminate();
+
+      auto plugin{freeaudio::clap_wrapper::standalone::mainCreatePlugin(entry, PLUGIN_ID, PLUGIN_INDEX,
+                                                                        argc, argv)};
+
+      setPlugin(m_plugin);
 
       return 0;
     }
