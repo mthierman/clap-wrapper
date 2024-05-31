@@ -102,7 +102,7 @@ function(target_add_standalone_wrapper)
                 MACOS_EMBEDDED_CLAP_LOCATION ${SA_MACOS_EMBEDDED_CLAP_LOCATION})
 
     elseif(WIN32 AND (CMAKE_CXX_COMPILER_ID MATCHES "MSVC" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
-        if(NOT SA_WIN32_ICON STREQUAL "")
+        if(NOT "${SA_WIN32_ICON}" STREQUAL "")
             message(STATUS "Win32 icon found: ${SA_WIN32_ICON}")
             file(WRITE "${CMAKE_BINARY_DIR}/standalone_win32.rc" "1 ICON \"standalone_win32.ico\"")
             file(COPY_FILE ${SA_WIN32_ICON} "${CMAKE_BINARY_DIR}/standalone_win32.ico")
@@ -129,7 +129,7 @@ function(target_add_standalone_wrapper)
                 ${CLAP_WRAPPER_CMAKE_CURRENT_SOURCE_DIR}/src/detail/standalone/windows/standalone.manifest
                 )
 
-        if(NOT SA_WIN32_ICON STREQUAL "")
+        if(NOT "${SA_WIN32_ICON}" STREQUAL "")
             target_sources(${SA_TARGET} PRIVATE
                         ${CMAKE_BINARY_DIR}/standalone_win32.rc
                         )
