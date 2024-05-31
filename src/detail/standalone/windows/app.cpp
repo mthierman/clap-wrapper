@@ -35,6 +35,11 @@ int run(int argc, char* argv[])
     return 3;
   }
 
+  auto plugin{
+      freeaudio::clap_wrapper::standalone::mainCreatePlugin(entry, PLUGIN_ID, PLUGIN_INDEX, argc, argv)};
+
+  freeaudio::clap_wrapper::standalone::mainStartAudio();
+
   MSG msg{};
   int r{};
 
@@ -42,7 +47,7 @@ int run(int argc, char* argv[])
   {
     if (r == -1)
     {
-      return EXIT_FAILURE;
+      break;
     }
 
     else
@@ -52,6 +57,6 @@ int run(int argc, char* argv[])
     }
   }
 
-  return EXIT_SUCCESS;
+  return freeaudio::clap_wrapper::standalone::mainFinish();
 }
 }  // namespace freeaudio::clap_wrapper::standalone::windows
