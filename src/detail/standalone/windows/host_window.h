@@ -31,7 +31,7 @@ struct HostWindow
   int onDestroy(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
   // SettingsWindow m_settingsWindow;
-  std::unique_ptr<freeaudio::clap_wrapper::standalone::StandaloneHost> m_standaloneHost;
+  freeaudio::clap_wrapper::standalone::StandaloneHost* m_standaloneHost;
   std::shared_ptr<Clap::Plugin> m_plugin;
 
   HWND m_hwnd;

@@ -44,6 +44,10 @@ int run(int argc, char* argv[])
 
   HostWindow hostWindow;
 
+  hostWindow.setPlugin(plugin);
+  hostWindow.setupPlugin();
+  hostWindow.setWindowVisibility(true);
+
   MSG msg{};
   int r{};
 

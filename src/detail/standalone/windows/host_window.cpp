@@ -41,8 +41,6 @@ HostWindow::HostWindow() : m_standaloneHost{freeaudio::clap_wrapper::standalone:
                     CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, nullptr, nullptr,
                     ::GetModuleHandleW(nullptr), this);
 
-  ::ShowWindow(m_hwnd, SW_SHOW);
-
   auto hMenu{::GetSystemMenu(m_hwnd, FALSE)};
 
   MENUITEMINFOW seperator{sizeof(MENUITEMINFOW)};
