@@ -10,7 +10,8 @@
 namespace freeaudio::clap_wrapper::standalone::windows
 {
 HostWindow::HostWindow(int argc, char* argv[], const clap_plugin_entry* entry)
-  : m_entry{entry}
+  : m_args{std::make_pair(argc, argv)}
+  , m_entry{entry}
   , m_standaloneHost{freeaudio::clap_wrapper::standalone::getStandaloneHost()}
   , m_plugin{freeaudio::clap_wrapper::standalone::mainCreatePlugin(m_entry, PLUGIN_ID, PLUGIN_INDEX,
                                                                    argc, argv)}
@@ -82,7 +83,7 @@ HostWindow::HostWindow(int argc, char* argv[], const clap_plugin_entry* entry)
     ::InsertMenuItemW(hMenu, 7, TRUE, &seperator);
   }
 
-  // ::EnableMenuItem(hMenu, IDM_RESET_STATE, MF_DISABLED);
+  ::EnableMenuItem(hMenu, IDM_RESET_STATE, MF_DISABLED);
 
   m_standaloneHost->onRequestResize = [this](uint32_t width, uint32_t height)
   { return setWindowSize(width, height); };

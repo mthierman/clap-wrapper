@@ -10,6 +10,7 @@ namespace freeaudio::clap_wrapper::standalone::windows
 int app(int argc, char* argv[])
 {
   auto entry{getClapPluginEntry()};
+
   HostWindow hostWindow(argc, argv, entry);
   hostWindow.setupPlugin();
   hostWindow.setWindowVisibility(true);

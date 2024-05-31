@@ -31,5 +31,6 @@ struct HostWindow
   std::shared_ptr<Clap::Plugin> m_plugin;
   HWND m_hwnd;
   SettingsWindow m_settingsWindow;
+  std::pair<int, char**> m_args;
 };
 }  // namespace freeaudio::clap_wrapper::standalone::windows
