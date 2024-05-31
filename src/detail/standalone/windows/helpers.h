@@ -38,4 +38,7 @@ int safe_size(T value)
 
 std::string narrow(std::wstring wstring);
 std::wstring widen(std::string string);
+
+void messageBox(std::string message);
+void errorBox(std::string message);
 }  // namespace freeaudio::clap_wrapper::standalone::windows

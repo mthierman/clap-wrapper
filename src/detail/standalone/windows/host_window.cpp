@@ -6,10 +6,10 @@
 // #include "detail/standalone/standalone_details.h"
 // #include "detail/standalone/entry.h"
 
-// #define IDM_SETTINGS 1001
-// #define IDM_SAVE_STATE 1002
-// #define IDM_LOAD_STATE 1003
-// #define IDM_RESET_STATE 1004
+#define IDM_SETTINGS 1001
+#define IDM_SAVE_STATE 1002
+#define IDM_LOAD_STATE 1003
+#define IDM_RESET_STATE 1004
 
 namespace freeaudio::clap_wrapper::standalone::windows
 {
@@ -17,7 +17,7 @@ HostWindow::HostWindow()
 {
   std::wstring windowName{widen(OUTPUT_NAME)};
 
-  WNDCLASSEXW wcex{sizeof(WNDCLASSEXW)};
+  ::WNDCLASSEXW wcex{sizeof(::WNDCLASSEXW)};
   wcex.lpszClassName = windowName.c_str();
   wcex.lpszMenuName = windowName.c_str();
   wcex.lpfnWndProc = HostWindow::wndProc;
@@ -25,14 +25,14 @@ HostWindow::HostWindow()
   wcex.cbClsExtra = 0;
   wcex.cbWndExtra = sizeof(intptr_t);
   wcex.hInstance = ::GetModuleHandleW(nullptr);
-  wcex.hbrBackground = reinterpret_cast<HBRUSH>(::GetStockObject(BLACK_BRUSH));
-  wcex.hCursor = reinterpret_cast<HCURSOR>(::LoadImageW(nullptr, reinterpret_cast<LPCWSTR>(IDC_ARROW),
-                                                        IMAGE_CURSOR, 0, 0, LR_SHARED | LR_DEFAULTSIZE));
-  wcex.hIcon = reinterpret_cast<HICON>(::LoadImageW(nullptr, reinterpret_cast<LPCWSTR>(IDI_APPLICATION),
-                                                    IMAGE_ICON, 0, 0,
-                                                    LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED));
-  wcex.hIconSm = reinterpret_cast<HICON>(
-      ::LoadImageW(nullptr, reinterpret_cast<LPCWSTR>(IDI_APPLICATION), IMAGE_ICON, 0, 0,
+  wcex.hbrBackground = reinterpret_cast<::HBRUSH>(::GetStockObject(BLACK_BRUSH));
+  wcex.hCursor = reinterpret_cast<::HCURSOR>(::LoadImageW(
+      nullptr, reinterpret_cast<::LPCWSTR>(IDC_ARROW), IMAGE_CURSOR, 0, 0, LR_SHARED | LR_DEFAULTSIZE));
+  wcex.hIcon = reinterpret_cast<::HICON>(
+      ::LoadImageW(nullptr, reinterpret_cast<::LPCWSTR>(IDI_APPLICATION), IMAGE_ICON, 0, 0,
+                   LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED));
+  wcex.hIconSm = reinterpret_cast<::HICON>(
+      ::LoadImageW(nullptr, reinterpret_cast<::LPCWSTR>(IDI_APPLICATION), IMAGE_ICON, 0, 0,
                    LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED));
 
   ::RegisterClassExW(&wcex);
@@ -43,44 +43,42 @@ HostWindow::HostWindow()
 
   ::ShowWindow(m_hwnd, SW_SHOW);
 
-  // https://www.codeproject.com/Articles/7503/An-examination-of-menus-from-a-beginner-s-point-of#systemmenu
+  auto hMenu{::GetSystemMenu(m_hwnd, FALSE)};
 
-  // auto hMenu{::GetSystemMenu(m_hwnd, FALSE)};
+  MENUITEMINFOW seperator{sizeof(MENUITEMINFOW)};
+  seperator.fMask = MIIM_FTYPE;
+  seperator.fType = MFT_SEPARATOR;
 
-  // MENUITEMINFOW seperator{sizeof(MENUITEMINFOW)};
-  // seperator.fMask = MIIM_FTYPE;
-  // seperator.fType = MFT_SEPARATOR;
+  MENUITEMINFOW audioIn{sizeof(MENUITEMINFOW)};
+  audioIn.fMask = MIIM_STRING | MIIM_ID;
+  audioIn.wID = IDM_SETTINGS;
+  audioIn.dwTypeData = const_cast<LPWSTR>(L"Settings");
 
-  // MENUITEMINFOW audioIn{sizeof(MENUITEMINFOW)};
-  // audioIn.fMask = MIIM_STRING | MIIM_ID;
-  // audioIn.wID = IDM_SETTINGS;
-  // audioIn.dwTypeData = const_cast<LPWSTR>(L"Settings");
+  MENUITEMINFOW saveState{sizeof(MENUITEMINFOW)};
+  saveState.fMask = MIIM_STRING | MIIM_ID;
+  saveState.wID = IDM_SAVE_STATE;
+  saveState.dwTypeData = const_cast<LPWSTR>(L"Save state...");
 
-  // MENUITEMINFOW saveState{sizeof(MENUITEMINFOW)};
-  // saveState.fMask = MIIM_STRING | MIIM_ID;
-  // saveState.wID = IDM_SAVE_STATE;
-  // saveState.dwTypeData = const_cast<LPWSTR>(L"Save state...");
+  MENUITEMINFOW loadState{sizeof(MENUITEMINFOW)};
+  loadState.fMask = MIIM_STRING | MIIM_ID;
+  loadState.wID = IDM_LOAD_STATE;
+  loadState.dwTypeData = const_cast<LPWSTR>(L"Load state...");
 
-  // MENUITEMINFOW loadState{sizeof(MENUITEMINFOW)};
-  // loadState.fMask = MIIM_STRING | MIIM_ID;
-  // loadState.wID = IDM_LOAD_STATE;
-  // loadState.dwTypeData = const_cast<LPWSTR>(L"Load state...");
+  MENUITEMINFOW resetState{sizeof(MENUITEMINFOW)};
+  resetState.fMask = MIIM_STRING | MIIM_ID;
+  resetState.wID = IDM_RESET_STATE;
+  resetState.dwTypeData = const_cast<LPWSTR>(L"Reset state...");
 
-  // MENUITEMINFOW resetState{sizeof(MENUITEMINFOW)};
-  // resetState.fMask = MIIM_STRING | MIIM_ID;
-  // resetState.wID = IDM_RESET_STATE;
-  // resetState.dwTypeData = const_cast<LPWSTR>(L"Reset state...");
-
-  // if (hMenu != INVALID_HANDLE_VALUE)
-  // {
-  //   ::InsertMenuItemW(hMenu, 1, TRUE, &seperator);
-  //   ::InsertMenuItemW(hMenu, 2, TRUE, &audioIn);
-  //   ::InsertMenuItemW(hMenu, 3, TRUE, &seperator);
-  //   ::InsertMenuItemW(hMenu, 4, TRUE, &saveState);
-  //   ::InsertMenuItemW(hMenu, 5, TRUE, &loadState);
-  //   ::InsertMenuItemW(hMenu, 6, TRUE, &resetState);
-  //   ::InsertMenuItemW(hMenu, 7, TRUE, &seperator);
-  // }
+  if (hMenu != INVALID_HANDLE_VALUE)
+  {
+    ::InsertMenuItemW(hMenu, 1, TRUE, &seperator);
+    ::InsertMenuItemW(hMenu, 2, TRUE, &audioIn);
+    ::InsertMenuItemW(hMenu, 3, TRUE, &seperator);
+    ::InsertMenuItemW(hMenu, 4, TRUE, &saveState);
+    ::InsertMenuItemW(hMenu, 5, TRUE, &loadState);
+    ::InsertMenuItemW(hMenu, 6, TRUE, &resetState);
+    ::InsertMenuItemW(hMenu, 7, TRUE, &seperator);
+  }
 }
 
 LRESULT CALLBACK HostWindow::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

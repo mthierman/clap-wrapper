@@ -38,4 +38,14 @@ std::wstring widen(std::string string)
   else
     return {};
 }
+
+void messageBox(std::string message)
+{
+  ::MessageBoxW(nullptr, widen(message).c_str(), nullptr, MB_OK | MB_ICONASTERISK);
+}
+
+void errorBox(std::string message)
+{
+  ::MessageBoxW(nullptr, widen(message).c_str(), nullptr, MB_OK | MB_ICONHAND);
+}
 }  // namespace freeaudio::clap_wrapper::standalone::windows

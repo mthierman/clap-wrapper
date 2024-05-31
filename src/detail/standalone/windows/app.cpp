@@ -3,6 +3,7 @@
 #include "detail/standalone/entry.h"
 #include "app.h"
 #include "host_window.h"
+#include "helpers.h"
 
 namespace freeaudio::clap_wrapper::standalone::windows
 {
@@ -32,7 +33,7 @@ int run(int argc, char* argv[])
 
   if (!entry)
   {
-    ::MessageBoxW(nullptr, L"Clap Standalone: No entry as configured", nullptr, MB_OK | MB_ICONERROR);
+    errorBox("No entry as configured");
     return 3;
   }
 
@@ -48,8 +49,9 @@ int run(int argc, char* argv[])
 
   while ((r = ::GetMessageW(&msg, nullptr, 0, 0)) != 0)
   {
-    if (r != -1)
+    if (r == -1)
     {
+      errorBox("Error in message loop");
       break;
     }
 
