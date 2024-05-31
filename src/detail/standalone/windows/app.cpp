@@ -38,6 +38,7 @@ int app(int argc, char* argv[])
   HostWindow hostWindow(argc, argv, entry);
 
   hostWindow.setupPlugin();
+
   hostWindow.setWindowVisibility(true);
 
   freeaudio::clap_wrapper::standalone::mainStartAudio();

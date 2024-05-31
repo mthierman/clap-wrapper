@@ -16,7 +16,9 @@ SettingsWindow::SettingsWindow()
 {
   std::wstring windowName{L"Audio/MIDI Settings"};
 
-  WNDCLASSEXW wcex{sizeof(WNDCLASSEXW)};
+  auto icon{loadIconFromResource()};
+
+  ::WNDCLASSEXW wcex{sizeof(::WNDCLASSEXW)};
   wcex.lpszClassName = windowName.c_str();
   wcex.lpszMenuName = windowName.c_str();
   wcex.lpfnWndProc = SettingsWindow::wndProc;
@@ -24,15 +26,17 @@ SettingsWindow::SettingsWindow()
   wcex.cbClsExtra = 0;
   wcex.cbWndExtra = sizeof(intptr_t);
   wcex.hInstance = ::GetModuleHandleW(nullptr);
-  wcex.hbrBackground = reinterpret_cast<HBRUSH>(::GetStockObject(WHITE_BRUSH));
-  wcex.hCursor = reinterpret_cast<HCURSOR>(::LoadImageW(nullptr, reinterpret_cast<LPCWSTR>(IDC_ARROW),
-                                                        IMAGE_CURSOR, 0, 0, LR_SHARED | LR_DEFAULTSIZE));
-  wcex.hIcon = reinterpret_cast<HICON>(::LoadImageW(nullptr, reinterpret_cast<LPCWSTR>(IDI_APPLICATION),
-                                                    IMAGE_ICON, 0, 0,
-                                                    LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED));
-  wcex.hIconSm = reinterpret_cast<HICON>(
-      ::LoadImageW(nullptr, reinterpret_cast<LPCWSTR>(IDI_APPLICATION), IMAGE_ICON, 0, 0,
-                   LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED));
+  wcex.hbrBackground = reinterpret_cast<::HBRUSH>(::GetStockObject(WHITE_BRUSH));
+  wcex.hCursor = reinterpret_cast<::HCURSOR>(::LoadImageW(
+      nullptr, reinterpret_cast<::LPCWSTR>(IDC_ARROW), IMAGE_CURSOR, 0, 0, LR_SHARED | LR_DEFAULTSIZE));
+  wcex.hIcon = icon ? icon
+                    : reinterpret_cast<::HICON>(
+                          ::LoadImageW(nullptr, reinterpret_cast<::LPCWSTR>(IDI_APPLICATION), IMAGE_ICON,
+                                       0, 0, LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED));
+  wcex.hIconSm = icon ? icon
+                      : reinterpret_cast<::HICON>(::LoadImageW(
+                            nullptr, reinterpret_cast<::LPCWSTR>(IDI_APPLICATION), IMAGE_ICON, 0, 0,
+                            LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED));
 
   ::RegisterClassExW(&wcex);
 
