@@ -41,4 +41,5 @@ std::string narrow(std::wstring wstring);
 std::wstring widen(std::string string);
 void messageBox(std::string message);
 void errorBox(std::string message);
+::HICON loadIconFromResource();
 }  // namespace freeaudio::clap_wrapper::standalone::windows

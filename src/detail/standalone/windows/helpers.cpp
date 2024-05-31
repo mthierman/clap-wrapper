@@ -48,4 +48,10 @@ void errorBox(std::string message)
 {
   ::MessageBoxW(nullptr, widen(message).c_str(), nullptr, MB_OK | MB_ICONHAND);
 }
+
+::HICON loadIconFromResource()
+{
+  return static_cast<::HICON>(
+      ::LoadImageA(::GetModuleHandleA(nullptr), MAKEINTRESOURCEA(1), IMAGE_ICON, 0, 0, LR_DEFAULTSIZE));
+}
 }  // namespace freeaudio::clap_wrapper::standalone::windows
