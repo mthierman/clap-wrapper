@@ -24,7 +24,7 @@ SettingsWindow::SettingsWindow()
   wcex.cbClsExtra = 0;
   wcex.cbWndExtra = sizeof(intptr_t);
   wcex.hInstance = ::GetModuleHandleW(nullptr);
-  wcex.hbrBackground = reinterpret_cast<HBRUSH>(::GetStockObject(BLACK_BRUSH));
+  wcex.hbrBackground = reinterpret_cast<HBRUSH>(::GetStockObject(WHITE_BRUSH));
   wcex.hCursor = reinterpret_cast<HCURSOR>(::LoadImageW(nullptr, reinterpret_cast<LPCWSTR>(IDC_ARROW),
                                                         IMAGE_CURSOR, 0, 0, LR_SHARED | LR_DEFAULTSIZE));
   wcex.hIcon = reinterpret_cast<HICON>(::LoadImageW(nullptr, reinterpret_cast<LPCWSTR>(IDI_APPLICATION),
