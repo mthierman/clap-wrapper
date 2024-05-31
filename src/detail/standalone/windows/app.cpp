@@ -1,4 +1,5 @@
 #include <Windows.h>
+#include <iostream>
 #include "detail/standalone/entry.h"
 #include "app.h"
 
@@ -11,13 +12,15 @@ int run(int argc, char* argv[])
   extern const clap_plugin_entry clap_entry;
   entry = &clap_entry;
 #else
-  std::string clapName{HOSTED_CLAP_NAME};
-  auto searchPaths{Clap::getValidCLAPSearchPaths()};
   auto lib{Clap::Library()};
+
+  auto searchPaths{Clap::getValidCLAPSearchPaths()};
+  auto clapFilename{std::string(HOSTED_CLAP_NAME).append(".clap")};
 
   for (const auto& searchPath : searchPaths)
   {
-    auto clapPath{searchPath / (clapName.append(".clap"))};
+    auto clapPath{searchPath / clapFilename};
+
     if (fs::exists(clapPath) && !entry)
     {
       lib.load(clapPath);
