@@ -307,25 +307,21 @@ int Win32Gui::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
     case IDM_SAVE_STATE:
     {
-      LOG << "IDM_SAVE_STATE" << std::endl;
-      auto pt{getStandaloneSettingsPath()};
-      if (pt.has_value())
+      auto settingsPath{freeaudio::clap_wrapper::standalone::getStandaloneSettingsPath()};
+
+      if (settingsPath.has_value())
       {
-        auto savePath{*pt / plugin->desc->id};
-        LOG << "Saving settings to '" << savePath << "'" << std::endl;
         try
         {
+          auto savePath{settingsPath.value() / plugin->desc->id};
+
           fs::create_directories(savePath);
           sah->saveStandaloneAndPluginSettings(savePath, "settings.clapwrapper");
         }
         catch (const fs::filesystem_error& e)
         {
-          // Oh well - whatcha gonna do?
+          ::MessageBoxW(nullptr, L"Unable to save file", nullptr, MB_OK | MB_ICONERROR);
         }
-      }
-      else
-      {
-        LOG << "No Standalone Settings Path; not streaming" << std::endl;
       }
 
       return 0;
@@ -333,22 +329,22 @@ int Win32Gui::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
     case IDM_LOAD_STATE:
     {
-      LOG << "IDM_LOAD_STATE" << std::endl;
-      auto pt{getStandaloneSettingsPath()};
-      if (pt.has_value())
+      auto settingsPath{freeaudio::clap_wrapper::standalone::getStandaloneSettingsPath()};
+
+      if (settingsPath.has_value())
       {
-        auto loadPath{*pt / plugin->desc->id};
         try
         {
+          auto loadPath{settingsPath.value() / plugin->desc->id};
+
           if (fs::exists(loadPath / "settings.clapwrapper"))
           {
-            LOG << "Trying to load from clap wrapper settings" << std::endl;
             sah->tryLoadStandaloneAndPluginSettings(loadPath, "settings.clapwrapper");
           }
         }
         catch (const fs::filesystem_error& e)
         {
-          // Oh well - whatcha gonna do?
+          ::MessageBoxW(nullptr, L"Unable to open file", nullptr, MB_OK | MB_ICONERROR);
         }
       }
 
