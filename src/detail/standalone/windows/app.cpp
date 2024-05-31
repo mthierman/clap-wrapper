@@ -2,6 +2,7 @@
 #include <iostream>
 #include "detail/standalone/entry.h"
 #include "app.h"
+#include "host_window.h"
 
 namespace freeaudio::clap_wrapper::standalone::windows
 {
@@ -40,12 +41,14 @@ int run(int argc, char* argv[])
 
   freeaudio::clap_wrapper::standalone::mainStartAudio();
 
+  HostWindow hostWindow;
+
   MSG msg{};
   int r{};
 
   while ((r = ::GetMessageW(&msg, nullptr, 0, 0)) != 0)
   {
-    if (r == -1)
+    if (r != -1)
     {
       break;
     }
