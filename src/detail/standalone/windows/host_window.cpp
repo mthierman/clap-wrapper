@@ -10,7 +10,7 @@
 
 namespace freeaudio::clap_wrapper::standalone::windows
 {
-HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> plugin) : m_plugin{plugin}
+HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin) : m_plugin{clapPlugin}
 {
   auto windowName{widen(OUTPUT_NAME)};
   auto hInstance{::GetModuleHandleW(nullptr)};
@@ -81,10 +81,7 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> plugin) : m_plugin{plugin}
     ::InsertMenuItemW(hMenu, 7, TRUE, &resetState);
     ::InsertMenuItemW(hMenu, 8, TRUE, &seperator);
   }
-}
 
-void HostWindow::setupPlugin()
-{
   auto standaloneHost{freeaudio::clap_wrapper::standalone::getStandaloneHost()};
 
   standaloneHost->onRequestResize = [this](uint32_t width, uint32_t height)
