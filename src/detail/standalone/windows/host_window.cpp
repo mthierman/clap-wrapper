@@ -125,8 +125,8 @@ void HostWindow::setupPlugin()
 
     pluginGui->create(plugin, CLAP_WINDOW_API_WIN32, false);
 
-    pluginGui->set_scale(plugin, static_cast<float>(::GetDpiForWindow(m_hwnd)) /
-                                     static_cast<float>(USER_DEFAULT_SCREEN_DPI));
+    pluginGui->set_scale(plugin, static_cast<double>(::GetDpiForWindow(m_hwnd)) /
+                                     static_cast<double>(USER_DEFAULT_SCREEN_DPI));
 
     uint32_t width{0};
     uint32_t height{0};
@@ -232,8 +232,8 @@ int HostWindow::onDpiChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
   if (plugin && pluginGui)
   {
-    pluginGui->set_scale(plugin, static_cast<float>(::GetDpiForWindow(m_hwnd)) /
-                                     static_cast<float>(USER_DEFAULT_SCREEN_DPI));
+    pluginGui->set_scale(plugin, static_cast<double>(::GetDpiForWindow(m_hwnd)) /
+                                     static_cast<double>(USER_DEFAULT_SCREEN_DPI));
   }
 
   return 0;
