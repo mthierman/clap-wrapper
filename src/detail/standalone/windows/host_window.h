@@ -12,10 +12,6 @@ struct HostWindow
 {
   HostWindow(int argc, char** argv);
 
-  clap_window createClapWindow();
-  void setPlugin(std::shared_ptr<Clap::Plugin> plugin);
-  void setupPlugin();
-
   bool setWindowVisibility(bool visible);
   bool getWindowVisibility();
   bool setWindowSize(uint32_t width, uint32_t height);

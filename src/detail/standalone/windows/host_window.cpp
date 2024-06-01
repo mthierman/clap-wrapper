@@ -90,29 +90,6 @@ HostWindow::HostWindow(int argc, char** argv)
   m_standaloneHost->onRequestResize = [this](uint32_t width, uint32_t height)
   { return setWindowSize(width, height); };
 
-  setupPlugin();
-
-  setWindowVisibility(true);
-
-  freeaudio::clap_wrapper::standalone::mainStartAudio();
-}
-
-clap_window HostWindow::createClapWindow()
-{
-  clap_window clapWindow;
-  clapWindow.api = CLAP_WINDOW_API_WIN32;
-  clapWindow.win32 = static_cast<void*>(m_hwnd);
-
-  return clapWindow;
-}
-
-void HostWindow::setPlugin(std::shared_ptr<Clap::Plugin> plugin)
-{
-  m_plugin = plugin;
-}
-
-void HostWindow::setupPlugin()
-{
   auto plugin{m_plugin->_plugin};
   auto pluginGui{m_plugin->_ext._gui};
 
@@ -158,11 +135,18 @@ void HostWindow::setupPlugin()
     // auto y = (static_cast<int>(mi.rcWork.bottom - mi.rcWork.top) - height) / 2;
     // ::SetWindowPos(m_hwnd, nullptr, x, y, 0, 0, SWP_NOSIZE);
 
-    auto clapWindow{createClapWindow()};
+    clap_window clapWindow;
+    clapWindow.api = CLAP_WINDOW_API_WIN32;
+    clapWindow.win32 = static_cast<void*>(m_hwnd);
+
     pluginGui->set_parent(plugin, &clapWindow);
 
     pluginGui->show(plugin);
   }
+
+  setWindowVisibility(true);
+
+  freeaudio::clap_wrapper::standalone::mainStartAudio();
 }
 
 bool HostWindow::setWindowVisibility(bool visible)
