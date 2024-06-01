@@ -301,7 +301,7 @@ static int64_t clapwrite(const clap_ostream *s, const void *buffer, uint64_t siz
 {
   auto ofs = static_cast<std::ofstream *>(s->ctx);
   ofs->write((const char *)buffer, size);
-  LOG << "defaults: ofs write - " << ofs << std::endl;
+
   return size;
 }
 
@@ -311,7 +311,6 @@ static int64_t clapread(const struct clap_istream *s, void *buffer, uint64_t siz
 
   // Oh this API is so terrible. I think this is right?
   ifs->read(static_cast<char *>(buffer), size);
-  LOG << "defaults: ifs read - " << ifs << std::endl;
   if (ifs->rdstate() == std::ios::goodbit || ifs->rdstate() == std::ios::eofbit) return ifs->gcount();
 
   if (ifs->rdstate() & std::ios::eofbit) return ifs->gcount();
