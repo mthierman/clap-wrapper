@@ -359,10 +359,7 @@ int HostWindow::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         try
         {
-          if (fs::exists(saveFile))
-          {
-            sah->saveStandaloneAndPluginSettings(saveFile.parent_path(), saveFile.filename());
-          }
+          sah->saveStandaloneAndPluginSettings(saveFile.parent_path(), saveFile.filename());
         }
         catch (const fs::filesystem_error& e)
         {
