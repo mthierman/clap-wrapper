@@ -51,26 +51,26 @@ HostWindow::HostWindow(int argc, char** argv)
 
   auto hMenu{::GetSystemMenu(m_hwnd, FALSE)};
 
-  MENUITEMINFOW seperator{sizeof(MENUITEMINFOW)};
+  ::MENUITEMINFOW seperator{sizeof(::MENUITEMINFOW)};
   seperator.fMask = MIIM_FTYPE;
   seperator.fType = MFT_SEPARATOR;
 
-  MENUITEMINFOW audioIn{sizeof(MENUITEMINFOW)};
+  ::MENUITEMINFOW audioIn{sizeof(::MENUITEMINFOW)};
   audioIn.fMask = MIIM_STRING | MIIM_ID;
   audioIn.wID = IDM_SETTINGS;
   audioIn.dwTypeData = const_cast<LPWSTR>(L"Audio/MIDI Settings");
 
-  MENUITEMINFOW saveState{sizeof(MENUITEMINFOW)};
+  ::MENUITEMINFOW saveState{sizeof(::MENUITEMINFOW)};
   saveState.fMask = MIIM_STRING | MIIM_ID;
   saveState.wID = IDM_SAVE_STATE;
   saveState.dwTypeData = const_cast<LPWSTR>(L"Save plugin state...");
 
-  MENUITEMINFOW loadState{sizeof(MENUITEMINFOW)};
+  ::MENUITEMINFOW loadState{sizeof(::MENUITEMINFOW)};
   loadState.fMask = MIIM_STRING | MIIM_ID;
   loadState.wID = IDM_LOAD_STATE;
   loadState.dwTypeData = const_cast<LPWSTR>(L"Load plugin state...");
 
-  MENUITEMINFOW resetState{sizeof(MENUITEMINFOW)};
+  ::MENUITEMINFOW resetState{sizeof(::MENUITEMINFOW)};
   resetState.fMask = MIIM_STRING | MIIM_ID;
   resetState.wID = IDM_RESET_STATE;
   resetState.dwTypeData = const_cast<LPWSTR>(L"Reset to default plugin state");
