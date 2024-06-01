@@ -44,7 +44,7 @@ int messageLoop();
 std::string narrow(std::wstring wstring);
 std::wstring widen(std::string string);
 void messageBox(std::string message);
-void errorBox(std::string message);
+void errorBox(std::initializer_list<std::string> args);
 ::HBRUSH loadBrushFromSystem(int name = BLACK_BRUSH);
 ::HCURSOR loadCursorFromSystem(LPSTR name = IDC_ARROW);
 ::HICON loadIconFromSystem(LPSTR name = IDI_APPLICATION);

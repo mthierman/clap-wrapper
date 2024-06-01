@@ -38,7 +38,7 @@ SettingsWindow::SettingsWindow()
 
   if (!atom)
   {
-    errorBox("Registering settings window failed");
+    errorBox({"Registering settings window failed"});
     ::ExitProcess(EXIT_FAILURE);
   }
 

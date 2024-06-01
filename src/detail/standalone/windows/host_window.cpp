@@ -42,7 +42,7 @@ HostWindow::HostWindow(int argc, char** argv)
 
   if (!atom)
   {
-    errorBox("Registering host window failed");
+    errorBox({"Registering host window failed"});
     ::ExitProcess(EXIT_FAILURE);
   }
 
@@ -122,7 +122,7 @@ void HostWindow::setupPlugin()
   {
     if (!pluginGui->is_api_supported(plugin, CLAP_WINDOW_API_WIN32, false))
     {
-      errorBox("CLAP_WINDOW_API_WIN32 is not supported");
+      errorBox({"CLAP_WINDOW_API_WIN32 is not supported"});
     }
 
     pluginGui->create(plugin, CLAP_WINDOW_API_WIN32, false);
@@ -374,40 +374,29 @@ int HostWindow::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
       std::vector<COMDLG_FILTERSPEC> fileTypes{{L"clapwrapper", L"*.clapwrapper"}};
       fileOpenDialog->SetFileTypes(fileTypes.size(), fileTypes.data());
 
-      FILEOPENDIALOGOPTIONS options;
-      fileOpenDialog->GetOptions(&options);
-      fileOpenDialog->SetOptions(options);
-
       fileOpenDialog->Show(nullptr);
 
-      wil::com_ptr<IShellItem> result;
-      fileOpenDialog->GetResult(&result);
+      wil::com_ptr<IShellItem> shellItem;
+      fileOpenDialog->GetResult(&shellItem);
 
-      wil::unique_cotaskmem_string resultPath;
-      result->GetDisplayName(SIGDN_FILESYSPATH, &resultPath);
+      wil::unique_cotaskmem_string result;
+      shellItem->GetDisplayName(SIGDN_FILESYSPATH, &result);
 
-      auto filePath{std::filesystem::path(narrow(resultPath.get()))};
+      auto saveFile{std::filesystem::path(result.get())};
 
-      LOG << filePath << std::endl;
+      LOG << saveFile << std::endl;
 
-      // auto settingsPath{freeaudio::clap_wrapper::standalone::getStandaloneSettingsPath()};
-
-      // if (settingsPath.has_value())
-      // {
-      //   try
-      //   {
-      //     auto loadPath{settingsPath.value() / plugin->desc->id};
-
-      //     if (fs::exists(loadPath / "settings.clapwrapper"))
-      //     {
-      //       sah->tryLoadStandaloneAndPluginSettings(loadPath, "settings.clapwrapper");
-      //     }
-      //   }
-      //   catch (const fs::filesystem_error& e)
-      //   {
-      //     ::MessageBoxW(nullptr, L"Unable to open file", nullptr, MB_OK | MB_ICONERROR);
-      //   }
-      // }
+      try
+      {
+        if (fs::exists(saveFile))
+        {
+          sah->tryLoadStandaloneAndPluginSettings(saveFile.parent_path(), saveFile.filename());
+        }
+      }
+      catch (const fs::filesystem_error& e)
+      {
+        errorBox({"Unable to load state: ", e.what()});
+      }
 
       return 0;
     }

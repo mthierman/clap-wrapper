@@ -92,8 +92,15 @@ void messageBox(std::string message)
   ::MessageBoxW(nullptr, widen(message).c_str(), nullptr, MB_OK | MB_ICONASTERISK);
 }
 
-void errorBox(std::string message)
+void errorBox(std::initializer_list<std::string> args)
 {
+  std::string message;
+
+  for (auto arg : args)
+  {
+    message.append(arg);
+  }
+
   ::MessageBoxW(nullptr, widen(message).c_str(), nullptr, MB_OK | MB_ICONHAND);
 }
 
