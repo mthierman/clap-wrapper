@@ -371,6 +371,7 @@ int HostWindow::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
       // https://github.com/microsoft/wil/wiki/RAII-resource-wrappers
 
       // https://github.com/0xC0000054/gmic-8bf/blob/12d2ccb87e473337c7921fda6adadd6192bb119d/src/win/FolderBrowserWin.cpp#L55
+      // https://github.com/0xC0000054/gmic-8bf/blob/12d2ccb87e473337c7921fda6adadd6192bb119d/src/win/ImageLoadDialogWin.cpp#L118
 
       // https://devblogs.microsoft.com/oldnewthing/20040520-00/?p=39243
       // https://learn.microsoft.com/en-us/windows/win32/learnwin32/initializing-the-com-library?redirectedfrom=MSDN
@@ -381,6 +382,10 @@ int HostWindow::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
       auto coUninitialize{wil::CoInitializeEx(COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE)};
 
       auto fileOpenDialog{wil::CoCreateInstance<IFileOpenDialog>(CLSID_FileOpenDialog)};
+
+      // https://learn.microsoft.com/en-us/windows/win32/api/shobjidl_core/nf-shobjidl_core-ifiledialog-setclientguid
+      // GUID guid;
+      // fileOpenDialog->SetClientGuid(guid);
 
       // https://learn.microsoft.com/en-us/windows/win32/api/shtypes/ns-shtypes-comdlg_filterspec
       // https://learn.microsoft.com/en-us/windows/win32/api/shobjidl_core/nf-shobjidl_core-ifiledialog-setfiletypes
@@ -395,6 +400,21 @@ int HostWindow::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
       fileOpenDialog->SetOptions(options);
 
       fileOpenDialog->Show(nullptr);
+
+      // https://learn.microsoft.com/en-us/windows/win32/api/shobjidl_core/nf-shobjidl_core-ifiledialog-getresult
+      // https://learn.microsoft.com/en-us/windows/win32/api/shobjidl_core/nn-shobjidl_core-ishellitem
+      // https://learn.microsoft.com/en-us/windows/win32/api/shobjidl_core/nf-shobjidl_core-ishellitem-getdisplayname
+      wil::com_ptr<IShellItem> result;
+      fileOpenDialog->GetResult(&result);
+
+      wil::unique_cotaskmem_string resultPath;
+      result->GetDisplayName(SIGDN_FILESYSPATH, &resultPath);
+
+      auto test = resultPath.get();
+      messageBox(narrow(test));
+
+      // https://learn.microsoft.com/en-us/windows/win32/api/shobjidl_core/ne-shobjidl_core-sigdn
+      LOG << "resultPath: " << narrow(resultPath.get()) << std::endl;
 
       // auto settingsPath{freeaudio::clap_wrapper::standalone::getStandaloneSettingsPath()};
 
