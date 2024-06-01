@@ -10,13 +10,7 @@ namespace freeaudio::clap_wrapper::standalone::windows
 int app(int argc, char* argv[])
 {
   HostWindow hostWindow(argc, argv);
-  hostWindow.setupPlugin();
-  hostWindow.setWindowVisibility(true);
 
-  freeaudio::clap_wrapper::standalone::mainStartAudio();
-
-  messageLoop();
-
-  return freeaudio::clap_wrapper::standalone::mainFinish();
+  return messageLoop();
 }
 }  // namespace freeaudio::clap_wrapper::standalone::windows

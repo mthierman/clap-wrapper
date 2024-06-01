@@ -28,7 +28,7 @@ const clap_plugin_entry* getClapPluginEntry()
   return entry;
 }
 
-void messageLoop()
+int messageLoop()
 {
   MSG msg{};
   int r{};
@@ -38,7 +38,7 @@ void messageLoop()
     if (r == -1)
     {
       errorBox("Error in message loop");
-      break;
+      return EXIT_FAILURE;
     }
 
     else
@@ -47,6 +47,8 @@ void messageLoop()
       ::DispatchMessageW(&msg);
     }
   }
+
+  return EXIT_SUCCESS;
 }
 
 std::string narrow(std::wstring wstring)

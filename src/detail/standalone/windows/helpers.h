@@ -40,7 +40,7 @@ int safe_size(T value)
 }
 
 const clap_plugin_entry* getClapPluginEntry();
-void messageLoop();
+int messageLoop();
 std::string narrow(std::wstring wstring);
 std::wstring widen(std::string string);
 void messageBox(std::string message);

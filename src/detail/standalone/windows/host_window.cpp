@@ -87,6 +87,12 @@ HostWindow::HostWindow(int argc, char** argv)
 
   m_standaloneHost->onRequestResize = [this](uint32_t width, uint32_t height)
   { return setWindowSize(width, height); };
+
+  setupPlugin();
+
+  setWindowVisibility(true);
+
+  freeaudio::clap_wrapper::standalone::mainStartAudio();
 }
 
 clap_window HostWindow::createClapWindow()
@@ -388,6 +394,8 @@ int HostWindow::onDestroy(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     pluginGui->destroy(plugin);
     m_plugin.reset();
   }
+
+  freeaudio::clap_wrapper::standalone::mainFinish();
 
   ::PostQuitMessage(0);
 
