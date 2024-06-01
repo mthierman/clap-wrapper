@@ -114,6 +114,9 @@ HostWindow::HostWindow(int argc, char** argv)
     // height = 1000;
     // pluginGui->adjust_size(plugin, &width, &height);
     // pluginGui->set_size(plugin, width, height);
+
+    // pluginGui->get_size(plugin, &width, &height);
+    // setWindowSize(width, height);
   }
   else
   {
@@ -121,11 +124,10 @@ HostWindow::HostWindow(int argc, char** argv)
     ::SetWindowLongPtrW(m_hwnd, GWL_STYLE,
                         ::GetWindowLongPtrW(m_hwnd, GWL_STYLE) & ~WS_OVERLAPPEDWINDOW | WS_OVERLAPPED |
                             WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
+
+    pluginGui->get_size(plugin, &width, &height);
+    setWindowSize(width, height);
   }
-
-  pluginGui->get_size(plugin, &width, &height);
-
-  setWindowSize(width, height);
 
   // Center the window, disabled because the dimensions can be larger than the display..
   // ::MONITORINFO mi{sizeof(::MONITORINFO)};
@@ -244,10 +246,6 @@ int HostWindow::onWindowPosChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 
       pluginGui->adjust_size(plugin, &width, &height);
       pluginGui->set_size(plugin, width, height);
-
-      // We can constrain aspect ratio like this, but it's very janky...
-      pluginGui->get_size(plugin, &width, &height);
-      setWindowSize(width, height);
     }
   }
 
@@ -256,44 +254,44 @@ int HostWindow::onWindowPosChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 
 int HostWindow::onKeyDown(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  auto plugin{m_plugin->_plugin};
-  auto pluginGui{m_plugin->_ext._gui};
+  // auto plugin{m_plugin->_plugin};
+  // auto pluginGui{m_plugin->_ext._gui};
 
-  switch (wParam)
-  {
-    case VK_F11:
-    {
-      if (pluginGui->can_resize(plugin))
-      {
-        static RECT pos{0, 0, 0, 0};
-        auto style{::GetWindowLongPtrW(m_hwnd, GWL_STYLE)};
+  // switch (wParam)
+  // {
+  //   case VK_F11:
+  //   {
+  //     if (pluginGui->can_resize(plugin))
+  //     {
+  //       static RECT pos{0, 0, 0, 0};
+  //       auto style{::GetWindowLongPtrW(m_hwnd, GWL_STYLE)};
 
-        if (style & WS_OVERLAPPEDWINDOW)
-        {
-          ::MONITORINFO mi{sizeof(mi)};
-          ::GetWindowRect(m_hwnd, &pos);
-          if (::GetMonitorInfoW(::MonitorFromWindow(m_hwnd, MONITOR_DEFAULTTONEAREST), &mi))
-          {
-            ::SetWindowLongPtrW(m_hwnd, GWL_STYLE, style & ~WS_OVERLAPPEDWINDOW);
-            ::SetWindowPos(m_hwnd, HWND_TOP, mi.rcMonitor.left, mi.rcMonitor.top,
-                           mi.rcMonitor.right - mi.rcMonitor.left,
-                           mi.rcMonitor.bottom - mi.rcMonitor.top, SWP_FRAMECHANGED);
-          }
-        }
+  //       if (style & WS_OVERLAPPEDWINDOW)
+  //       {
+  //         ::MONITORINFO mi{sizeof(mi)};
+  //         ::GetWindowRect(m_hwnd, &pos);
+  //         if (::GetMonitorInfoW(::MonitorFromWindow(m_hwnd, MONITOR_DEFAULTTONEAREST), &mi))
+  //         {
+  //           ::SetWindowLongPtrW(m_hwnd, GWL_STYLE, style & ~WS_OVERLAPPEDWINDOW);
+  //           ::SetWindowPos(m_hwnd, HWND_TOP, mi.rcMonitor.left, mi.rcMonitor.top,
+  //                          mi.rcMonitor.right - mi.rcMonitor.left,
+  //                          mi.rcMonitor.bottom - mi.rcMonitor.top, SWP_FRAMECHANGED);
+  //         }
+  //       }
 
-        else
-        {
-          ::SetWindowLongPtrW(m_hwnd, GWL_STYLE, style | WS_OVERLAPPEDWINDOW);
-          ::SetWindowPos(m_hwnd, nullptr, pos.left, pos.top, (pos.right - pos.left),
-                         (pos.bottom - pos.top), SWP_FRAMECHANGED);
-        }
-      }
+  //       else
+  //       {
+  //         ::SetWindowLongPtrW(m_hwnd, GWL_STYLE, style | WS_OVERLAPPEDWINDOW);
+  //         ::SetWindowPos(m_hwnd, nullptr, pos.left, pos.top, (pos.right - pos.left),
+  //                        (pos.bottom - pos.top), SWP_FRAMECHANGED);
+  //       }
+  //     }
 
-      break;
-    }
-    default:
-      return 0;
-  }
+  //     break;
+  //   }
+  //   default:
+  //     return 0;
+  // }
 
   return 0;
 }
