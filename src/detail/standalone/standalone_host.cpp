@@ -319,66 +319,12 @@ static int64_t clapread(const struct clap_istream *s, void *buffer, uint64_t siz
   return -1;
 }
 
-static int64_t clapwriteStringstream(const clap_ostream *s, const void *buffer, uint64_t size)
+bool StandaloneHost::saveDefaultPluginState(const fs::path &intoDir, const fs::path &withName)
 {
-  auto stringStream{static_cast<std::ostringstream *>(s->ctx)};
-  stringStream->seekp(0, std::ios::end);
-
-  stringStream->write(static_cast<const char *>(buffer), size);
-  LOG << "defaults: stringstream write - " << stringStream << std::endl;
-
-  return size;
-}
-
-static int64_t clapreadStringstream(const struct clap_istream *s, void *buffer, uint64_t size)
-{
-  auto stringStream{static_cast<std::istringstream *>(s->ctx)};
-  stringStream->seekg(0, std::ios::beg);
-
-  stringStream->read(static_cast<char *>(buffer), size);
-  LOG << "defaults: stringstream read - " << stringStream << std::endl;
-
-  if (stringStream->rdstate() & std::ios::eofbit) return stringStream->gcount();
-
-  return -1;
-}
-
-bool StandaloneHost::saveDefaultPluginState()
-{
-  std::ostringstream ofs{std::stringstream::out | std::stringstream::binary};
-  if (!clapPlugin || !clapPlugin->_ext._state)
-  {
-    return false;
-  }
-  clap_ostream cos{};
-  cos.ctx = &ofs;
-  cos.write = clapwriteStringstream;
-  clapPlugin->_ext._state->save(clapPlugin->_plugin, &cos);
-
-  return true;
-}
-
-bool StandaloneHost::loadDefaultPluginState()
-{
-  std::istringstream ifs{std::stringstream::in | std::stringstream::binary};
-  if (!clapPlugin || !clapPlugin->_ext._state)
-  {
-    return false;
-  }
-  clap_istream cis{};
-  cis.ctx = &ifs;
-  cis.read = clapreadStringstream;
-  clapPlugin->_ext._state->load(clapPlugin->_plugin, &cis);
-
-  return true;
-}
-
-bool StandaloneHost::saveDefaultPluginStateFile()
-{
-  std::ofstream ofs(defaultStateTempFile, std::ios::out | std::ios::binary);
+  std::ofstream ofs(intoDir / withName, std::ios::out | std::ios::binary);
   if (!ofs.is_open())
   {
-    LOG << "Unable to open for writing " << defaultStateTempFile.u8string() << std::endl;
+    LOG << "Unable to open for writing " << (intoDir / withName).u8string() << std::endl;
     return false;
   }
   if (!clapPlugin || !clapPlugin->_ext._state)
@@ -393,12 +339,12 @@ bool StandaloneHost::saveDefaultPluginStateFile()
   return true;
 }
 
-bool StandaloneHost::loadDefaultPluginStateFile()
+bool StandaloneHost::loadDefaultPluginState(const fs::path &intoDir, const fs::path &withName)
 {
-  std::ifstream ifs(defaultStateTempFile, std::ios::in | std::ios::binary);
+  std::ifstream ifs(intoDir / withName, std::ios::in | std::ios::binary);
   if (!ifs.is_open())
   {
-    LOG << "Unable to open for reading " << defaultStateTempFile.u8string() << std::endl;
+    LOG << "Unable to open for reading " << (intoDir / withName).u8string() << std::endl;
     return false;
   }
   if (!clapPlugin || !clapPlugin->_ext._state)

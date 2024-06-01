@@ -411,9 +411,8 @@ int HostWindow::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
     case IDM_RESET_STATE:
     {
-      //
-      m_standaloneHost->loadDefaultPluginState();
-      // m_standaloneHost->loadDefaultPluginStateFile();
+      m_standaloneHost->loadDefaultPluginState(fs::temp_directory_path(),
+                                               std::string(plugin->desc->id).append(".clapwrapper"));
 
       return 0;
     }

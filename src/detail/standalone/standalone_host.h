@@ -126,16 +126,8 @@ struct StandaloneHost : Clap::IHost
     TRACE;
   }
 
-  bool saveDefaultPluginState();
-  bool loadDefaultPluginState();
-  bool saveDefaultPluginStateFile();
-  bool loadDefaultPluginStateFile();
-  // std::stringstream defaultStateStringstream{std::stringstream::app | std::stringstream::in |
-  //                                            std::stringstream::out | std::stringstream::binary};
-  // std::stringstream defaultStateStringstream{std::ios::in | std::ios::out | std::ios::binary};
-  // static std::stringstream defaultStateStringstream;
-  fs::path defaultStateTempFile{
-      fs::path(fs::temp_directory_path() / OUTPUT_NAME).string().append(".clapwrapper")};
+  bool saveDefaultPluginState(const fs::path &intoDir, const fs::path &withName);
+  bool loadDefaultPluginState(const fs::path &intoDir, const fs::path &withName);
 
   bool saveStandaloneAndPluginSettings(const fs::path &intoDir, const fs::path &withName);
   bool tryLoadStandaloneAndPluginSettings(const fs::path &fromDir, const fs::path &withName);
