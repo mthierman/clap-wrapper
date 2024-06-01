@@ -26,8 +26,8 @@ struct HostWindow
 
   std::pair<int, char**> m_args;
   const clap_plugin_entry* m_entry;
-  freeaudio::clap_wrapper::standalone::StandaloneHost* m_standaloneHost;
   std::shared_ptr<Clap::Plugin> m_plugin;
+  freeaudio::clap_wrapper::standalone::StandaloneHost* m_standaloneHost;
   HWND m_hwnd;
   SettingsWindow m_settingsWindow;
   std::vector<COMDLG_FILTERSPEC> m_fileTypes{{L"clapwrapper", L"*.clapwrapper"}};

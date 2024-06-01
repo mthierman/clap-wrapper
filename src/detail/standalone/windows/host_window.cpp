@@ -13,9 +13,9 @@ namespace freeaudio::clap_wrapper::standalone::windows
 HostWindow::HostWindow(int argc, char** argv)
   : m_args{std::make_pair(argc, argv)}
   , m_entry{getClapPluginEntry()}
-  , m_standaloneHost{freeaudio::clap_wrapper::standalone::getStandaloneHost()}
   , m_plugin{freeaudio::clap_wrapper::standalone::mainCreatePlugin(m_entry, PLUGIN_ID, PLUGIN_INDEX,
                                                                    m_args.first, m_args.second)}
+  , m_standaloneHost{freeaudio::clap_wrapper::standalone::getStandaloneHost()}
 {
   auto windowName{widen(OUTPUT_NAME)};
   auto hInstance{::GetModuleHandleW(nullptr)};
