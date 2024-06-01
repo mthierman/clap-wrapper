@@ -37,13 +37,7 @@ int main(int argc, char **argv)
   auto clapPlugin{
       freeaudio::clap_wrapper::standalone::mainCreatePlugin(entry, PLUGIN_ID, PLUGIN_INDEX, argc, argv)};
 
-  freeaudio::clap_wrapper::standalone::mainStartAudio();
-
   freeaudio::clap_wrapper::standalone::windows::HostWindow hostWindow{clapPlugin};
-
-  // hostWindow.setupPlugin();
-
-  hostWindow.setWindowVisibility(true);
 
   return freeaudio::clap_wrapper::standalone::windows::messageLoop();
 }

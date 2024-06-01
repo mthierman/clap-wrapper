@@ -132,6 +132,8 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin) : m_plugin{clap
   pluginGui->show(plugin);
 
   setWindowVisibility(true);
+
+  freeaudio::clap_wrapper::standalone::mainStartAudio();
 }
 
 bool HostWindow::setWindowVisibility(bool visible)
