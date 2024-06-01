@@ -82,10 +82,8 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin) : m_plugin{clap
     ::InsertMenuItemW(hMenu, 8, TRUE, &seperator);
   }
 
-  auto standaloneHost{freeaudio::clap_wrapper::standalone::getStandaloneHost()};
-
-  standaloneHost->onRequestResize = [this](uint32_t width, uint32_t height)
-  { return setWindowSize(width, height); };
+  freeaudio::clap_wrapper::standalone::getStandaloneHost()->onRequestResize =
+      [this](uint32_t width, uint32_t height) { return setWindowSize(width, height); };
 
   auto plugin{m_plugin->_plugin};
   auto pluginGui{m_plugin->_ext._gui};
@@ -285,8 +283,6 @@ int HostWindow::onKeyDown(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 int HostWindow::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  auto sah{freeaudio::clap_wrapper::standalone::getStandaloneHost()};
-
   auto plugin{m_plugin->_plugin};
   auto pluginGui{m_plugin->_ext._gui};
   auto pluginState{m_plugin->_ext._state};
@@ -325,7 +321,8 @@ int HostWindow::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         try
         {
-          sah->saveStandaloneAndPluginSettings(saveFile.parent_path(), saveFile.filename());
+          freeaudio::clap_wrapper::standalone::getStandaloneHost()->saveStandaloneAndPluginSettings(
+              saveFile.parent_path(), saveFile.filename());
         }
         catch (const fs::filesystem_error& e)
         {
@@ -363,7 +360,8 @@ int HostWindow::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         {
           if (fs::exists(saveFile))
           {
-            sah->tryLoadStandaloneAndPluginSettings(saveFile.parent_path(), saveFile.filename());
+            freeaudio::clap_wrapper::standalone::getStandaloneHost()->tryLoadStandaloneAndPluginSettings(
+                saveFile.parent_path(), saveFile.filename());
           }
         }
         catch (const fs::filesystem_error& e)
@@ -377,9 +375,8 @@ int HostWindow::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
     case IDM_RESET_STATE:
     {
-      auto standaloneHost{freeaudio::clap_wrapper::standalone::getStandaloneHost()};
-      standaloneHost->loadDefaultPluginState(fs::temp_directory_path(),
-                                             std::string(plugin->desc->id).append(".clapwrapper"));
+      freeaudio::clap_wrapper::standalone::getStandaloneHost()->loadDefaultPluginState(
+          fs::temp_directory_path(), std::string(plugin->desc->id).append(".clapwrapper"));
 
       return 0;
     }
