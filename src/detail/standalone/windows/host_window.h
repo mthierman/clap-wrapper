@@ -12,8 +12,6 @@ struct HostWindow
 {
   HostWindow();
 
-  // const clap_plugin_entry* getClapPluginEntry();
-
   void setupPlugin();
 
   bool setWindowVisibility(bool visible);
