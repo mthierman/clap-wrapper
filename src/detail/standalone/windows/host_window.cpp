@@ -58,7 +58,7 @@ HostWindow::HostWindow(int argc, char** argv)
   MENUITEMINFOW audioIn{sizeof(MENUITEMINFOW)};
   audioIn.fMask = MIIM_STRING | MIIM_ID;
   audioIn.wID = IDM_SETTINGS;
-  audioIn.dwTypeData = const_cast<LPWSTR>(L"Settings");
+  audioIn.dwTypeData = const_cast<LPWSTR>(L"Audio/MIDI Settings");
 
   MENUITEMINFOW saveState{sizeof(MENUITEMINFOW)};
   saveState.fMask = MIIM_STRING | MIIM_ID;
