@@ -125,8 +125,7 @@ void HostWindow::setupPlugin()
 
     pluginGui->create(plugin, CLAP_WINDOW_API_WIN32, false);
 
-    pluginGui->set_scale(plugin, static_cast<double>(::GetDpiForWindow(m_hwnd)) /
-                                     static_cast<double>(USER_DEFAULT_SCREEN_DPI));
+    setPluginScale();
 
     uint32_t width{0};
     uint32_t height{0};
@@ -201,11 +200,25 @@ bool HostWindow::setWindowSize(uint32_t width, uint32_t height)
   }
 }
 
+bool HostWindow::setPluginScale()
+{
+  auto plugin{m_plugin->_plugin};
+  auto pluginGui{m_plugin->_ext._gui};
+
+  if (plugin && pluginGui)
+  {
+    return pluginGui->set_scale(plugin, static_cast<double>(::GetDpiForWindow(m_hwnd)) /
+                                            static_cast<double>(USER_DEFAULT_SCREEN_DPI));
+  }
+
+  return false;
+}
+
 LRESULT CALLBACK HostWindow::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   auto self{instance_from_wnd_proc<HostWindow>(hWnd, uMsg, lParam)};
 
-  if (self && self->m_plugin)
+  if (self)
   {
     switch (uMsg)
     {
@@ -227,14 +240,7 @@ LRESULT CALLBACK HostWindow::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 
 int HostWindow::onDpiChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  auto plugin{m_plugin->_plugin};
-  auto pluginGui{m_plugin->_ext._gui};
-
-  if (plugin && pluginGui)
-  {
-    pluginGui->set_scale(plugin, static_cast<double>(::GetDpiForWindow(m_hwnd)) /
-                                     static_cast<double>(USER_DEFAULT_SCREEN_DPI));
-  }
+  setPluginScale();
 
   return 0;
 }
