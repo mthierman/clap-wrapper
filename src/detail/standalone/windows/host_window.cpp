@@ -10,12 +10,7 @@
 
 namespace freeaudio::clap_wrapper::standalone::windows
 {
-HostWindow::HostWindow(int argc, char** argv)
-  : m_args{std::make_pair(argc, argv)}
-  , m_entry{getClapPluginEntry()}
-  , m_plugin{freeaudio::clap_wrapper::standalone::mainCreatePlugin(m_entry, PLUGIN_ID, PLUGIN_INDEX,
-                                                                   m_args.first, m_args.second)}
-  , m_standaloneHost{freeaudio::clap_wrapper::standalone::getStandaloneHost()}
+HostWindow::HostWindow()
 {
   auto windowName{widen(OUTPUT_NAME)};
   auto hInstance{::GetModuleHandleW(nullptr)};
@@ -86,8 +81,13 @@ HostWindow::HostWindow(int argc, char** argv)
     ::InsertMenuItemW(hMenu, 7, TRUE, &resetState);
     ::InsertMenuItemW(hMenu, 8, TRUE, &seperator);
   }
+}
 
-  m_standaloneHost->onRequestResize = [this](uint32_t width, uint32_t height)
+void HostWindow::setupPlugin()
+{
+  auto standaloneHost{freeaudio::clap_wrapper::standalone::getStandaloneHost()};
+
+  standaloneHost->onRequestResize = [this](uint32_t width, uint32_t height)
   { return setWindowSize(width, height); };
 
   auto plugin{m_plugin->_plugin};
@@ -135,35 +135,33 @@ HostWindow::HostWindow(int argc, char** argv)
   pluginGui->show(plugin);
 
   setWindowVisibility(true);
-
-  freeaudio::clap_wrapper::standalone::mainStartAudio();
 }
 
-const clap_plugin_entry* HostWindow::getClapPluginEntry()
-{
-  static const clap_plugin_entry* entry{nullptr};
-  static Clap::Library library;
+// const clap_plugin_entry* HostWindow::getClapPluginEntry()
+// {
+//   static const clap_plugin_entry* entry{nullptr};
+//   static Clap::Library library;
 
-#ifdef STATICALLY_LINKED_CLAP_ENTRY
-  static extern const clap_plugin_entry clap_entry;
-  entry = &clap_entry;
-#else
-  auto clapFilename{std::string(HOSTED_CLAP_NAME).append(".clap")};
+// #ifdef STATICALLY_LINKED_CLAP_ENTRY
+//   static extern const clap_plugin_entry clap_entry;
+//   entry = &clap_entry;
+// #else
+//   auto clapFilename{std::string(HOSTED_CLAP_NAME).append(".clap")};
 
-  for (const auto& searchPath : Clap::getValidCLAPSearchPaths())
-  {
-    auto clapPath{searchPath / clapFilename};
+//   for (const auto& searchPath : Clap::getValidCLAPSearchPaths())
+//   {
+//     auto clapPath{searchPath / clapFilename};
 
-    if (fs::exists(clapPath) && !entry)
-    {
-      library.load(clapPath);
-      entry = library._pluginEntry;
-    }
-  }
-#endif
+//     if (fs::exists(clapPath) && !entry)
+//     {
+//       library.load(clapPath);
+//       entry = library._pluginEntry;
+//     }
+//   }
+// #endif
 
-  return entry;
-}
+//   return entry;
+// }
 
 bool HostWindow::setWindowVisibility(bool visible)
 {
@@ -406,8 +404,9 @@ int HostWindow::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
     case IDM_RESET_STATE:
     {
-      m_standaloneHost->loadDefaultPluginState(fs::temp_directory_path(),
-                                               std::string(plugin->desc->id).append(".clapwrapper"));
+      auto standaloneHost{freeaudio::clap_wrapper::standalone::getStandaloneHost()};
+      standaloneHost->loadDefaultPluginState(fs::temp_directory_path(),
+                                             std::string(plugin->desc->id).append(".clapwrapper"));
 
       return 0;
     }

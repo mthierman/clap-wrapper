@@ -10,9 +10,11 @@ namespace freeaudio::clap_wrapper::standalone::windows
 {
 struct HostWindow
 {
-  HostWindow(int argc, char** argv);
+  HostWindow();
 
-  const clap_plugin_entry* getClapPluginEntry();
+  // const clap_plugin_entry* getClapPluginEntry();
+
+  void setupPlugin();
 
   bool setWindowVisibility(bool visible);
   bool getWindowVisibility();
@@ -26,8 +28,6 @@ struct HostWindow
   int onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
   int onDestroy(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-  std::pair<int, char**> m_args;
-  const clap_plugin_entry* m_entry;
   std::shared_ptr<Clap::Plugin> m_plugin;
   freeaudio::clap_wrapper::standalone::StandaloneHost* m_standaloneHost;
   HWND m_hwnd;
