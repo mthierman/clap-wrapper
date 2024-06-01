@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Windows.h>
+#include <ShlObj.h>
 
 #include "detail/standalone/standalone_host.h"
 #include "settings_window.h"
@@ -33,5 +34,6 @@ struct HostWindow
   std::shared_ptr<Clap::Plugin> m_plugin;
   HWND m_hwnd;
   SettingsWindow m_settingsWindow;
+  std::vector<COMDLG_FILTERSPEC> m_fileTypes{{L"clapwrapper", L"*.clapwrapper"}};
 };
 }  // namespace freeaudio::clap_wrapper::standalone::windows

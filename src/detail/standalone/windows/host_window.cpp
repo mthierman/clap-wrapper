@@ -1,4 +1,3 @@
-#include <ShlObj_core.h>
 #include <wil/com.h>
 #include "detail/standalone/entry.h"
 #include "host_window.h"
@@ -335,25 +334,14 @@ int HostWindow::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
       return 0;
     }
 
-      // https://www.codeproject.com/Articles/16678/Vista-Goodies-in-C-Using-the-New-Vista-File-Dialog
-      // https://learn.microsoft.com/en-us/windows/win32/shell/common-file-dialog
-      // https://github.com/microsoft/Windows-classic-samples/tree/main/Samples/Win7Samples/winui/shell/appplatform/commonfiledialog
-      // https://github.com/microsoft/Windows-classic-samples/tree/main/Samples/Win7Samples/winui/shell/appplatform/CommonFileDialogModes
-      // https://learn.microsoft.com/en-us/windows/win32/dlgbox/using-common-dialog-boxes#opening-a-file
-      // https://learn.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-iid_ppv_args
-      // https://learn.microsoft.com/en-us/windows/win32/learnwin32/example--the-open-dialog-box
-
     case IDM_SAVE_STATE:
     {
       auto coUninitialize{wil::CoInitializeEx(COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE)};
 
-      // https://github.com/0xC0000054/gmic-8bf/blob/12d2ccb87e473337c7921fda6adadd6192bb119d/src/win/ImageSaveDialogWin.cpp#L73
       auto fileSaveDialog{wil::CoCreateInstance<IFileSaveDialog>(CLSID_FileSaveDialog)};
 
-      std::vector<COMDLG_FILTERSPEC> fileTypes{{L"clapwrapper", L"*.clapwrapper"}};
-      // https://learn.microsoft.com/en-us/windows/win32/api/shobjidl_core/nf-shobjidl_core-ifiledialog-setdefaultextension
-      fileSaveDialog->SetDefaultExtension(fileTypes.at(0).pszName);
-      fileSaveDialog->SetFileTypes(fileTypes.size(), fileTypes.data());
+      fileSaveDialog->SetDefaultExtension(m_fileTypes.at(0).pszName);
+      fileSaveDialog->SetFileTypes(m_fileTypes.size(), m_fileTypes.data());
 
       fileSaveDialog->Show(m_hwnd);
 
@@ -391,8 +379,8 @@ int HostWindow::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
       auto fileOpenDialog{wil::CoCreateInstance<IFileOpenDialog>(CLSID_FileOpenDialog)};
 
-      std::vector<COMDLG_FILTERSPEC> fileTypes{{L"clapwrapper", L"*.clapwrapper"}};
-      fileOpenDialog->SetFileTypes(fileTypes.size(), fileTypes.data());
+      fileOpenDialog->SetDefaultExtension(m_fileTypes.at(0).pszName);
+      fileOpenDialog->SetFileTypes(m_fileTypes.size(), m_fileTypes.data());
 
       fileOpenDialog->Show(m_hwnd);
 
