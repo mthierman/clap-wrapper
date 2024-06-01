@@ -10,7 +10,7 @@
 
 namespace freeaudio::clap_wrapper::standalone::windows
 {
-HostWindow::HostWindow()
+HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> plugin) : m_plugin{plugin}
 {
   auto windowName{widen(OUTPUT_NAME)};
   auto hInstance{::GetModuleHandleW(nullptr)};

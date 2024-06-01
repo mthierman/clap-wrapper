@@ -34,14 +34,12 @@ int main(int argc, char **argv)
     return 3;
   }
 
-  auto plugin{freeaudio::clap_wrapper::standalone::mainCreatePlugin(entry, PLUGIN_ID, PLUGIN_INDEX, argc,
-                                                                    (char **)argv)};
+  auto plugin{
+      freeaudio::clap_wrapper::standalone::mainCreatePlugin(entry, PLUGIN_ID, PLUGIN_INDEX, argc, argv)};
 
   freeaudio::clap_wrapper::standalone::mainStartAudio();
 
-  freeaudio::clap_wrapper::standalone::windows::HostWindow hostWindow;
-
-  hostWindow.m_plugin = plugin;
+  freeaudio::clap_wrapper::standalone::windows::HostWindow hostWindow{plugin};
 
   hostWindow.setupPlugin();
 

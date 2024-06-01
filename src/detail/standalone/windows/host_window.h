@@ -10,7 +10,7 @@ namespace freeaudio::clap_wrapper::standalone::windows
 {
 struct HostWindow
 {
-  HostWindow();
+  HostWindow(std::shared_ptr<Clap::Plugin> plugin);
 
   void setupPlugin();
 
