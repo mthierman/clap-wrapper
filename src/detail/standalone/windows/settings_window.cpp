@@ -45,16 +45,15 @@ SettingsWindow::SettingsWindow()
   ::CreateWindowExW(0, windowName.c_str(), windowName.c_str(), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
                     CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, nullptr, nullptr, hInstance, this);
 
-  ::MONITORINFO mi{sizeof(::MONITORINFO)};
-  ::GetMonitorInfoA(::MonitorFromWindow(m_hwnd, MONITOR_DEFAULTTONEAREST), &mi);
+  // ::MONITORINFO mi{sizeof(::MONITORINFO)};
+  // ::GetMonitorInfoA(::MonitorFromWindow(m_hwnd, MONITOR_DEFAULTTONEAREST), &mi);
+  // int width{600};
+  // int height{400};
+  // auto x = (static_cast<int>(mi.rcWork.right - mi.rcWork.left) - width) / 2;
+  // auto y = (static_cast<int>(mi.rcWork.bottom - mi.rcWork.top) - height) / 2;
+  // ::SetWindowPos(m_hwnd, nullptr, x, y, width, height, 0);
 
-  int width{600};
-  int height{400};
-
-  auto x = (static_cast<int>(mi.rcWork.right - mi.rcWork.left) - width) / 2;
-  auto y = (static_cast<int>(mi.rcWork.bottom - mi.rcWork.top) - height) / 2;
-
-  ::SetWindowPos(m_hwnd, nullptr, x, y, width, height, 0);
+  setWindowVisibility(false);
 }
 
 bool SettingsWindow::setWindowVisibility(bool visible)
