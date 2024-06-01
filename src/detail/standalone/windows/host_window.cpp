@@ -103,8 +103,8 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin) : m_plugin{clap
 
   if (pluginGui->can_resize(plugin))
   {
-    // if resizable and has known size from previous session:
-    // We should load size here, width = previousWidth, height = previousHeight instead of hardcoded values:
+    // We can restore size here
+
     // width = previousWidth();
     // height = previousHeight();
     // pluginGui->adjust_size(plugin, &width, &height);
@@ -195,8 +195,6 @@ LRESULT CALLBACK HostWindow::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
         return self->onDpiChanged(hWnd, uMsg, wParam, lParam);
       case WM_WINDOWPOSCHANGED:
         return self->onWindowPosChanged(hWnd, uMsg, wParam, lParam);
-      case WM_KEYDOWN:
-        return self->onKeyDown(hWnd, uMsg, wParam, lParam);
       case WM_SYSCOMMAND:
         return self->onSysCommand(hWnd, uMsg, wParam, lParam);
       case WM_DESTROY:
@@ -233,50 +231,6 @@ int HostWindow::onWindowPosChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
       pluginGui->set_size(plugin, width, height);
     }
   }
-
-  return 0;
-}
-
-int HostWindow::onKeyDown(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-  // auto plugin{m_plugin->_plugin};
-  // auto pluginGui{m_plugin->_ext._gui};
-
-  // switch (wParam)
-  // {
-  //   case VK_F11:
-  //   {
-  //     if (pluginGui->can_resize(plugin))
-  //     {
-  //       static RECT pos{0, 0, 0, 0};
-  //       auto style{::GetWindowLongPtrW(m_hwnd, GWL_STYLE)};
-
-  //       if (style & WS_OVERLAPPEDWINDOW)
-  //       {
-  //         ::MONITORINFO mi{sizeof(mi)};
-  //         ::GetWindowRect(m_hwnd, &pos);
-  //         if (::GetMonitorInfoW(::MonitorFromWindow(m_hwnd, MONITOR_DEFAULTTONEAREST), &mi))
-  //         {
-  //           ::SetWindowLongPtrW(m_hwnd, GWL_STYLE, style & ~WS_OVERLAPPEDWINDOW);
-  //           ::SetWindowPos(m_hwnd, HWND_TOP, mi.rcMonitor.left, mi.rcMonitor.top,
-  //                          mi.rcMonitor.right - mi.rcMonitor.left,
-  //                          mi.rcMonitor.bottom - mi.rcMonitor.top, SWP_FRAMECHANGED);
-  //         }
-  //       }
-
-  //       else
-  //       {
-  //         ::SetWindowLongPtrW(m_hwnd, GWL_STYLE, style | WS_OVERLAPPEDWINDOW);
-  //         ::SetWindowPos(m_hwnd, nullptr, pos.left, pos.top, (pos.right - pos.left),
-  //                        (pos.bottom - pos.top), SWP_FRAMECHANGED);
-  //       }
-  //     }
-
-  //     break;
-  //   }
-  //   default:
-  //     return 0;
-  // }
 
   return 0;
 }
