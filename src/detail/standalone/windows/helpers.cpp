@@ -37,7 +37,6 @@ int messageLoop()
   {
     if (r == -1)
     {
-      errorBox("Error in message loop");
       return EXIT_FAILURE;
     }
 
