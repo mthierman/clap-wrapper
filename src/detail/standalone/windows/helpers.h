@@ -39,7 +39,6 @@ int safe_size(T value)
   return static_cast<U>(value);
 }
 
-const clap_plugin_entry* getClapPluginEntry();
 int messageLoop();
 std::string narrow(std::wstring wstring);
 std::wstring widen(std::string string);
