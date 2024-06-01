@@ -301,7 +301,7 @@ static int64_t clapwrite(const clap_ostream *s, const void *buffer, uint64_t siz
 {
   auto ofs = static_cast<std::ofstream *>(s->ctx);
   ofs->write((const char *)buffer, size);
-  LOG << "defaults: ofs write - " << ofs->rdbuf() << std::endl;
+  LOG << "defaults: ofs write - " << ofs << std::endl;
   return size;
 }
 
@@ -321,36 +321,37 @@ static int64_t clapread(const struct clap_istream *s, void *buffer, uint64_t siz
 
 static int64_t clapwriteStringstream(const clap_ostream *s, const void *buffer, uint64_t size)
 {
-  auto stringStream{static_cast<std::stringstream *>(s->ctx)};
+  auto stringStream{static_cast<std::ostringstream *>(s->ctx)};
   stringStream->seekp(0, std::ios::end);
 
-  stringStream->write(reinterpret_cast<const char *>(buffer), size);
-  LOG << "defaults: stringstream write - " << stringStream->str() << std::endl;
+  stringStream->write(static_cast<const char *>(buffer), size);
+  LOG << "defaults: stringstream write - " << stringStream << std::endl;
 
   return size;
 }
 
 static int64_t clapreadStringstream(const struct clap_istream *s, void *buffer, uint64_t size)
 {
-  auto stringStream{static_cast<std::stringstream *>(s->ctx)};
+  auto stringStream{static_cast<std::istringstream *>(s->ctx)};
   stringStream->seekg(0, std::ios::beg);
 
-  stringStream->read(reinterpret_cast<char *>(buffer), size);
+  stringStream->read(static_cast<char *>(buffer), size);
   LOG << "defaults: stringstream read - " << stringStream << std::endl;
 
-  // if (stringStream->rdstate() & std::ios::eofbit) return stringStream->gcount();
+  if (stringStream->rdstate() & std::ios::eofbit) return stringStream->gcount();
 
   return -1;
 }
 
 bool StandaloneHost::saveDefaultPluginState()
 {
+  std::ostringstream ofs{std::stringstream::out | std::stringstream::binary};
   if (!clapPlugin || !clapPlugin->_ext._state)
   {
     return false;
   }
   clap_ostream cos{};
-  cos.ctx = &defaultStateStringstream;
+  cos.ctx = &ofs;
   cos.write = clapwriteStringstream;
   clapPlugin->_ext._state->save(clapPlugin->_plugin, &cos);
 
@@ -359,12 +360,13 @@ bool StandaloneHost::saveDefaultPluginState()
 
 bool StandaloneHost::loadDefaultPluginState()
 {
+  std::istringstream ifs{std::stringstream::in | std::stringstream::binary};
   if (!clapPlugin || !clapPlugin->_ext._state)
   {
     return false;
   }
   clap_istream cis{};
-  cis.ctx = &defaultStateStringstream;
+  cis.ctx = &ifs;
   cis.read = clapreadStringstream;
   clapPlugin->_ext._state->load(clapPlugin->_plugin, &cis);
 

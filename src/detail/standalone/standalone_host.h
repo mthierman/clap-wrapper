@@ -130,10 +130,10 @@ struct StandaloneHost : Clap::IHost
   bool loadDefaultPluginState();
   bool saveDefaultPluginStateFile();
   bool loadDefaultPluginStateFile();
-  std::stringstream defaultStateStringstream{std::stringstream::app | std::stringstream::in |
-                                             std::stringstream::out | std::stringstream::binary};
+  // std::stringstream defaultStateStringstream{std::stringstream::app | std::stringstream::in |
+  //                                            std::stringstream::out | std::stringstream::binary};
   // std::stringstream defaultStateStringstream{std::ios::in | std::ios::out | std::ios::binary};
-  // std::stringstream defaultStateStringstream;
+  // static std::stringstream defaultStateStringstream;
   fs::path defaultStateTempFile{
       fs::path(fs::temp_directory_path() / OUTPUT_NAME).string().append(".clapwrapper")};
 
