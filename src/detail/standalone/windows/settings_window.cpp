@@ -28,7 +28,7 @@ SettingsWindow::SettingsWindow()
   wcex.style = 0;
   wcex.cbClsExtra = 0;
   wcex.cbWndExtra = sizeof(intptr_t);
-  wcex.hInstance = ::GetModuleHandleW(nullptr);
+  wcex.hInstance = hInstance;
   wcex.hbrBackground = brushFromSystem;
   wcex.hCursor = cursorFromSystem;
   wcex.hIcon = iconFromResource ? iconFromResource : iconFromSystem;
@@ -37,8 +37,7 @@ SettingsWindow::SettingsWindow()
   ::RegisterClassExW(&wcex);
 
   ::CreateWindowExW(0, windowName.c_str(), windowName.c_str(), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
-                    CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, nullptr, nullptr,
-                    ::GetModuleHandleW(nullptr), this);
+                    CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, nullptr, nullptr, hInstance, this);
 
   ::MONITORINFO mi{sizeof(::MONITORINFO)};
   ::GetMonitorInfoA(::MonitorFromWindow(m_hwnd, MONITOR_DEFAULTTONEAREST), &mi);
