@@ -412,7 +412,8 @@ int HostWindow::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case IDM_RESET_STATE:
     {
       //
-      m_standaloneHost->restoreDefaultPluginState();
+      m_standaloneHost->loadDefaultPluginState();
+      // m_standaloneHost->loadDefaultPluginStateFile();
 
       return 0;
     }
