@@ -347,26 +347,40 @@ int HostWindow::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
       auto coUninitialize{wil::CoInitializeEx(COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE)};
 
+      // https://github.com/0xC0000054/gmic-8bf/blob/12d2ccb87e473337c7921fda6adadd6192bb119d/src/win/ImageSaveDialogWin.cpp#L73
       auto fileSaveDialog{wil::CoCreateInstance<IFileSaveDialog>(CLSID_FileSaveDialog)};
 
-      fileSaveDialog->Show(nullptr);
+      std::vector<COMDLG_FILTERSPEC> fileTypes{{L"clapwrapper", L"*.clapwrapper"}};
+      // https://learn.microsoft.com/en-us/windows/win32/api/shobjidl_core/nf-shobjidl_core-ifiledialog-setdefaultextension
+      fileSaveDialog->SetDefaultExtension(fileTypes.at(0).pszName);
+      fileSaveDialog->SetFileTypes(fileTypes.size(), fileTypes.data());
 
-      // auto settingsPath{freeaudio::clap_wrapper::standalone::getStandaloneSettingsPath()};
+      fileSaveDialog->Show(m_hwnd);
 
-      // if (settingsPath.has_value())
-      // {
-      //   try
-      //   {
-      //     auto savePath{settingsPath.value() / plugin->desc->id};
+      wil::com_ptr<IShellItem> shellItem;
+      auto hr{fileSaveDialog->GetResult(&shellItem)};
 
-      //     fs::create_directories(savePath);
-      //     sah->saveStandaloneAndPluginSettings(savePath, "settings.clapwrapper");
-      //   }
-      //   catch (const fs::filesystem_error& e)
-      //   {
-      //     ::MessageBoxW(nullptr, L"Unable to save file", nullptr, MB_OK | MB_ICONERROR);
-      //   }
-      // }
+      if (SUCCEEDED(hr))
+      {
+        wil::unique_cotaskmem_string result;
+        shellItem->GetDisplayName(SIGDN_FILESYSPATH, &result);
+
+        auto saveFile{std::filesystem::path(result.get())};
+
+        LOG << saveFile << std::endl;
+
+        try
+        {
+          if (fs::exists(saveFile))
+          {
+            sah->saveStandaloneAndPluginSettings(saveFile.parent_path(), saveFile.filename());
+          }
+        }
+        catch (const fs::filesystem_error& e)
+        {
+          errorBox({"Unable to save state: ", e.what()});
+        }
+      }
 
       return 0;
     }
