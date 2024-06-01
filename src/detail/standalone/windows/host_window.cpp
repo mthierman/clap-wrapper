@@ -63,17 +63,17 @@ HostWindow::HostWindow(int argc, char** argv)
   MENUITEMINFOW saveState{sizeof(MENUITEMINFOW)};
   saveState.fMask = MIIM_STRING | MIIM_ID;
   saveState.wID = IDM_SAVE_STATE;
-  saveState.dwTypeData = const_cast<LPWSTR>(L"Save state...");
+  saveState.dwTypeData = const_cast<LPWSTR>(L"Save plugin state...");
 
   MENUITEMINFOW loadState{sizeof(MENUITEMINFOW)};
   loadState.fMask = MIIM_STRING | MIIM_ID;
   loadState.wID = IDM_LOAD_STATE;
-  loadState.dwTypeData = const_cast<LPWSTR>(L"Load state...");
+  loadState.dwTypeData = const_cast<LPWSTR>(L"Load plugin state...");
 
   MENUITEMINFOW resetState{sizeof(MENUITEMINFOW)};
   resetState.fMask = MIIM_STRING | MIIM_ID;
   resetState.wID = IDM_RESET_STATE;
-  resetState.dwTypeData = const_cast<LPWSTR>(L"Reset state...");
+  resetState.dwTypeData = const_cast<LPWSTR>(L"Reset to default plugin state");
 
   if (hMenu != INVALID_HANDLE_VALUE)
   {
@@ -82,8 +82,9 @@ HostWindow::HostWindow(int argc, char** argv)
     ::InsertMenuItemW(hMenu, 3, TRUE, &seperator);
     ::InsertMenuItemW(hMenu, 4, TRUE, &saveState);
     ::InsertMenuItemW(hMenu, 5, TRUE, &loadState);
-    ::InsertMenuItemW(hMenu, 6, TRUE, &resetState);
-    ::InsertMenuItemW(hMenu, 7, TRUE, &seperator);
+    ::InsertMenuItemW(hMenu, 6, TRUE, &seperator);
+    ::InsertMenuItemW(hMenu, 7, TRUE, &resetState);
+    ::InsertMenuItemW(hMenu, 8, TRUE, &seperator);
   }
 
   // ::EnableMenuItem(hMenu, IDM_RESET_STATE, MF_DISABLED);
@@ -265,8 +266,8 @@ int HostWindow::onWindowPosChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
       pluginGui->set_size(plugin, width, height);
 
       // We can constrain aspect ratio like this, but it's very janky...
-      // pluginGui->get_size(plugin, &width, &height);
-      // setWindowSize(width, height);
+      pluginGui->get_size(plugin, &width, &height);
+      setWindowSize(width, height);
     }
   }
 
