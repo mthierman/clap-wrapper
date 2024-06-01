@@ -28,6 +28,27 @@ const clap_plugin_entry* getClapPluginEntry()
   return entry;
 }
 
+void messageLoop()
+{
+  MSG msg{};
+  int r{};
+
+  while ((r = ::GetMessageW(&msg, nullptr, 0, 0)) != 0)
+  {
+    if (r == -1)
+    {
+      errorBox("Error in message loop");
+      break;
+    }
+
+    else
+    {
+      ::TranslateMessage(&msg);
+      ::DispatchMessageW(&msg);
+    }
+  }
+}
+
 std::string narrow(std::wstring wstring)
 {
   if (wstring.empty()) return {};

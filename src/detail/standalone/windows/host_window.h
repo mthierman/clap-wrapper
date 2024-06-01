@@ -9,7 +9,7 @@ namespace freeaudio::clap_wrapper::standalone::windows
 {
 struct HostWindow
 {
-  HostWindow(int argc, char* argv[], const clap_plugin_entry* entry);
+  HostWindow(int argc, char** argv);
 
   clap_window createClapWindow();
   void setPlugin(std::shared_ptr<Clap::Plugin> plugin);
@@ -26,11 +26,11 @@ struct HostWindow
   int onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
   int onDestroy(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
+  std::pair<int, char**> m_args;
   const clap_plugin_entry* m_entry;
   freeaudio::clap_wrapper::standalone::StandaloneHost* m_standaloneHost;
   std::shared_ptr<Clap::Plugin> m_plugin;
   HWND m_hwnd;
   SettingsWindow m_settingsWindow;
-  std::pair<int, char**> m_args;
 };
 }  // namespace freeaudio::clap_wrapper::standalone::windows

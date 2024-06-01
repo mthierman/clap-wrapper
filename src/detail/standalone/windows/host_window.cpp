@@ -9,12 +9,12 @@
 
 namespace freeaudio::clap_wrapper::standalone::windows
 {
-HostWindow::HostWindow(int argc, char* argv[], const clap_plugin_entry* entry)
+HostWindow::HostWindow(int argc, char** argv)
   : m_args{std::make_pair(argc, argv)}
-  , m_entry{entry}
+  , m_entry{getClapPluginEntry()}
   , m_standaloneHost{freeaudio::clap_wrapper::standalone::getStandaloneHost()}
   , m_plugin{freeaudio::clap_wrapper::standalone::mainCreatePlugin(m_entry, PLUGIN_ID, PLUGIN_INDEX,
-                                                                   argc, argv)}
+                                                                   m_args.first, m_args.second)}
 {
   std::wstring windowName{widen(OUTPUT_NAME)};
 
