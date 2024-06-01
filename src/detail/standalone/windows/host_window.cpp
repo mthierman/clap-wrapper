@@ -93,56 +93,54 @@ HostWindow::HostWindow(int argc, char** argv)
   auto plugin{m_plugin->_plugin};
   auto pluginGui{m_plugin->_ext._gui};
 
-  if (plugin && pluginGui)
+  if (!pluginGui->is_api_supported(plugin, CLAP_WINDOW_API_WIN32, false))
   {
-    if (!pluginGui->is_api_supported(plugin, CLAP_WINDOW_API_WIN32, false))
-    {
-      errorBox({"CLAP_WINDOW_API_WIN32 is not supported"});
-    }
-
-    pluginGui->create(plugin, CLAP_WINDOW_API_WIN32, false);
-
-    setPluginScale();
-
-    uint32_t width{0};
-    uint32_t height{0};
-
-    if (pluginGui->can_resize(plugin))
-    {
-      // if resizable and has known size from previous session:
-      // We should load size here, width = previousWidth, height = previousHeight instead of hardcoded values:
-      // width = 1000;
-      // height = 1000;
-      // pluginGui->adjust_size(plugin, &width, &height);
-      // pluginGui->set_size(plugin, width, height);
-    }
-    else
-    {
-      // We can't resize, so disable WS_THICKFRAME and WS_MAXIMIZEBOX
-      ::SetWindowLongPtrW(m_hwnd, GWL_STYLE,
-                          ::GetWindowLongPtrW(m_hwnd, GWL_STYLE) & ~WS_OVERLAPPEDWINDOW | WS_OVERLAPPED |
-                              WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
-    }
-
-    pluginGui->get_size(plugin, &width, &height);
-
-    setWindowSize(width, height);
-
-    // Center the window, disabled because the dimensions can be larger than the display..
-    // ::MONITORINFO mi{sizeof(::MONITORINFO)};
-    // ::GetMonitorInfoA(::MonitorFromWindow(m_hwnd, MONITOR_DEFAULTTONEAREST), &mi);
-    // auto x = (static_cast<int>(mi.rcWork.right - mi.rcWork.left) - width) / 2;
-    // auto y = (static_cast<int>(mi.rcWork.bottom - mi.rcWork.top) - height) / 2;
-    // ::SetWindowPos(m_hwnd, nullptr, x, y, 0, 0, SWP_NOSIZE);
-
-    clap_window clapWindow;
-    clapWindow.api = CLAP_WINDOW_API_WIN32;
-    clapWindow.win32 = static_cast<void*>(m_hwnd);
-
-    pluginGui->set_parent(plugin, &clapWindow);
-
-    pluginGui->show(plugin);
+    errorBox({"CLAP_WINDOW_API_WIN32 is not supported"});
+    ::ExitProcess(EXIT_FAILURE);
   }
+
+  pluginGui->create(plugin, CLAP_WINDOW_API_WIN32, false);
+
+  setPluginScale();
+
+  uint32_t width{0};
+  uint32_t height{0};
+
+  if (pluginGui->can_resize(plugin))
+  {
+    // if resizable and has known size from previous session:
+    // We should load size here, width = previousWidth, height = previousHeight instead of hardcoded values:
+    // width = 1000;
+    // height = 1000;
+    // pluginGui->adjust_size(plugin, &width, &height);
+    // pluginGui->set_size(plugin, width, height);
+  }
+  else
+  {
+    // We can't resize, so disable WS_THICKFRAME and WS_MAXIMIZEBOX
+    ::SetWindowLongPtrW(m_hwnd, GWL_STYLE,
+                        ::GetWindowLongPtrW(m_hwnd, GWL_STYLE) & ~WS_OVERLAPPEDWINDOW | WS_OVERLAPPED |
+                            WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
+  }
+
+  pluginGui->get_size(plugin, &width, &height);
+
+  setWindowSize(width, height);
+
+  // Center the window, disabled because the dimensions can be larger than the display..
+  // ::MONITORINFO mi{sizeof(::MONITORINFO)};
+  // ::GetMonitorInfoA(::MonitorFromWindow(m_hwnd, MONITOR_DEFAULTTONEAREST), &mi);
+  // auto x = (static_cast<int>(mi.rcWork.right - mi.rcWork.left) - width) / 2;
+  // auto y = (static_cast<int>(mi.rcWork.bottom - mi.rcWork.top) - height) / 2;
+  // ::SetWindowPos(m_hwnd, nullptr, x, y, 0, 0, SWP_NOSIZE);
+
+  clap_window clapWindow;
+  clapWindow.api = CLAP_WINDOW_API_WIN32;
+  clapWindow.win32 = static_cast<void*>(m_hwnd);
+
+  pluginGui->set_parent(plugin, &clapWindow);
+
+  pluginGui->show(plugin);
 
   setWindowVisibility(true);
 
