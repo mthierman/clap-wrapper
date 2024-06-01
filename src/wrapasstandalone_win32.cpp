@@ -30,7 +30,8 @@ int main(int argc, char **argv)
 
   if (!entry)
   {
-    std::cerr << "Clap Standalone: No Entry as configured" << std::endl;
+    freeaudio::clap_wrapper::standalone::windows::errorBox({"No entry as configured"});
+
     return 3;
   }
 
