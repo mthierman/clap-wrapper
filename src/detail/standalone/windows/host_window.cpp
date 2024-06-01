@@ -345,22 +345,28 @@ int HostWindow::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
     case IDM_SAVE_STATE:
     {
-      auto settingsPath{freeaudio::clap_wrapper::standalone::getStandaloneSettingsPath()};
+      auto coUninitialize{wil::CoInitializeEx(COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE)};
 
-      if (settingsPath.has_value())
-      {
-        try
-        {
-          auto savePath{settingsPath.value() / plugin->desc->id};
+      auto fileSaveDialog{wil::CoCreateInstance<IFileSaveDialog>(CLSID_FileSaveDialog)};
 
-          fs::create_directories(savePath);
-          sah->saveStandaloneAndPluginSettings(savePath, "settings.clapwrapper");
-        }
-        catch (const fs::filesystem_error& e)
-        {
-          ::MessageBoxW(nullptr, L"Unable to save file", nullptr, MB_OK | MB_ICONERROR);
-        }
-      }
+      fileSaveDialog->Show(nullptr);
+
+      // auto settingsPath{freeaudio::clap_wrapper::standalone::getStandaloneSettingsPath()};
+
+      // if (settingsPath.has_value())
+      // {
+      //   try
+      //   {
+      //     auto savePath{settingsPath.value() / plugin->desc->id};
+
+      //     fs::create_directories(savePath);
+      //     sah->saveStandaloneAndPluginSettings(savePath, "settings.clapwrapper");
+      //   }
+      //   catch (const fs::filesystem_error& e)
+      //   {
+      //     ::MessageBoxW(nullptr, L"Unable to save file", nullptr, MB_OK | MB_ICONERROR);
+      //   }
+      // }
 
       return 0;
     }
@@ -374,28 +380,31 @@ int HostWindow::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
       std::vector<COMDLG_FILTERSPEC> fileTypes{{L"clapwrapper", L"*.clapwrapper"}};
       fileOpenDialog->SetFileTypes(fileTypes.size(), fileTypes.data());
 
-      fileOpenDialog->Show(nullptr);
+      fileOpenDialog->Show(m_hwnd);
 
       wil::com_ptr<IShellItem> shellItem;
-      fileOpenDialog->GetResult(&shellItem);
+      auto hr{fileOpenDialog->GetResult(&shellItem)};
 
-      wil::unique_cotaskmem_string result;
-      shellItem->GetDisplayName(SIGDN_FILESYSPATH, &result);
-
-      auto saveFile{std::filesystem::path(result.get())};
-
-      LOG << saveFile << std::endl;
-
-      try
+      if (SUCCEEDED(hr))
       {
-        if (fs::exists(saveFile))
+        wil::unique_cotaskmem_string result;
+        shellItem->GetDisplayName(SIGDN_FILESYSPATH, &result);
+
+        auto saveFile{std::filesystem::path(result.get())};
+
+        LOG << saveFile << std::endl;
+
+        try
         {
-          sah->tryLoadStandaloneAndPluginSettings(saveFile.parent_path(), saveFile.filename());
+          if (fs::exists(saveFile))
+          {
+            sah->tryLoadStandaloneAndPluginSettings(saveFile.parent_path(), saveFile.filename());
+          }
         }
-      }
-      catch (const fs::filesystem_error& e)
-      {
-        errorBox({"Unable to load state: ", e.what()});
+        catch (const fs::filesystem_error& e)
+        {
+          errorBox({"Unable to load state: ", e.what()});
+        }
       }
 
       return 0;
