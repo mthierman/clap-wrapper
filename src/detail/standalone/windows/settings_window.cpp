@@ -34,7 +34,13 @@ SettingsWindow::SettingsWindow()
   wcex.hIcon = iconFromResource ? iconFromResource : iconFromSystem;
   wcex.hIconSm = iconFromResource ? iconFromResource : iconFromSystem;
 
-  ::RegisterClassExW(&wcex);
+  auto atom{::RegisterClassExW(&wcex)};
+
+  if (!atom)
+  {
+    errorBox("Registering settings window failed");
+    ::ExitProcess(EXIT_FAILURE);
+  }
 
   ::CreateWindowExW(0, windowName.c_str(), windowName.c_str(), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
                     CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, nullptr, nullptr, hInstance, this);
