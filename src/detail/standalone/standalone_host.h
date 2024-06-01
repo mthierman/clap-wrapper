@@ -126,6 +126,11 @@ struct StandaloneHost : Clap::IHost
     TRACE;
   }
 
+  bool setDefaultPluginState();
+  bool restoreDefaultPluginState();
+  fs::path defaultStateTempFile{
+      fs::path(fs::temp_directory_path() / OUTPUT_NAME).string().append(".clapwrapper")};
+
   bool saveStandaloneAndPluginSettings(const fs::path &intoDir, const fs::path &withName);
   bool tryLoadStandaloneAndPluginSettings(const fs::path &fromDir, const fs::path &withName);
 

@@ -317,6 +317,48 @@ static int64_t clapread(const struct clap_istream *s, void *buffer, uint64_t siz
   return -1;
 }
 
+bool StandaloneHost::setDefaultPluginState()
+{
+  std::ofstream ofs(defaultStateTempFile, std::ios::out | std::ios::binary);
+  if (!ofs.is_open())
+  {
+    LOG << "Unable to open for writing " << defaultStateTempFile.u8string() << std::endl;
+    return false;
+  }
+  if (!clapPlugin || !clapPlugin->_ext._state)
+  {
+    return false;
+  }
+  clap_ostream cos{};
+  // cos.ctx = &defaultPluginState;
+  cos.ctx = &ofs;
+  cos.write = clapwrite;
+  clapPlugin->_ext._state->save(clapPlugin->_plugin, &cos);
+
+  return true;
+}
+
+bool StandaloneHost::restoreDefaultPluginState()
+{
+  std::ifstream ifs(defaultStateTempFile, std::ios::in | std::ios::binary);
+  if (!ifs.is_open())
+  {
+    LOG << "Unable to open for reading " << defaultStateTempFile.u8string() << std::endl;
+    return false;
+  }
+  if (!clapPlugin || !clapPlugin->_ext._state)
+  {
+    return false;
+  }
+  clap_istream cis{};
+  // cis.ctx = &defaultPluginState;
+  cis.ctx = &ifs;
+  cis.read = clapread;
+  clapPlugin->_ext._state->load(clapPlugin->_plugin, &cis);
+
+  return true;
+}
+
 bool StandaloneHost::saveStandaloneAndPluginSettings(const fs::path &intoDir, const fs::path &withName)
 {
   // This should obviously be a more robust file format. What we

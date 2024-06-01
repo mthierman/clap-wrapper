@@ -86,7 +86,7 @@ HostWindow::HostWindow(int argc, char** argv)
     ::InsertMenuItemW(hMenu, 7, TRUE, &seperator);
   }
 
-  ::EnableMenuItem(hMenu, IDM_RESET_STATE, MF_DISABLED);
+  // ::EnableMenuItem(hMenu, IDM_RESET_STATE, MF_DISABLED);
 
   m_standaloneHost->onRequestResize = [this](uint32_t width, uint32_t height)
   { return setWindowSize(width, height); };
@@ -412,6 +412,7 @@ int HostWindow::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case IDM_RESET_STATE:
     {
       //
+      m_standaloneHost->restoreDefaultPluginState();
 
       return 0;
     }
