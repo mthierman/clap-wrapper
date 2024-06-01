@@ -87,8 +87,15 @@ std::wstring widen(std::string string)
     return {};
 }
 
-void messageBox(std::string message)
+void messageBox(std::initializer_list<std::string> args)
 {
+  std::string message;
+
+  for (auto arg : args)
+  {
+    message.append(arg);
+  }
+
   ::MessageBoxW(nullptr, widen(message).c_str(), nullptr, MB_OK | MB_ICONASTERISK);
 }
 
