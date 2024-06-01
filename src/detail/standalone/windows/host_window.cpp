@@ -1,3 +1,5 @@
+#include <ShlObj_core.h>
+#include <wil/com.h>
 #include "detail/standalone/entry.h"
 #include "host_window.h"
 #include "helpers.h"
@@ -326,6 +328,14 @@ int HostWindow::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
       return 0;
     }
 
+      // https://www.codeproject.com/Articles/16678/Vista-Goodies-in-C-Using-the-New-Vista-File-Dialog
+      // https://learn.microsoft.com/en-us/windows/win32/shell/common-file-dialog
+      // https://github.com/microsoft/Windows-classic-samples/tree/main/Samples/Win7Samples/winui/shell/appplatform/commonfiledialog
+      // https://github.com/microsoft/Windows-classic-samples/tree/main/Samples/Win7Samples/winui/shell/appplatform/CommonFileDialogModes
+      // https://learn.microsoft.com/en-us/windows/win32/dlgbox/using-common-dialog-boxes#opening-a-file
+      // https://learn.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-iid_ppv_args
+      // https://learn.microsoft.com/en-us/windows/win32/learnwin32/example--the-open-dialog-box
+
     case IDM_SAVE_STATE:
     {
       auto settingsPath{freeaudio::clap_wrapper::standalone::getStandaloneSettingsPath()};
@@ -350,24 +360,53 @@ int HostWindow::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
     case IDM_LOAD_STATE:
     {
-      auto settingsPath{freeaudio::clap_wrapper::standalone::getStandaloneSettingsPath()};
+      // https://github.com/microsoft/wil/wiki/WinRT-and-COM-wrappers
+      // https://github.com/microsoft/wil/wiki/RAII-resource-wrappers
 
-      if (settingsPath.has_value())
-      {
-        try
-        {
-          auto loadPath{settingsPath.value() / plugin->desc->id};
+      // https://github.com/0xC0000054/gmic-8bf/blob/12d2ccb87e473337c7921fda6adadd6192bb119d/src/win/FolderBrowserWin.cpp#L55
+      // https://devblogs.microsoft.com/oldnewthing/20040520-00/?p=39243
+      // https://learn.microsoft.com/en-us/windows/win32/learnwin32/initializing-the-com-library?redirectedfrom=MSDN
+      // https://stackoverflow.com/questions/20404500/correct-way-of-initialize-com-c-service-multithread
+      // https://learn.microsoft.com/en-us/windows/win32/api/objbase/ne-objbase-coinit
+      // https://learn.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-coinitializeex
 
-          if (fs::exists(loadPath / "settings.clapwrapper"))
-          {
-            sah->tryLoadStandaloneAndPluginSettings(loadPath, "settings.clapwrapper");
-          }
-        }
-        catch (const fs::filesystem_error& e)
-        {
-          ::MessageBoxW(nullptr, L"Unable to open file", nullptr, MB_OK | MB_ICONERROR);
-        }
-      }
+      auto coUninitialize{wil::CoInitializeEx(COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE)};
+
+      auto fileOpenDialog{wil::CoCreateInstance<IFileOpenDialog>(CLSID_FileOpenDialog)};
+
+      // https://learn.microsoft.com/en-us/windows/win32/api/shtypes/ns-shtypes-comdlg_filterspec
+      // https://learn.microsoft.com/en-us/windows/win32/api/shobjidl_core/nf-shobjidl_core-ifiledialog-setfiletypes
+      COMDLG_FILTERSPEC filterSpec[]{{L"clapwrapper", L"*.clapwrapper"}};
+      fileOpenDialog->SetFileTypes(1, filterSpec);
+
+      // https://learn.microsoft.com/en-us/windows/win32/api/shobjidl_core/nf-shobjidl_core-ifiledialog-setoptions
+      // https://learn.microsoft.com/en-us/windows/win32/api/shobjidl_core/nf-shobjidl_core-ifiledialog-getoptions
+      // https://learn.microsoft.com/en-us/windows/win32/api/shobjidl_core/ne-shobjidl_core-_fileopendialogoptions
+      FILEOPENDIALOGOPTIONS options;
+
+      fileOpenDialog->GetOptions(&options);
+      fileOpenDialog->SetOptions(options);
+
+      fileOpenDialog->Show(nullptr);
+
+      // auto settingsPath{freeaudio::clap_wrapper::standalone::getStandaloneSettingsPath()};
+
+      // if (settingsPath.has_value())
+      // {
+      //   try
+      //   {
+      //     auto loadPath{settingsPath.value() / plugin->desc->id};
+
+      //     if (fs::exists(loadPath / "settings.clapwrapper"))
+      //     {
+      //       sah->tryLoadStandaloneAndPluginSettings(loadPath, "settings.clapwrapper");
+      //     }
+      //   }
+      //   catch (const fs::filesystem_error& e)
+      //   {
+      //     ::MessageBoxW(nullptr, L"Unable to open file", nullptr, MB_OK | MB_ICONERROR);
+      //   }
+      // }
 
       return 0;
     }
