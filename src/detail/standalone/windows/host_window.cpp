@@ -110,13 +110,10 @@ HostWindow::HostWindow(int argc, char** argv)
   {
     // if resizable and has known size from previous session:
     // We should load size here, width = previousWidth, height = previousHeight instead of hardcoded values:
-    // width = 1000;
-    // height = 1000;
+    // width = previousWidth();
+    // height = previousHeight();
     // pluginGui->adjust_size(plugin, &width, &height);
     // pluginGui->set_size(plugin, width, height);
-
-    // pluginGui->get_size(plugin, &width, &height);
-    // setWindowSize(width, height);
   }
   else
   {
@@ -128,13 +125,6 @@ HostWindow::HostWindow(int argc, char** argv)
     pluginGui->get_size(plugin, &width, &height);
     setWindowSize(width, height);
   }
-
-  // Center the window, disabled because the dimensions can be larger than the display..
-  // ::MONITORINFO mi{sizeof(::MONITORINFO)};
-  // ::GetMonitorInfoA(::MonitorFromWindow(m_hwnd, MONITOR_DEFAULTTONEAREST), &mi);
-  // auto x = (static_cast<int>(mi.rcWork.right - mi.rcWork.left) - width) / 2;
-  // auto y = (static_cast<int>(mi.rcWork.bottom - mi.rcWork.top) - height) / 2;
-  // ::SetWindowPos(m_hwnd, nullptr, x, y, 0, 0, SWP_NOSIZE);
 
   clap_window clapWindow;
   clapWindow.api = CLAP_WINDOW_API_WIN32;
