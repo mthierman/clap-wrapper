@@ -14,8 +14,8 @@ namespace freeaudio::clap_wrapper::standalone::windows
 {
 SettingsWindow::SettingsWindow()
 {
-  std::wstring windowName{L"Audio/MIDI Settings"};
-
+  auto windowName{std::wstring(L"Audio/MIDI Settings")};
+  auto hInstance{::GetModuleHandleW(nullptr)};
   auto brushFromSystem{loadBrushFromSystem(WHITE_BRUSH)};
   auto cursorFromSystem{loadCursorFromSystem()};
   auto iconFromResource{loadIconFromResource()};
