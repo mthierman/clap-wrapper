@@ -45,5 +45,8 @@ std::string narrow(std::wstring wstring);
 std::wstring widen(std::string string);
 void messageBox(std::string message);
 void errorBox(std::string message);
+::HBRUSH loadBrushFromSystem(int name = BLACK_BRUSH);
+::HCURSOR loadCursorFromSystem(LPSTR name = IDC_ARROW);
+::HICON loadIconFromSystem(LPSTR name = IDI_APPLICATION);
 ::HICON loadIconFromResource();
 }  // namespace freeaudio::clap_wrapper::standalone::windows

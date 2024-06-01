@@ -20,7 +20,10 @@ HostWindow::HostWindow(int argc, char** argv)
 {
   std::wstring windowName{widen(OUTPUT_NAME)};
 
-  auto icon{loadIconFromResource()};
+  auto brushFromSystem{loadBrushFromSystem()};
+  auto cursorFromSystem{loadCursorFromSystem()};
+  auto iconFromResource{loadIconFromResource()};
+  auto iconFromSystem{loadIconFromSystem()};
 
   ::WNDCLASSEXW wcex{sizeof(::WNDCLASSEXW)};
   wcex.lpszClassName = windowName.c_str();
@@ -30,17 +33,10 @@ HostWindow::HostWindow(int argc, char** argv)
   wcex.cbClsExtra = 0;
   wcex.cbWndExtra = sizeof(intptr_t);
   wcex.hInstance = ::GetModuleHandleW(nullptr);
-  wcex.hbrBackground = reinterpret_cast<::HBRUSH>(::GetStockObject(BLACK_BRUSH));
-  wcex.hCursor = reinterpret_cast<::HCURSOR>(::LoadImageW(
-      nullptr, reinterpret_cast<::LPCWSTR>(IDC_ARROW), IMAGE_CURSOR, 0, 0, LR_SHARED | LR_DEFAULTSIZE));
-  wcex.hIcon = icon ? icon
-                    : reinterpret_cast<::HICON>(
-                          ::LoadImageW(nullptr, reinterpret_cast<::LPCWSTR>(IDI_APPLICATION), IMAGE_ICON,
-                                       0, 0, LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED));
-  wcex.hIconSm = icon ? icon
-                      : reinterpret_cast<::HICON>(::LoadImageW(
-                            nullptr, reinterpret_cast<::LPCWSTR>(IDI_APPLICATION), IMAGE_ICON, 0, 0,
-                            LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED));
+  wcex.hbrBackground = brushFromSystem;
+  wcex.hCursor = cursorFromSystem;
+  wcex.hIcon = iconFromResource ? iconFromResource : iconFromSystem;
+  wcex.hIconSm = iconFromResource ? iconFromResource : iconFromSystem;
 
   ::RegisterClassExW(&wcex);
 

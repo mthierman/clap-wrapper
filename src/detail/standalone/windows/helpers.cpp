@@ -97,9 +97,26 @@ void errorBox(std::string message)
   ::MessageBoxW(nullptr, widen(message).c_str(), nullptr, MB_OK | MB_ICONHAND);
 }
 
+::HBRUSH loadBrushFromSystem(int name)
+{
+  return static_cast<::HBRUSH>(::GetStockObject(name));
+}
+
+::HCURSOR loadCursorFromSystem(LPSTR name)
+{
+  return static_cast<::HCURSOR>(
+      ::LoadImageA(nullptr, name, IMAGE_CURSOR, 0, 0, LR_SHARED | LR_DEFAULTSIZE));
+}
+
+::HICON loadIconFromSystem(LPSTR name)
+{
+  return static_cast<::HICON>(
+      ::LoadImageA(nullptr, name, IMAGE_ICON, 0, 0, LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED));
+}
+
 ::HICON loadIconFromResource()
 {
   return static_cast<::HICON>(
-      ::LoadImageW(::GetModuleHandleA(nullptr), MAKEINTRESOURCEW(1), IMAGE_ICON, 0, 0, LR_DEFAULTSIZE));
+      ::LoadImageW(::GetModuleHandleW(nullptr), MAKEINTRESOURCEW(1), IMAGE_ICON, 0, 0, LR_DEFAULTSIZE));
 }
 }  // namespace freeaudio::clap_wrapper::standalone::windows
