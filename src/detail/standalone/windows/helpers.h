@@ -47,7 +47,7 @@ void messageBox(std::initializer_list<std::string> args);
 void errorBox(std::initializer_list<std::string> args);
 wil::unique_hmodule getModuleHandle();
 wil::unique_hbrush loadBrushFromSystem(int name = BLACK_BRUSH);
-::HCURSOR loadCursorFromSystem(LPSTR name = IDC_ARROW);
+wil::unique_hcursor loadCursorFromSystem(LPSTR name = IDC_ARROW);
 ::HICON loadIconFromSystem(LPSTR name = IDI_APPLICATION);
 ::HICON loadIconFromResource();
 }  // namespace freeaudio::clap_wrapper::standalone::windows

@@ -95,10 +95,10 @@ wil::unique_hbrush loadBrushFromSystem(int name)
   return wil::unique_hbrush{static_cast<::HBRUSH>(::GetStockObject(name))};
 }
 
-::HCURSOR loadCursorFromSystem(LPSTR name)
+wil::unique_hcursor loadCursorFromSystem(LPSTR name)
 {
-  return static_cast<::HCURSOR>(
-      ::LoadImageA(nullptr, name, IMAGE_CURSOR, 0, 0, LR_SHARED | LR_DEFAULTSIZE));
+  return wil::unique_hcursor{static_cast<::HCURSOR>(
+      ::LoadImageA(nullptr, name, IMAGE_CURSOR, 0, 0, LR_SHARED | LR_DEFAULTSIZE))};
 }
 
 ::HICON loadIconFromSystem(LPSTR name)

@@ -30,7 +30,7 @@ SettingsWindow::SettingsWindow()
   wcex.cbWndExtra = sizeof(intptr_t);
   wcex.hInstance = hInstance.get();
   wcex.hbrBackground = brushFromSystem.get();
-  wcex.hCursor = cursorFromSystem;
+  wcex.hCursor = cursorFromSystem.get();
   wcex.hIcon = iconFromResource ? iconFromResource : iconFromSystem;
   wcex.hIconSm = iconFromResource ? iconFromResource : iconFromSystem;
 
