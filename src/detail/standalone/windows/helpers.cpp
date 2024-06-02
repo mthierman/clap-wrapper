@@ -101,10 +101,10 @@ wil::unique_hcursor loadCursorFromSystem(LPSTR name)
       ::LoadImageA(nullptr, name, IMAGE_CURSOR, 0, 0, LR_SHARED | LR_DEFAULTSIZE))};
 }
 
-::HICON loadIconFromSystem(LPSTR name)
+wil::unique_hicon loadIconFromSystem(LPSTR name)
 {
-  return static_cast<::HICON>(
-      ::LoadImageA(nullptr, name, IMAGE_ICON, 0, 0, LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED));
+  return wil::unique_hicon{static_cast<::HICON>(
+      ::LoadImageA(nullptr, name, IMAGE_ICON, 0, 0, LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED))};
 }
 
 ::HICON loadIconFromResource()
