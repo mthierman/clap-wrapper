@@ -87,10 +87,7 @@ void errorBox(std::initializer_list<std::string> args)
 
 wil::unique_hmodule getModuleHandle()
 {
-  ::HMODULE hModule;
-  ::GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, nullptr, &hModule);
-
-  return wil::unique_hmodule{hModule};
+  return wil::unique_hmodule{::GetModuleHandleW(nullptr)};
 }
 
 wil::unique_hbrush loadBrushFromSystem(int name)
@@ -100,14 +97,14 @@ wil::unique_hbrush loadBrushFromSystem(int name)
 
 wil::unique_hcursor loadCursorFromSystem(LPSTR name)
 {
-  return wil::unique_hcursor{static_cast<::HCURSOR>(
-      ::LoadImageA(nullptr, name, IMAGE_CURSOR, 0, 0, LR_SHARED | LR_DEFAULTSIZE))};
+  return wil::unique_hcursor{
+      static_cast<::HCURSOR>(::LoadImageA(nullptr, name, IMAGE_CURSOR, 0, 0, LR_DEFAULTSIZE))};
 }
 
 wil::unique_hicon loadIconFromSystem(LPSTR name)
 {
-  return wil::unique_hicon{static_cast<::HICON>(
-      ::LoadImageA(nullptr, name, IMAGE_ICON, 0, 0, LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED))};
+  return wil::unique_hicon{
+      static_cast<::HICON>(::LoadImageA(nullptr, name, IMAGE_ICON, 0, 0, LR_DEFAULTSIZE))};
 }
 
 wil::unique_hicon loadIconFromResource()
