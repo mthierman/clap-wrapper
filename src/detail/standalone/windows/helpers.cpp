@@ -87,7 +87,10 @@ void errorBox(std::initializer_list<std::string> args)
 
 wil::unique_hmodule getModuleHandle()
 {
-  return wil::unique_hmodule{::GetModuleHandleW(nullptr)};
+  ::HMODULE hModule;
+  ::GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, nullptr, &hModule);
+
+  return wil::unique_hmodule{hModule};
 }
 
 wil::unique_hbrush loadBrushFromSystem(int name)
@@ -107,9 +110,9 @@ wil::unique_hicon loadIconFromSystem(LPSTR name)
       ::LoadImageA(nullptr, name, IMAGE_ICON, 0, 0, LR_DEFAULTCOLOR | LR_DEFAULTSIZE | LR_SHARED))};
 }
 
-::HICON loadIconFromResource()
+wil::unique_hicon loadIconFromResource()
 {
-  return static_cast<::HICON>(
-      ::LoadImageW(::GetModuleHandleW(nullptr), MAKEINTRESOURCEW(1), IMAGE_ICON, 0, 0, LR_DEFAULTSIZE));
+  return wil::unique_hicon{static_cast<::HICON>(
+      ::LoadImageW(::GetModuleHandleW(nullptr), MAKEINTRESOURCEW(1), IMAGE_ICON, 0, 0, LR_DEFAULTSIZE))};
 }
 }  // namespace freeaudio::clap_wrapper::standalone::windows

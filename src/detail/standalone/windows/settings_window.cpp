@@ -31,8 +31,8 @@ SettingsWindow::SettingsWindow()
   wcex.hInstance = hInstance.get();
   wcex.hbrBackground = brushFromSystem.get();
   wcex.hCursor = cursorFromSystem.get();
-  wcex.hIcon = iconFromResource ? iconFromResource : iconFromSystem.get();
-  wcex.hIconSm = iconFromResource ? iconFromResource : iconFromSystem.get();
+  wcex.hIcon = iconFromResource ? iconFromResource.get() : iconFromSystem.get();
+  wcex.hIconSm = iconFromResource ? iconFromResource.get() : iconFromSystem.get();
 
   auto atom{::RegisterClassExW(&wcex)};
 

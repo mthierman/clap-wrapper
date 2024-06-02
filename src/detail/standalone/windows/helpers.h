@@ -49,5 +49,5 @@ wil::unique_hmodule getModuleHandle();
 wil::unique_hbrush loadBrushFromSystem(int name = BLACK_BRUSH);
 wil::unique_hcursor loadCursorFromSystem(LPSTR name = IDC_ARROW);
 wil::unique_hicon loadIconFromSystem(LPSTR name = IDI_APPLICATION);
-::HICON loadIconFromResource();
+wil::unique_hicon loadIconFromResource();
 }  // namespace freeaudio::clap_wrapper::standalone::windows
