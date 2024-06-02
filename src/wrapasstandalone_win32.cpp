@@ -3,9 +3,9 @@
 #include "detail/standalone/windows/host_window.h"
 #include "detail/standalone/windows/helpers.h"
 
-int main(int argc, char **argv)
+int main(int argc, char* argv[])
 {
-  const clap_plugin_entry *entry{nullptr};
+  const clap_plugin_entry* entry{nullptr};
 #ifdef STATICALLY_LINKED_CLAP_ENTRY
   extern const clap_plugin_entry clap_entry;
   entry = &clap_entry;
@@ -15,7 +15,7 @@ int main(int argc, char **argv)
 
   auto library{Clap::Library()};
 
-  for (const auto &searchPaths : Clap::getValidCLAPSearchPaths())
+  for (const auto& searchPaths : Clap::getValidCLAPSearchPaths())
   {
     auto clapPath{searchPaths / clapFilename};
 
