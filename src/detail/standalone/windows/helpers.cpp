@@ -90,9 +90,9 @@ wil::unique_hmodule getModuleHandle()
   return wil::unique_hmodule{::GetModuleHandleW(nullptr)};
 }
 
-::HBRUSH loadBrushFromSystem(int name)
+wil::unique_hbrush loadBrushFromSystem(int name)
 {
-  return static_cast<::HBRUSH>(::GetStockObject(name));
+  return wil::unique_hbrush{static_cast<::HBRUSH>(::GetStockObject(name))};
 }
 
 ::HCURSOR loadCursorFromSystem(LPSTR name)
