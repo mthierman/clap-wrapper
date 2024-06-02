@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Windows.h>
+#include <wil/resource.h>
 
 #include <string>
 #include <stdexcept>
@@ -44,6 +45,7 @@ std::string narrow(std::wstring wstring);
 std::wstring widen(std::string string);
 void messageBox(std::initializer_list<std::string> args);
 void errorBox(std::initializer_list<std::string> args);
+wil::unique_hmodule getModuleHandle();
 ::HBRUSH loadBrushFromSystem(int name = BLACK_BRUSH);
 ::HCURSOR loadCursorFromSystem(LPSTR name = IDC_ARROW);
 ::HICON loadIconFromSystem(LPSTR name = IDI_APPLICATION);
