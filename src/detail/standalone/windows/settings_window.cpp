@@ -15,10 +15,7 @@ namespace freeaudio::clap_wrapper::standalone::windows
 SettingsWindow::SettingsWindow()
 {
   auto windowName{std::wstring(L"Audio/MIDI Settings")};
-  auto brushFromSystem{loadBrushFromSystem(WHITE_BRUSH)};
-  auto cursorFromSystem{loadCursorFromSystem()};
   auto iconFromResource{loadIconFromResource()};
-  auto iconFromSystem{loadIconFromSystem()};
 
   ::WNDCLASSEXW wcex{sizeof(::WNDCLASSEXW)};
   wcex.lpszClassName = windowName.c_str();
@@ -28,10 +25,10 @@ SettingsWindow::SettingsWindow()
   wcex.cbClsExtra = 0;
   wcex.cbWndExtra = sizeof(intptr_t);
   wcex.hInstance = nullptr;
-  wcex.hbrBackground = brushFromSystem.get();
-  wcex.hCursor = cursorFromSystem.get();
-  wcex.hIcon = iconFromResource ? iconFromResource.get() : iconFromSystem.get();
-  wcex.hIconSm = iconFromResource ? iconFromResource.get() : iconFromSystem.get();
+  wcex.hbrBackground = loadBrushFromSystem();
+  wcex.hCursor = loadCursorFromSystem();
+  wcex.hIcon = iconFromResource ? iconFromResource : loadIconFromSystem();
+  wcex.hIconSm = iconFromResource ? iconFromResource : loadIconFromSystem();
 
   auto atom{::RegisterClassExW(&wcex)};
 

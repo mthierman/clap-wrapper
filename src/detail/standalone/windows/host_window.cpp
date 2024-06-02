@@ -13,10 +13,7 @@ namespace freeaudio::clap_wrapper::standalone::windows
 HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin) : m_plugin{clapPlugin}
 {
   auto windowName{widen(OUTPUT_NAME)};
-  auto brushFromSystem{loadBrushFromSystem()};
-  auto cursorFromSystem{loadCursorFromSystem()};
   auto iconFromResource{loadIconFromResource()};
-  auto iconFromSystem{loadIconFromSystem()};
 
   ::WNDCLASSEXW wcex{sizeof(::WNDCLASSEXW)};
   wcex.lpszClassName = windowName.c_str();
@@ -26,10 +23,10 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin) : m_plugin{clap
   wcex.cbClsExtra = 0;
   wcex.cbWndExtra = sizeof(intptr_t);
   wcex.hInstance = nullptr;
-  wcex.hbrBackground = brushFromSystem.get();
-  wcex.hCursor = cursorFromSystem.get();
-  wcex.hIcon = iconFromResource ? iconFromResource.get() : iconFromSystem.get();
-  wcex.hIconSm = iconFromResource ? iconFromResource.get() : iconFromSystem.get();
+  wcex.hbrBackground = loadBrushFromSystem();
+  wcex.hCursor = loadCursorFromSystem();
+  wcex.hIcon = iconFromResource ? iconFromResource : loadIconFromSystem();
+  wcex.hIconSm = iconFromResource ? iconFromResource : loadIconFromSystem();
 
   auto atom{::RegisterClassExW(&wcex)};
 

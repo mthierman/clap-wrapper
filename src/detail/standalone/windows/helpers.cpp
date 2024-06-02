@@ -85,29 +85,28 @@ void errorBox(std::initializer_list<std::string> args)
   ::MessageBoxW(nullptr, widen(message).c_str(), nullptr, MB_OK | MB_ICONHAND);
 }
 
-wil::unique_hbrush loadBrushFromSystem(int name)
+::HBRUSH loadBrushFromSystem(int name)
 {
-  return wil::unique_hbrush{static_cast<::HBRUSH>(::GetStockObject(name))};
+  return static_cast<::HBRUSH>(::GetStockObject(name));
 }
 
-wil::unique_hcursor loadCursorFromSystem(LPSTR name)
+::HCURSOR loadCursorFromSystem(LPSTR name)
 {
-  return wil::unique_hcursor{
-      static_cast<::HCURSOR>(::LoadImageA(nullptr, name, IMAGE_CURSOR, 0, 0, LR_DEFAULTSIZE))};
+  return static_cast<::HCURSOR>(
+      ::LoadImageA(nullptr, name, IMAGE_CURSOR, 0, 0, LR_SHARED | LR_DEFAULTSIZE));
 }
 
-wil::unique_hicon loadIconFromSystem(LPSTR name)
+::HICON loadIconFromSystem(LPSTR name)
 {
-  return wil::unique_hicon{
-      static_cast<::HICON>(::LoadImageA(nullptr, name, IMAGE_ICON, 0, 0, LR_DEFAULTSIZE))};
+  return static_cast<::HICON>(::LoadImageA(nullptr, name, IMAGE_ICON, 0, 0, LR_SHARED | LR_DEFAULTSIZE));
 }
 
-wil::unique_hicon loadIconFromResource()
+::HICON loadIconFromResource()
 {
   ::HMODULE hInstance;
   ::GetModuleHandleExW(0, nullptr, &hInstance);
 
-  return wil::unique_hicon{static_cast<::HICON>(
-      ::LoadImageW(hInstance, MAKEINTRESOURCEW(1), IMAGE_ICON, 0, 0, LR_DEFAULTSIZE))};
+  return static_cast<::HICON>(
+      ::LoadImageW(hInstance, MAKEINTRESOURCEW(1), IMAGE_ICON, 0, 0, LR_SHARED | LR_DEFAULTSIZE));
 }
 }  // namespace freeaudio::clap_wrapper::standalone::windows
