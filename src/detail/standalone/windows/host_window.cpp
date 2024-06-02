@@ -44,7 +44,7 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin) : m_plugin{clap
                     CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, nullptr, nullptr,
                     hInstance, this);
 
-  auto hMenu{::GetSystemMenu(m_hwnd, FALSE)};
+  auto hMenu{::GetSystemMenu(m_hWnd.get(), FALSE)};
 
   ::MENUITEMINFOW seperator{sizeof(::MENUITEMINFOW)};
   seperator.fMask = MIIM_FTYPE;
@@ -113,9 +113,9 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin) : m_plugin{clap
   else
   {
     // We can't resize, so disable WS_THICKFRAME and WS_MAXIMIZEBOX
-    ::SetWindowLongPtrW(m_hwnd, GWL_STYLE,
-                        ::GetWindowLongPtrW(m_hwnd, GWL_STYLE) & ~WS_OVERLAPPEDWINDOW | WS_OVERLAPPED |
-                            WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
+    ::SetWindowLongPtrW(m_hWnd.get(), GWL_STYLE,
+                        ::GetWindowLongPtrW(m_hWnd.get(), GWL_STYLE) & ~WS_OVERLAPPEDWINDOW |
+                            WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
 
     pluginGui->get_size(plugin, &width, &height);
     setWindowSize(width, height);
@@ -123,7 +123,7 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin) : m_plugin{clap
 
   clap_window clapWindow;
   clapWindow.api = CLAP_WINDOW_API_WIN32;
-  clapWindow.win32 = static_cast<void*>(m_hwnd);
+  clapWindow.win32 = static_cast<void*>(m_hWnd.get());
 
   pluginGui->set_parent(plugin, &clapWindow);
 
@@ -136,14 +136,14 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin) : m_plugin{clap
 
 bool HostWindow::setWindowVisibility(bool visible)
 {
-  ::ShowWindow(m_hwnd, visible ? SW_SHOW : SW_HIDE);
+  ::ShowWindow(m_hWnd.get(), visible ? SW_SHOW : SW_HIDE);
 
   return visible ? true : false;
 }
 
 bool HostWindow::getWindowVisibility()
 {
-  return ::IsWindowVisible(m_hwnd);
+  return ::IsWindowVisible(m_hWnd.get());
 }
 
 bool HostWindow::setWindowSize(uint32_t width, uint32_t height)
@@ -152,12 +152,13 @@ bool HostWindow::setWindowSize(uint32_t width, uint32_t height)
   r.right = width;
   r.bottom = height;
 
-  if (m_hwnd)
+  if (m_hWnd)
   {
-    ::AdjustWindowRectExForDpi(&r, ::GetWindowLongPtrW(m_hwnd, GWL_STYLE), ::GetMenu(m_hwnd) != nullptr,
-                               ::GetWindowLongPtrW(m_hwnd, GWL_EXSTYLE), ::GetDpiForWindow(m_hwnd));
+    ::AdjustWindowRectExForDpi(
+        &r, ::GetWindowLongPtrW(m_hWnd.get(), GWL_STYLE), ::GetMenu(m_hWnd.get()) != nullptr,
+        ::GetWindowLongPtrW(m_hWnd.get(), GWL_EXSTYLE), ::GetDpiForWindow(m_hWnd.get()));
 
-    ::SetWindowPos(m_hwnd, nullptr, 0, 0, (r.right - r.left), (r.bottom - r.top),
+    ::SetWindowPos(m_hWnd.get(), nullptr, 0, 0, (r.right - r.left), (r.bottom - r.top),
                    SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE);
 
     return true;
@@ -176,7 +177,7 @@ bool HostWindow::setPluginScale()
 
   if (plugin && pluginGui)
   {
-    return pluginGui->set_scale(plugin, static_cast<double>(::GetDpiForWindow(m_hwnd)) /
+    return pluginGui->set_scale(plugin, static_cast<double>(::GetDpiForWindow(m_hWnd.get())) /
                                             static_cast<double>(USER_DEFAULT_SCREEN_DPI));
   }
 
@@ -259,7 +260,7 @@ int HostWindow::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
       fileSaveDialog->SetDefaultExtension(m_fileTypes.at(0).pszName);
       fileSaveDialog->SetFileTypes(m_fileTypes.size(), m_fileTypes.data());
 
-      fileSaveDialog->Show(m_hwnd);
+      fileSaveDialog->Show(m_hWnd.get());
 
       wil::com_ptr<IShellItem> shellItem;
       auto hr{fileSaveDialog->GetResult(&shellItem)};
@@ -296,7 +297,7 @@ int HostWindow::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
       fileOpenDialog->SetDefaultExtension(m_fileTypes.at(0).pszName);
       fileOpenDialog->SetFileTypes(m_fileTypes.size(), m_fileTypes.data());
 
-      fileOpenDialog->Show(m_hwnd);
+      fileOpenDialog->Show(m_hWnd.get());
 
       wil::com_ptr<IShellItem> shellItem;
       auto hr{fileOpenDialog->GetResult(&shellItem)};

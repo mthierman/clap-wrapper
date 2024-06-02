@@ -46,26 +46,26 @@ SettingsWindow::SettingsWindow()
                     CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, nullptr, nullptr, hInstance, this);
 
   // ::MONITORINFO mi{sizeof(::MONITORINFO)};
-  // ::GetMonitorInfoA(::MonitorFromWindow(m_hwnd, MONITOR_DEFAULTTONEAREST), &mi);
+  // ::GetMonitorInfoA(::MonitorFromWindow(m_hWnd.get(), MONITOR_DEFAULTTONEAREST), &mi);
   // int width{600};
   // int height{400};
   // auto x = (static_cast<int>(mi.rcWork.right - mi.rcWork.left) - width) / 2;
   // auto y = (static_cast<int>(mi.rcWork.bottom - mi.rcWork.top) - height) / 2;
-  // ::SetWindowPos(m_hwnd, nullptr, x, y, width, height, 0);
+  // ::SetWindowPos(m_hWnd.get(), nullptr, x, y, width, height, 0);
 
   setWindowVisibility(false);
 }
 
 bool SettingsWindow::setWindowVisibility(bool visible)
 {
-  ::ShowWindow(m_hwnd, visible ? SW_SHOW : SW_HIDE);
+  ::ShowWindow(m_hWnd.get(), visible ? SW_SHOW : SW_HIDE);
 
   return visible ? true : false;
 }
 
 bool SettingsWindow::getWindowVisibility()
 {
-  return ::IsWindowVisible(m_hwnd);
+  return ::IsWindowVisible(m_hWnd.get());
 }
 
 LRESULT CALLBACK SettingsWindow::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -88,17 +88,17 @@ LRESULT CALLBACK SettingsWindow::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 
 int SettingsWindow::onCreate(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  CreateWindow("COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST, 10, 10, 150, 100, m_hwnd,
-               (HMENU)ID_COMBOBOX1, NULL, NULL);
-  CreateWindow("COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST, 10, 50, 150, 100, m_hwnd,
-               (HMENU)ID_COMBOBOX2, NULL, NULL);
-  CreateWindow("COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST, 10, 90, 150, 100, m_hwnd,
-               (HMENU)ID_COMBOBOX3, NULL, NULL);
+  CreateWindow("COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST, 10, 10, 150, 100,
+               m_hWnd.get(), (HMENU)ID_COMBOBOX1, NULL, NULL);
+  CreateWindow("COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST, 10, 50, 150, 100,
+               m_hWnd.get(), (HMENU)ID_COMBOBOX2, NULL, NULL);
+  CreateWindow("COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST, 10, 90, 150, 100,
+               m_hWnd.get(), (HMENU)ID_COMBOBOX3, NULL, NULL);
 
-  CreateWindow("BUTTON", "Button 1", WS_CHILD | WS_VISIBLE, 10, 130, 80, 30, m_hwnd, (HMENU)ID_BUTTON1,
-               NULL, NULL);
-  CreateWindow("BUTTON", "Button 2", WS_CHILD | WS_VISIBLE, 100, 130, 80, 30, m_hwnd, (HMENU)ID_BUTTON2,
-               NULL, NULL);
+  CreateWindow("BUTTON", "Button 1", WS_CHILD | WS_VISIBLE, 10, 130, 80, 30, m_hWnd.get(),
+               (HMENU)ID_BUTTON1, NULL, NULL);
+  CreateWindow("BUTTON", "Button 2", WS_CHILD | WS_VISIBLE, 100, 130, 80, 30, m_hWnd.get(),
+               (HMENU)ID_BUTTON2, NULL, NULL);
 
   return 0;
 }

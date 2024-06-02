@@ -2,6 +2,7 @@
 
 #include <Windows.h>
 #include <ShlObj.h>
+#include <wil/resource.h>
 
 #include "detail/standalone/standalone_host.h"
 #include "settings_window.h"
@@ -25,7 +26,7 @@ struct HostWindow
 
   std::shared_ptr<Clap::Plugin> m_plugin;
   freeaudio::clap_wrapper::standalone::StandaloneHost* m_standaloneHost;
-  HWND m_hwnd;
+  wil::unique_hwnd m_hWnd;
   SettingsWindow m_settingsWindow;
   std::vector<COMDLG_FILTERSPEC> m_fileTypes{{L"clapwrapper", L"*.clapwrapper"}};
 };
