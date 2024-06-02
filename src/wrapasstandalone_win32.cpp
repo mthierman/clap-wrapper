@@ -25,7 +25,6 @@ int main(int argc, char **argv)
       entry = library._pluginEntry;
     }
   }
-
 #endif
 
   if (!entry)
