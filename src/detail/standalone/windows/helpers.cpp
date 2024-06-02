@@ -104,7 +104,10 @@ wil::unique_hicon loadIconFromSystem(LPSTR name)
 
 wil::unique_hicon loadIconFromResource()
 {
+  ::HMODULE hInstance;
+  ::GetModuleHandleExW(0, nullptr, &hInstance);
+
   return wil::unique_hicon{static_cast<::HICON>(
-      ::LoadImageW(::GetModuleHandleW(nullptr), MAKEINTRESOURCEW(1), IMAGE_ICON, 0, 0, LR_DEFAULTSIZE))};
+      ::LoadImageW(hInstance, MAKEINTRESOURCEW(1), IMAGE_ICON, 0, 0, LR_DEFAULTSIZE))};
 }
 }  // namespace freeaudio::clap_wrapper::standalone::windows
