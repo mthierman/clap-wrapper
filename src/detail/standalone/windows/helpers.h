@@ -45,7 +45,6 @@ std::string narrow(std::wstring wstring);
 std::wstring widen(std::string string);
 void messageBox(std::initializer_list<std::string> args);
 void errorBox(std::initializer_list<std::string> args);
-wil::unique_hmodule getModuleHandle();
 wil::unique_hbrush loadBrushFromSystem(int name = BLACK_BRUSH);
 wil::unique_hcursor loadCursorFromSystem(LPSTR name = IDC_ARROW);
 wil::unique_hicon loadIconFromSystem(LPSTR name = IDI_APPLICATION);

@@ -13,7 +13,6 @@ namespace freeaudio::clap_wrapper::standalone::windows
 HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin) : m_plugin{clapPlugin}
 {
   auto windowName{widen(OUTPUT_NAME)};
-  auto hInstance{getModuleHandle()};
   auto brushFromSystem{loadBrushFromSystem()};
   auto cursorFromSystem{loadCursorFromSystem()};
   auto iconFromResource{loadIconFromResource()};
@@ -26,7 +25,7 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin) : m_plugin{clap
   wcex.style = 0;
   wcex.cbClsExtra = 0;
   wcex.cbWndExtra = sizeof(intptr_t);
-  wcex.hInstance = hInstance.get();
+  wcex.hInstance = nullptr;
   wcex.hbrBackground = brushFromSystem.get();
   wcex.hCursor = cursorFromSystem.get();
   wcex.hIcon = iconFromResource ? iconFromResource.get() : iconFromSystem.get();
@@ -42,7 +41,7 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin) : m_plugin{clap
 
   ::CreateWindowExW(0, windowName.c_str(), windowName.c_str(), WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
                     CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, nullptr, nullptr,
-                    hInstance.get(), this);
+                    nullptr, this);
 
   auto hMenu{::GetSystemMenu(m_hWnd.get(), FALSE)};
 

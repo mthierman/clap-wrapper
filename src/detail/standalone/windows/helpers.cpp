@@ -85,11 +85,6 @@ void errorBox(std::initializer_list<std::string> args)
   ::MessageBoxW(nullptr, widen(message).c_str(), nullptr, MB_OK | MB_ICONHAND);
 }
 
-wil::unique_hmodule getModuleHandle()
-{
-  return wil::unique_hmodule{::GetModuleHandleW(nullptr)};
-}
-
 wil::unique_hbrush loadBrushFromSystem(int name)
 {
   return wil::unique_hbrush{static_cast<::HBRUSH>(::GetStockObject(name))};

@@ -15,7 +15,6 @@ namespace freeaudio::clap_wrapper::standalone::windows
 SettingsWindow::SettingsWindow()
 {
   auto windowName{std::wstring(L"Audio/MIDI Settings")};
-  auto hInstance{getModuleHandle()};
   auto brushFromSystem{loadBrushFromSystem(WHITE_BRUSH)};
   auto cursorFromSystem{loadCursorFromSystem()};
   auto iconFromResource{loadIconFromResource()};
@@ -28,7 +27,7 @@ SettingsWindow::SettingsWindow()
   wcex.style = 0;
   wcex.cbClsExtra = 0;
   wcex.cbWndExtra = sizeof(intptr_t);
-  wcex.hInstance = hInstance.get();
+  wcex.hInstance = nullptr;
   wcex.hbrBackground = brushFromSystem.get();
   wcex.hCursor = cursorFromSystem.get();
   wcex.hIcon = iconFromResource ? iconFromResource.get() : iconFromSystem.get();
@@ -43,8 +42,7 @@ SettingsWindow::SettingsWindow()
   }
 
   ::CreateWindowExW(0, windowName.c_str(), windowName.c_str(), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
-                    CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, nullptr, nullptr, hInstance.get(),
-                    this);
+                    CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, nullptr, nullptr, nullptr, this);
 
   // ::MONITORINFO mi{sizeof(::MONITORINFO)};
   // ::GetMonitorInfoA(::MonitorFromWindow(m_hWnd.get(), MONITOR_DEFAULTTONEAREST), &mi);
