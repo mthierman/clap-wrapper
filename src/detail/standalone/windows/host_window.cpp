@@ -10,7 +10,11 @@
 
 namespace freeaudio::clap_wrapper::standalone::windows
 {
-HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin) : m_plugin{clapPlugin}
+HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin)
+  : m_clapPlugin{clapPlugin}
+  , m_plugin{m_clapPlugin->_plugin}
+  , m_pluginGui{m_clapPlugin->_ext._gui}
+  , m_pluginState{m_clapPlugin->_ext._state}
 {
   auto windowName{widen(OUTPUT_NAME)};
   auto iconFromResource{loadIconFromResource()};
@@ -81,23 +85,20 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin) : m_plugin{clap
   freeaudio::clap_wrapper::standalone::getStandaloneHost()->onRequestResize =
       [this](uint32_t width, uint32_t height) { return setWindowSize(width, height); };
 
-  auto plugin{m_plugin->_plugin};
-  auto pluginGui{m_plugin->_ext._gui};
-
-  if (!pluginGui->is_api_supported(plugin, CLAP_WINDOW_API_WIN32, false))
+  if (!m_pluginGui->is_api_supported(m_plugin, CLAP_WINDOW_API_WIN32, false))
   {
     errorBox({"CLAP_WINDOW_API_WIN32 is not supported"});
     ::ExitProcess(EXIT_FAILURE);
   }
 
-  pluginGui->create(plugin, CLAP_WINDOW_API_WIN32, false);
+  m_pluginGui->create(m_plugin, CLAP_WINDOW_API_WIN32, false);
 
   setPluginScale();
 
   uint32_t width{0};
   uint32_t height{0};
 
-  if (pluginGui->can_resize(plugin))
+  if (m_pluginGui->can_resize(m_plugin))
   {
     // We can restore size here
 
@@ -113,7 +114,7 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin) : m_plugin{clap
                         ::GetWindowLongPtrW(m_hWnd.get(), GWL_STYLE) & ~WS_OVERLAPPEDWINDOW |
                             WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
 
-    pluginGui->get_size(plugin, &width, &height);
+    m_pluginGui->get_size(m_plugin, &width, &height);
     setWindowSize(width, height);
   }
 
@@ -121,9 +122,9 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin) : m_plugin{clap
   clapWindow.api = CLAP_WINDOW_API_WIN32;
   clapWindow.win32 = static_cast<void*>(m_hWnd.get());
 
-  pluginGui->set_parent(plugin, &clapWindow);
+  m_pluginGui->set_parent(m_plugin, &clapWindow);
 
-  pluginGui->show(plugin);
+  m_pluginGui->show(m_plugin);
 
   setWindowVisibility(true);
 
@@ -168,13 +169,10 @@ bool HostWindow::setWindowSize(uint32_t width, uint32_t height)
 
 bool HostWindow::setPluginScale()
 {
-  auto plugin{m_plugin->_plugin};
-  auto pluginGui{m_plugin->_ext._gui};
-
-  if (plugin && pluginGui)
+  if (m_plugin && m_pluginGui)
   {
-    return pluginGui->set_scale(plugin, static_cast<double>(::GetDpiForWindow(m_hWnd.get())) /
-                                            static_cast<double>(USER_DEFAULT_SCREEN_DPI));
+    return m_pluginGui->set_scale(m_plugin, static_cast<double>(::GetDpiForWindow(m_hWnd.get())) /
+                                                static_cast<double>(USER_DEFAULT_SCREEN_DPI));
   }
 
   return false;
@@ -211,12 +209,9 @@ int HostWindow::onDpiChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 int HostWindow::onWindowPosChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  auto plugin{m_plugin->_plugin};
-  auto pluginGui{m_plugin->_ext._gui};
-
-  if (plugin && pluginGui)
+  if (m_plugin && m_pluginGui)
   {
-    if (pluginGui->can_resize(plugin))
+    if (m_pluginGui->can_resize(m_plugin))
     {
       RECT r{0, 0, 0, 0};
       ::GetClientRect(hWnd, &r);
@@ -224,8 +219,8 @@ int HostWindow::onWindowPosChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
       uint32_t width = (r.right - r.left);
       uint32_t height = (r.bottom - r.top);
 
-      pluginGui->adjust_size(plugin, &width, &height);
-      pluginGui->set_size(plugin, width, height);
+      m_pluginGui->adjust_size(m_plugin, &width, &height);
+      m_pluginGui->set_size(m_plugin, width, height);
     }
   }
 
@@ -234,10 +229,6 @@ int HostWindow::onWindowPosChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 
 int HostWindow::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  auto plugin{m_plugin->_plugin};
-  auto pluginGui{m_plugin->_ext._gui};
-  auto pluginState{m_plugin->_ext._state};
-
   switch (wParam)
   {
     case IDM_SETTINGS:
@@ -327,7 +318,7 @@ int HostWindow::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case IDM_RESET_STATE:
     {
       freeaudio::clap_wrapper::standalone::getStandaloneHost()->loadDefaultPluginState(
-          fs::temp_directory_path(), std::string(plugin->desc->id).append(".clapwrapper"));
+          fs::temp_directory_path(), std::string(m_plugin->desc->id).append(".clapwrapper"));
 
       return 0;
     }
@@ -338,14 +329,11 @@ int HostWindow::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 int HostWindow::onDestroy(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  auto plugin{m_plugin->_plugin};
-  auto pluginGui{m_plugin->_ext._gui};
-
-  if (plugin && pluginGui)
+  if (m_plugin && m_pluginGui)
   {
-    pluginGui->hide(plugin);
-    pluginGui->destroy(plugin);
-    m_plugin.reset();
+    m_pluginGui->hide(m_plugin);
+    m_pluginGui->destroy(m_plugin);
+    m_clapPlugin.reset();
   }
 
   freeaudio::clap_wrapper::standalone::mainFinish();
