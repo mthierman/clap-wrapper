@@ -37,7 +37,7 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin)
   if (!atom)
   {
     helpers::errorBox({"Registering host window failed"});
-    ::ExitProcess(EXIT_FAILURE);
+    helpers::abort();
   }
 
   ::CreateWindowExW(0, windowName.c_str(), windowName.c_str(), WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
