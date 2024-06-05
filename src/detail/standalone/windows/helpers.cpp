@@ -25,6 +25,11 @@ bool hideWindow(::HWND window)
   return ::ShowWindow(window, SW_HIDE);
 }
 
+bool closeWindow(::HWND window)
+{
+  return ::CloseWindow(window);
+}
+
 void abort(unsigned int exitCode)
 {
   ::ExitProcess(exitCode);

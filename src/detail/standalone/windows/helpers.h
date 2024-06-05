@@ -50,6 +50,7 @@ U safe_size(T value)
 bool activateWindow(::HWND window);
 bool showWindow(::HWND window);
 bool hideWindow(::HWND window);
+bool closeWindow(::HWND window);
 
 void abort(unsigned int exitCode = EXIT_FAILURE);
 void quit(unsigned int exitCode = EXIT_SUCCESS);
