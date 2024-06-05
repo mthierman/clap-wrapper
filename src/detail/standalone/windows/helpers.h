@@ -10,20 +10,20 @@
 
 #include "detail/standalone/entry.h"
 
-namespace freeaudio::clap_wrapper::standalone::windows::helpers::details
+namespace freeaudio::clap_wrapper::standalone::windows::helpers::detail
 {
 struct DefaultWindowProcedure
 {
   static auto CALLBACK wndProc(::HWND hWnd, ::UINT uMsg, ::WPARAM wParam, ::LPARAM lParam) -> ::LRESULT;
 };
-}  // namespace freeaudio::clap_wrapper::standalone::windows::helpers::details
+}  // namespace freeaudio::clap_wrapper::standalone::windows::helpers::detail
 
 namespace freeaudio::clap_wrapper::standalone::windows::helpers
 {
 template <typename T = detail::DefaultWindowProcedure>
 auto registerWindowClass(const char* name, T* self = nullptr) -> const char*
 {
-  ::WNDCLASSEXA windowClass{sizeof(::WNDCLASSEXA)};
+  ::WNDCLASSEXW windowClass{sizeof(::WNDCLASSEXW)};
 
   auto hInstance{getInstance()};
 
