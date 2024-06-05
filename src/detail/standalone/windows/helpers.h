@@ -104,11 +104,11 @@ auto createMessageWindow(T* self) -> ::HWND
 }
 
 void abort(uint64_t exitCode = EXIT_FAILURE);
-auto getInstance() -> ::HMODULE;
-auto activateWindow(::HWND window) -> bool;
-auto showWindow(::HWND window) -> bool;
-auto hideWindow(::HWND window) -> bool;
-auto checkWindowVisibility(::HWND window) -> bool;
+::HMODULE getInstance();
+bool activateWindow(::HWND window);
+bool showWindow(::HWND window);
+bool hideWindow(::HWND window);
+bool checkWindowVisibility(::HWND window);
 uint64_t getCurrentDpi(::HWND hWnd);
 double getCurrentScale(::HWND hWnd);
 int messageLoop();

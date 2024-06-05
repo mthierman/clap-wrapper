@@ -24,22 +24,22 @@ auto getInstance() -> ::HMODULE
   return hInstance;
 }
 
-auto activateWindow(HWND window) -> bool
+bool activateWindow(::HWND window)
 {
   return ::ShowWindow(window, SW_NORMAL);
 }
 
-auto showWindow(HWND window) -> bool
+bool showWindow(::HWND window)
 {
   return ::ShowWindow(window, SW_SHOW);
 }
 
-auto hideWindow(HWND window) -> bool
+bool hideWindow(::HWND window)
 {
   return ::ShowWindow(window, SW_HIDE);
 }
 
-auto checkWindowVisibility(HWND window) -> bool
+bool checkWindowVisibility(HWND window)
 {
   return ::IsWindowVisible(window);
 }
