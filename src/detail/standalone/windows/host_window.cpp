@@ -136,22 +136,19 @@ bool HostWindow::setWindowSize(uint32_t width, uint32_t height)
   r.right = width;
   r.bottom = height;
 
-  if (m_hWnd)
-  {
-    ::AdjustWindowRectExForDpi(
-        &r, ::GetWindowLongPtrW(m_hWnd.get(), GWL_STYLE), ::GetMenu(m_hWnd.get()) != nullptr,
-        ::GetWindowLongPtrW(m_hWnd.get(), GWL_EXSTYLE), ::GetDpiForWindow(m_hWnd.get()));
-
-    ::SetWindowPos(m_hWnd.get(), nullptr, 0, 0, (r.right - r.left), (r.bottom - r.top),
-                   SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE);
-
-    return true;
-  }
-
-  else
+  if (!m_hWnd)
   {
     return false;
   }
+
+  ::AdjustWindowRectExForDpi(
+      &r, ::GetWindowLongPtrW(m_hWnd.get(), GWL_STYLE), ::GetMenu(m_hWnd.get()) != nullptr,
+      ::GetWindowLongPtrW(m_hWnd.get(), GWL_EXSTYLE), ::GetDpiForWindow(m_hWnd.get()));
+
+  ::SetWindowPos(m_hWnd.get(), nullptr, 0, 0, (r.right - r.left), (r.bottom - r.top),
+                 SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE);
+
+  return true;
 }
 
 LRESULT CALLBACK HostWindow::wndProc(::HWND hWnd, ::UINT uMsg, ::WPARAM wParam, ::LPARAM lParam)
