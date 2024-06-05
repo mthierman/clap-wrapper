@@ -16,6 +16,18 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin)
   , m_pluginGui{m_clapPlugin->_ext._gui}
   , m_pluginState{m_clapPlugin->_ext._state}
 {
+  if (!m_plugin)
+  {
+    helpers::errorBox({"Plugin is null"});
+    helpers::abort();
+  }
+
+  if (!m_pluginGui)
+  {
+    helpers::errorBox({"Plugin GUI is null"});
+    helpers::abort();
+  }
+
   freeaudio::clap_wrapper::standalone::windows::helpers::createWindow(
       helpers::toUTF16(OUTPUT_NAME).c_str(), this);
 
@@ -28,12 +40,6 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin)
   setupMenu();
 
   setupStandaloneHost();
-
-  if (!m_pluginGui)
-  {
-    helpers::errorBox({"Plugin GUI is null"});
-    helpers::abort();
-  }
 
   if (!checkApi())
   {
@@ -148,7 +154,7 @@ bool HostWindow::setWindowSize(uint32_t width, uint32_t height)
 
   ::AdjustWindowRectExForDpi(
       &rect, ::GetWindowLongPtrW(m_hWnd.get(), GWL_STYLE), ::GetMenu(m_hWnd.get()) != nullptr,
-      ::GetWindowLongPtrW(m_hWnd.get(), GWL_EXSTYLE), ::GetDpiForWindow(m_hWnd.get()));
+      ::GetWindowLongPtrW(m_hWnd.get(), GWL_EXSTYLE), helpers::getCurrentDpi(m_hWnd.get()));
 
   ::SetWindowPos(m_hWnd.get(), nullptr, 0, 0, (rect.right - rect.left), (rect.bottom - rect.top),
                  SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE);
