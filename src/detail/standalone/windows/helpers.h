@@ -8,6 +8,14 @@
 
 #include "detail/standalone/entry.h"
 
+namespace freeaudio::clap_wrapper::standalone::windows::helpers::detail
+{
+struct DefaultWindowProcedure
+{
+  static auto CALLBACK wndProc(::HWND hWnd, ::UINT uMsg, ::WPARAM wParam, ::LPARAM lParam) -> ::LRESULT;
+};
+}  // namespace freeaudio::clap_wrapper::standalone::windows::helpers::detail
+
 namespace freeaudio::clap_wrapper::standalone::windows::helpers
 {
 template <typename T>
@@ -40,9 +48,17 @@ int safe_size(T value)
   return static_cast<U>(value);
 }
 
-int messageLoop();
+void abort(uint64_t exitCode = EXIT_FAILURE);
+auto getInstance() -> ::HMODULE;
+auto activateWindow(::HWND window) -> bool;
+auto showWindow(::HWND window) -> bool;
+auto hideWindow(::HWND window) -> bool;
+auto checkWindowVisibility(::HWND window) -> bool;
+auto closeWindow(wil::unique_hwnd& window) -> void;
 uint64_t getCurrentDpi(::HWND hWnd);
 double getCurrentScale(::HWND hWnd);
+
+int messageLoop();
 std::string narrow(std::wstring wstring);
 std::wstring widen(std::string string);
 void messageBox(std::initializer_list<std::string> args);
@@ -51,4 +67,4 @@ void errorBox(std::initializer_list<std::string> args);
 ::HCURSOR loadCursorFromSystem(LPSTR name = IDC_ARROW);
 ::HICON loadIconFromSystem(LPSTR name = IDI_APPLICATION);
 ::HICON loadIconFromResource();
-}  // namespace freeaudio::clap_wrapper::standalone::windows
+}  // namespace freeaudio::clap_wrapper::standalone::windows::helpers

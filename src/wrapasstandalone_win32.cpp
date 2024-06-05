@@ -27,11 +27,10 @@ int main(int argc, char* argv[])
   }
 #endif
 
-  if (!entry)
+  if (entry)
   {
     freeaudio::clap_wrapper::standalone::windows::helpers::errorBox({"No entry as configured"});
-
-    return 3;
+    freeaudio::clap_wrapper::standalone::windows::helpers::abort(3);
   }
 
   auto clapPlugin{

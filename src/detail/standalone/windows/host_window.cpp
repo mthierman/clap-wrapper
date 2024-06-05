@@ -37,7 +37,6 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin)
   if (!atom)
   {
     helpers::errorBox({"Registering host window failed"});
-    ::ExitProcess(EXIT_FAILURE);
   }
 
   ::CreateWindowExW(0, windowName.c_str(), windowName.c_str(), WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
@@ -104,10 +103,14 @@ void HostWindow::setupStandaloneHost()
 
 void HostWindow::setupPlugin()
 {
+  if (!m_pluginGui)
+  {
+    helpers::errorBox({"Plugin gui is null"});
+  }
+
   if (!m_pluginGui->is_api_supported(m_plugin, CLAP_WINDOW_API_WIN32, false))
   {
     helpers::errorBox({"CLAP_WINDOW_API_WIN32 is not supported"});
-    ::ExitProcess(EXIT_FAILURE);
   }
 
   m_pluginGui->create(m_plugin, CLAP_WINDOW_API_WIN32, false);

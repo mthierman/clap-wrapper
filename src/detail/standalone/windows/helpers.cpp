@@ -1,7 +1,64 @@
 #include "helpers.h"
 
+namespace freeaudio::clap_wrapper::standalone::windows::helpers::detail
+{
+auto CALLBACK DefaultWindowProcedure::wndProc(::HWND hWnd, ::UINT uMsg, ::WPARAM wParam,
+                                              ::LPARAM lParam) -> ::LRESULT
+{
+  return ::DefWindowProcA(hWnd, uMsg, wParam, lParam);
+}
+}  // namespace freeaudio::clap_wrapper::standalone::windows::helpers::detail
+
 namespace freeaudio::clap_wrapper::standalone::windows::helpers
 {
+void abort(uint64_t exitCode)
+{
+  ::ExitProcess(exitCode);
+}
+
+auto getInstance() -> ::HMODULE
+{
+  ::HMODULE hInstance;
+  ::GetModuleHandleExW(0, nullptr, &hInstance);
+
+  return hInstance;
+}
+
+auto activateWindow(HWND window) -> bool
+{
+  return ::ShowWindow(window, SW_NORMAL);
+}
+
+auto showWindow(HWND window) -> bool
+{
+  return ::ShowWindow(window, SW_SHOW);
+}
+
+auto hideWindow(HWND window) -> bool
+{
+  return ::ShowWindow(window, SW_HIDE);
+}
+
+auto checkWindowVisibility(HWND window) -> bool
+{
+  return ::IsWindowVisible(window);
+}
+
+auto closeWindow(wil::unique_hwnd& window) -> void
+{
+  window.reset();
+}
+
+uint64_t getCurrentDpi(::HWND hWnd)
+{
+  return ::GetDpiForWindow(hWnd);
+}
+
+double getCurrentScale(::HWND hWnd)
+{
+  return static_cast<double>(::GetDpiForWindow(hWnd)) / static_cast<double>(USER_DEFAULT_SCREEN_DPI);
+}
+
 int messageLoop()
 {
   MSG msg{};
@@ -22,16 +79,6 @@ int messageLoop()
   }
 
   return EXIT_SUCCESS;
-}
-
-uint64_t getCurrentDpi(::HWND hWnd)
-{
-  return ::GetDpiForWindow(hWnd);
-}
-
-double getCurrentScale(::HWND hWnd)
-{
-  return static_cast<double>(::GetDpiForWindow(hWnd)) / static_cast<double>(USER_DEFAULT_SCREEN_DPI);
 }
 
 std::string narrow(std::wstring wstring)
@@ -119,4 +166,4 @@ void errorBox(std::initializer_list<std::string> args)
   return static_cast<::HICON>(
       ::LoadImageW(hInstance, MAKEINTRESOURCEW(1), IMAGE_ICON, 0, 0, LR_SHARED | LR_DEFAULTSIZE));
 }
-}  // namespace freeaudio::clap_wrapper::standalone::windows
+}  // namespace freeaudio::clap_wrapper::standalone::windows::helpers
