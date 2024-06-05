@@ -163,10 +163,7 @@ void errorBox(std::initializer_list<std::string> args)
 
 ::HICON loadIconFromResource()
 {
-  ::HMODULE hInstance;
-  ::GetModuleHandleExW(0, nullptr, &hInstance);
-
   return static_cast<::HICON>(
-      ::LoadImageW(hInstance, MAKEINTRESOURCEW(1), IMAGE_ICON, 0, 0, LR_SHARED | LR_DEFAULTSIZE));
+      ::LoadImageW(getInstance(), MAKEINTRESOURCEW(1), IMAGE_ICON, 0, 0, LR_SHARED | LR_DEFAULTSIZE));
 }
 }  // namespace freeaudio::clap_wrapper::standalone::windows::helpers

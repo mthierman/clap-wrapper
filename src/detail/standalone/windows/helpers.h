@@ -21,13 +21,13 @@ struct DefaultWindowProcedure
 namespace freeaudio::clap_wrapper::standalone::windows::helpers
 {
 template <typename T = detail::DefaultWindowProcedure>
-auto registerWindowClass(const char* name, T* self = nullptr) -> const char*
+auto registerWindowClass(const wchar_t* name, T* self = nullptr) -> const wchar_t*
 {
   ::WNDCLASSEXW windowClass{sizeof(::WNDCLASSEXW)};
 
   auto hInstance{getInstance()};
 
-  if (!::GetClassInfoExA(hInstance, name, &windowClass))
+  if (!::GetClassInfoExW(hInstance, name, &windowClass))
   {
     auto iconFromResource{loadIconFromResource()};
 
@@ -43,12 +43,12 @@ auto registerWindowClass(const char* name, T* self = nullptr) -> const char*
     windowClass.hIcon = iconFromResource ? iconFromResource : loadIconFromSystem();
     windowClass.hIconSm = iconFromResource ? iconFromResource : loadIconFromSystem();
 
-    auto atom{::RegisterClassExA(&windowClass)};
+    auto atom{::RegisterClassExW(&windowClass)};
 
     if (!atom)
     {
-      helpers::errBox({"Window registration failed"});
-      ::ExitProcess(EXIT_FAILURE);
+      helpers::errorBox({"Window registration failed"});
+      helpers::abort();
     }
   }
 
