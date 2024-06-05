@@ -129,18 +129,6 @@ void HostWindow::setupPlugin()
   m_pluginGui->show(m_plugin);
 }
 
-bool HostWindow::setWindowVisibility(bool visible)
-{
-  ::ShowWindow(m_hWnd.get(), visible ? SW_SHOW : SW_HIDE);
-
-  return visible ? true : false;
-}
-
-bool HostWindow::getWindowVisibility()
-{
-  return ::IsWindowVisible(m_hWnd.get());
-}
-
 bool HostWindow::setWindowSize(uint32_t width, uint32_t height)
 {
   RECT r{0, 0, 0, 0};

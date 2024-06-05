@@ -17,8 +17,6 @@ struct HostWindow
   void setupStandaloneHost();
   void setupPlugin();
 
-  bool setWindowVisibility(bool visible);
-  bool getWindowVisibility();
   bool setWindowSize(uint32_t width, uint32_t height);
   bool setPluginScale(double scale = 1.0);
 
