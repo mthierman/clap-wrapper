@@ -48,16 +48,69 @@ int safe_size(T value)
   return static_cast<U>(value);
 }
 
+template <typename T = detail::DefaultWindowProcedure>
+auto registerWindowClass(const wchar_t* name, T* self = nullptr) -> const wchar_t*
+{
+  ::WNDCLASSEXW windowClass{sizeof(::WNDCLASSEXW)};
+
+  auto hInstance{getInstance()};
+
+  if (!::GetClassInfoExW(hInstance, name, &windowClass))
+  {
+    auto iconFromResource{loadIconFromResource()};
+
+    windowClass.lpszClassName = name;
+    windowClass.lpszMenuName = nullptr;
+    windowClass.lpfnWndProc = self ? self->wndProc : ::DefWindowProcA;
+    windowClass.style = 0;
+    windowClass.cbClsExtra = 0;
+    windowClass.cbWndExtra = sizeof(intptr_t);
+    windowClass.hInstance = hInstance;
+    windowClass.hbrBackground = loadBrushFromSystem();
+    windowClass.hCursor = loadCursorFromSystem();
+    windowClass.hIcon = iconFromResource ? iconFromResource : loadIconFromSystem();
+    windowClass.hIconSm = iconFromResource ? iconFromResource : loadIconFromSystem();
+
+    auto atom{::RegisterClassExW(&windowClass)};
+
+    if (!atom)
+    {
+      errorBox({"Window registration failed"});
+      abort();
+    }
+  }
+
+  return name;
+}
+
+template <typename T = detail::DefaultWindowProcedure>
+auto createWindow(const wchar_t* name = "Window", T* self = nullptr) -> ::HWND
+{
+  registerWindowClass(name, self);
+
+  return ::CreateWindowExW(0, name, name, WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN, CW_USEDEFAULT,
+                           CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, nullptr, nullptr, getInstance(),
+                           self);
+}
+
+template <typename T>
+auto createMessageWindow(T* self) -> ::HWND
+{
+  auto name{registerWindowClass("MessageWindow", self)};
+
+  return ::CreateWindowExW(0, name, name, WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN, CW_USEDEFAULT,
+                           CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, HWND_MESSAGE, nullptr,
+                           getInstance(), self);
+}
+
 void abort(uint64_t exitCode = EXIT_FAILURE);
 auto getInstance() -> ::HMODULE;
 auto activateWindow(::HWND window) -> bool;
 auto showWindow(::HWND window) -> bool;
 auto hideWindow(::HWND window) -> bool;
 auto checkWindowVisibility(::HWND window) -> bool;
-auto closeWindow(wil::unique_hwnd& window) -> void;
 uint64_t getCurrentDpi(::HWND hWnd);
 double getCurrentScale(::HWND hWnd);
-
 int messageLoop();
 std::string narrow(std::wstring wstring);
 std::wstring widen(std::string string);

@@ -44,11 +44,6 @@ auto checkWindowVisibility(HWND window) -> bool
   return ::IsWindowVisible(window);
 }
 
-auto closeWindow(wil::unique_hwnd& window) -> void
-{
-  window.reset();
-}
-
 uint64_t getCurrentDpi(::HWND hWnd)
 {
   return ::GetDpiForWindow(hWnd);
