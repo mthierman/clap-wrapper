@@ -147,11 +147,6 @@ bool HostWindow::setWindowSize(uint32_t width, uint32_t height)
   rect.right = width;
   rect.bottom = height;
 
-  if (!m_hWnd)
-  {
-    return false;
-  }
-
   ::AdjustWindowRectExForDpi(
       &rect, ::GetWindowLongPtrW(m_hWnd.get(), GWL_STYLE), ::GetMenu(m_hWnd.get()) != nullptr,
       ::GetWindowLongPtrW(m_hWnd.get(), GWL_EXSTYLE), helpers::getCurrentDpi(m_hWnd.get()));
