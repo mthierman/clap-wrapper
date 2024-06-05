@@ -108,7 +108,6 @@ void HostWindow::setupPlugin(::HWND window)
   if (m_pluginGui->can_resize(m_plugin))
   {
     // We can restore size here
-
     // width = previousWidth();
     // height = previousHeight();
     // pluginGui->adjust_size(plugin, &width, &height);
@@ -123,15 +122,12 @@ void HostWindow::setupPlugin(::HWND window)
 
     m_pluginGui->get_size(m_plugin, &width, &height);
 
-    helpers::log(
-        {"DEBUG: get_size() ", "WIDTH - ", std::to_string(width), " HEIGHT - ", std::to_string(height)});
-
     setWindowSize(width, height);
   }
 
   clap_window clapWindow;
   clapWindow.api = CLAP_WINDOW_API_WIN32;
-  clapWindow.win32 = static_cast<void*>(m_hWnd.get());
+  clapWindow.win32 = static_cast<void*>(window);
 
   m_pluginGui->set_parent(m_plugin, &clapWindow);
 }
