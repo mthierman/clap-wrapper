@@ -13,6 +13,7 @@ struct HostWindow
 {
   HostWindow(std::shared_ptr<Clap::Plugin> plugin);
 
+  void setupMenu();
   bool setWindowVisibility(bool visible);
   bool getWindowVisibility();
   double getCurrentScale();

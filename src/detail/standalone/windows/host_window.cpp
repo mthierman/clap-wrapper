@@ -19,43 +19,7 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin)
   auto window{freeaudio::clap_wrapper::standalone::windows::helpers::createWindow(
       helpers::toUTF16(OUTPUT_NAME).c_str(), this)};
 
-  auto hMenu{::GetSystemMenu(window, FALSE)};
-
-  ::MENUITEMINFOW seperator{sizeof(::MENUITEMINFOW)};
-  seperator.fMask = MIIM_FTYPE;
-  seperator.fType = MFT_SEPARATOR;
-
-  ::MENUITEMINFOW audioIn{sizeof(::MENUITEMINFOW)};
-  audioIn.fMask = MIIM_STRING | MIIM_ID;
-  audioIn.wID = IDM_SETTINGS;
-  audioIn.dwTypeData = const_cast<LPWSTR>(L"Audio/MIDI Settings");
-
-  ::MENUITEMINFOW saveState{sizeof(::MENUITEMINFOW)};
-  saveState.fMask = MIIM_STRING | MIIM_ID;
-  saveState.wID = IDM_SAVE_STATE;
-  saveState.dwTypeData = const_cast<LPWSTR>(L"Save plugin state...");
-
-  ::MENUITEMINFOW loadState{sizeof(::MENUITEMINFOW)};
-  loadState.fMask = MIIM_STRING | MIIM_ID;
-  loadState.wID = IDM_LOAD_STATE;
-  loadState.dwTypeData = const_cast<LPWSTR>(L"Load plugin state...");
-
-  ::MENUITEMINFOW resetState{sizeof(::MENUITEMINFOW)};
-  resetState.fMask = MIIM_STRING | MIIM_ID;
-  resetState.wID = IDM_RESET_STATE;
-  resetState.dwTypeData = const_cast<LPWSTR>(L"Reset to default plugin state");
-
-  if (hMenu != INVALID_HANDLE_VALUE)
-  {
-    ::InsertMenuItemW(hMenu, 1, TRUE, &seperator);
-    ::InsertMenuItemW(hMenu, 2, TRUE, &audioIn);
-    ::InsertMenuItemW(hMenu, 3, TRUE, &seperator);
-    ::InsertMenuItemW(hMenu, 4, TRUE, &saveState);
-    ::InsertMenuItemW(hMenu, 5, TRUE, &loadState);
-    ::InsertMenuItemW(hMenu, 6, TRUE, &seperator);
-    ::InsertMenuItemW(hMenu, 7, TRUE, &resetState);
-    ::InsertMenuItemW(hMenu, 8, TRUE, &seperator);
-  }
+  setupMenu();
 
   freeaudio::clap_wrapper::standalone::getStandaloneHost()->onRequestResize =
       [this](uint32_t width, uint32_t height)
@@ -116,6 +80,47 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin)
   setWindowVisibility(true);
 
   freeaudio::clap_wrapper::standalone::mainStartAudio();
+}
+
+void HostWindow::setupMenu()
+{
+  auto hMenu{::GetSystemMenu(m_hWnd.get(), FALSE)};
+
+  ::MENUITEMINFOW seperator{sizeof(::MENUITEMINFOW)};
+  seperator.fMask = MIIM_FTYPE;
+  seperator.fType = MFT_SEPARATOR;
+
+  ::MENUITEMINFOW audioIn{sizeof(::MENUITEMINFOW)};
+  audioIn.fMask = MIIM_STRING | MIIM_ID;
+  audioIn.wID = IDM_SETTINGS;
+  audioIn.dwTypeData = const_cast<LPWSTR>(L"Audio/MIDI Settings");
+
+  ::MENUITEMINFOW saveState{sizeof(::MENUITEMINFOW)};
+  saveState.fMask = MIIM_STRING | MIIM_ID;
+  saveState.wID = IDM_SAVE_STATE;
+  saveState.dwTypeData = const_cast<LPWSTR>(L"Save plugin state...");
+
+  ::MENUITEMINFOW loadState{sizeof(::MENUITEMINFOW)};
+  loadState.fMask = MIIM_STRING | MIIM_ID;
+  loadState.wID = IDM_LOAD_STATE;
+  loadState.dwTypeData = const_cast<LPWSTR>(L"Load plugin state...");
+
+  ::MENUITEMINFOW resetState{sizeof(::MENUITEMINFOW)};
+  resetState.fMask = MIIM_STRING | MIIM_ID;
+  resetState.wID = IDM_RESET_STATE;
+  resetState.dwTypeData = const_cast<LPWSTR>(L"Reset to default plugin state");
+
+  if (hMenu != INVALID_HANDLE_VALUE)
+  {
+    ::InsertMenuItemW(hMenu, 1, TRUE, &seperator);
+    ::InsertMenuItemW(hMenu, 2, TRUE, &audioIn);
+    ::InsertMenuItemW(hMenu, 3, TRUE, &seperator);
+    ::InsertMenuItemW(hMenu, 4, TRUE, &saveState);
+    ::InsertMenuItemW(hMenu, 5, TRUE, &loadState);
+    ::InsertMenuItemW(hMenu, 6, TRUE, &seperator);
+    ::InsertMenuItemW(hMenu, 7, TRUE, &resetState);
+    ::InsertMenuItemW(hMenu, 8, TRUE, &seperator);
+  }
 }
 
 bool HostWindow::setWindowVisibility(bool visible)
