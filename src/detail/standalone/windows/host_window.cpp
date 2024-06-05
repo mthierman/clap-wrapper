@@ -129,6 +129,7 @@ void HostWindow::setupPlugin()
                             WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
 
     m_pluginGui->get_size(m_plugin, &width, &height);
+
     setWindowSize(width, height);
   }
 
