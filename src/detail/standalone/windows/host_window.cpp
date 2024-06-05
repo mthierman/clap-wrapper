@@ -23,52 +23,7 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin)
 
   setupStandaloneHost();
 
-  if (!m_pluginGui->is_api_supported(m_plugin, CLAP_WINDOW_API_WIN32, false))
-  {
-    helpers::errorBox({"CLAP_WINDOW_API_WIN32 is not supported"});
-    helpers::abort();
-  }
-
-  m_pluginGui->create(m_plugin, CLAP_WINDOW_API_WIN32, false);
-
-  if (auto setScale = m_pluginGui->set_scale(m_plugin, getCurrentScale()); setScale)
-  {
-    helpers::log({"DEBUG: getCurrentScale() - ", std::to_string(getCurrentScale())});
-    helpers::log({"DEBUG: setPluginScale returned true"});
-  }
-
-  uint32_t width{0};
-  uint32_t height{0};
-
-  if (m_pluginGui->can_resize(m_plugin))
-  {
-    // We can restore size here
-
-    // width = previousWidth();
-    // height = previousHeight();
-    // pluginGui->adjust_size(plugin, &width, &height);
-    // pluginGui->set_size(plugin, width, height);
-  }
-  else
-  {
-    // We can't resize, so disable WS_THICKFRAME and WS_MAXIMIZEBOX
-    ::SetWindowLongPtrW(m_hWnd.get(), GWL_STYLE,
-                        ::GetWindowLongPtrW(m_hWnd.get(), GWL_STYLE) & ~WS_OVERLAPPEDWINDOW |
-                            WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
-
-    m_pluginGui->get_size(m_plugin, &width, &height);
-
-    helpers::log(
-        {"DEBUG: get_size() ", "WIDTH - ", std::to_string(width), " HEIGHT - ", std::to_string(height)});
-
-    setWindowSize(width, height);
-  }
-
-  clap_window clapWindow;
-  clapWindow.api = CLAP_WINDOW_API_WIN32;
-  clapWindow.win32 = static_cast<void*>(m_hWnd.get());
-
-  m_pluginGui->set_parent(m_plugin, &clapWindow);
+  setupPlugin();
 
   m_pluginGui->show(m_plugin);
 
@@ -126,6 +81,56 @@ void HostWindow::setupStandaloneHost()
     helpers::log({"DEBUG: onRequestResize called"});
     return setWindowSize(width, height);
   };
+}
+
+void HostWindow::setupPlugin()
+{
+  if (!m_pluginGui->is_api_supported(m_plugin, CLAP_WINDOW_API_WIN32, false))
+  {
+    helpers::errorBox({"CLAP_WINDOW_API_WIN32 is not supported"});
+    helpers::abort();
+  }
+
+  m_pluginGui->create(m_plugin, CLAP_WINDOW_API_WIN32, false);
+
+  if (auto setScale = m_pluginGui->set_scale(m_plugin, getCurrentScale()); setScale)
+  {
+    helpers::log({"DEBUG: getCurrentScale() - ", std::to_string(getCurrentScale())});
+    helpers::log({"DEBUG: setPluginScale returned true"});
+  }
+
+  uint32_t width{0};
+  uint32_t height{0};
+
+  if (m_pluginGui->can_resize(m_plugin))
+  {
+    // We can restore size here
+
+    // width = previousWidth();
+    // height = previousHeight();
+    // pluginGui->adjust_size(plugin, &width, &height);
+    // pluginGui->set_size(plugin, width, height);
+  }
+  else
+  {
+    // We can't resize, so disable WS_THICKFRAME and WS_MAXIMIZEBOX
+    ::SetWindowLongPtrW(m_hWnd.get(), GWL_STYLE,
+                        ::GetWindowLongPtrW(m_hWnd.get(), GWL_STYLE) & ~WS_OVERLAPPEDWINDOW |
+                            WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
+
+    m_pluginGui->get_size(m_plugin, &width, &height);
+
+    helpers::log(
+        {"DEBUG: get_size() ", "WIDTH - ", std::to_string(width), " HEIGHT - ", std::to_string(height)});
+
+    setWindowSize(width, height);
+  }
+
+  clap_window clapWindow;
+  clapWindow.api = CLAP_WINDOW_API_WIN32;
+  clapWindow.win32 = static_cast<void*>(m_hWnd.get());
+
+  m_pluginGui->set_parent(m_plugin, &clapWindow);
 }
 
 bool HostWindow::setWindowVisibility(bool visible)

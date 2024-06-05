@@ -15,6 +15,7 @@ struct HostWindow
 
   void setupMenu();
   void setupStandaloneHost();
+  void setupPlugin();
 
   bool setWindowVisibility(bool visible);
   bool getWindowVisibility();
