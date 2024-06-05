@@ -18,7 +18,7 @@ SettingsWindow::SettingsWindow()
 
   if (!m_hWnd)
   {
-    helpers::errorBox({"Window creation failed"});
+    helpers::errorBox({"Settings Window creation failed"});
     helpers::abort();
   }
 }

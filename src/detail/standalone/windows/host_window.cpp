@@ -33,7 +33,7 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin)
 
   if (!m_hWnd)
   {
-    helpers::errorBox({"Window creation failed"});
+    helpers::errorBox({"Host Window creation failed"});
     helpers::abort();
   }
 
