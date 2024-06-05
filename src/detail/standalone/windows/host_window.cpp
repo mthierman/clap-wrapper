@@ -93,9 +93,10 @@ void HostWindow::setupPlugin()
 
   m_pluginGui->create(m_plugin, CLAP_WINDOW_API_WIN32, false);
 
-  if (auto setScale = m_pluginGui->set_scale(m_plugin, getCurrentScale()); setScale)
+  if (auto setScale = m_pluginGui->set_scale(m_plugin, helpers::getCurrentScale(m_hWnd.get())); setScale)
   {
-    helpers::log({"DEBUG: getCurrentScale() - ", std::to_string(getCurrentScale())});
+    helpers::log(
+        {"DEBUG: getCurrentScale() - ", std::to_string(helpers::getCurrentScale(m_hWnd.get()))});
     helpers::log({"DEBUG: setPluginScale returned true"});
   }
 
@@ -131,15 +132,6 @@ void HostWindow::setupPlugin()
   clapWindow.win32 = static_cast<void*>(m_hWnd.get());
 
   m_pluginGui->set_parent(m_plugin, &clapWindow);
-}
-
-double HostWindow::getCurrentScale()
-{
-  if (m_hWnd)
-  {
-    return static_cast<double>(::GetDpiForWindow(m_hWnd.get())) /
-           static_cast<double>(USER_DEFAULT_SCREEN_DPI);
-  }
 }
 
 bool HostWindow::setWindowSize(uint32_t width, uint32_t height)
@@ -196,7 +188,7 @@ LRESULT CALLBACK HostWindow::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 
 int HostWindow::onDpiChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  m_pluginGui->set_scale(m_plugin, getCurrentScale());
+  m_pluginGui->set_scale(m_plugin, helpers::getCurrentScale(m_hWnd.get()));
 
   return 0;
 }

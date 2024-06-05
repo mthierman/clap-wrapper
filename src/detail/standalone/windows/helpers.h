@@ -105,6 +105,8 @@ bool showWindow(::HWND window);
 bool hideWindow(::HWND window);
 bool closeWindow(::HWND window);
 bool checkWindowVisibility(::HWND window);
+unsigned int getCurrentDpi(::HWND window);
+double getCurrentScale(::HWND window);
 
 void abort(unsigned int exitCode = EXIT_FAILURE);
 void quit(unsigned int exitCode = EXIT_SUCCESS);

@@ -44,6 +44,16 @@ bool checkWindowVisibility(::HWND window)
   return ::IsWindowVisible(window);
 }
 
+unsigned int getCurrentDpi(::HWND window)
+{
+  return ::GetDpiForWindow(window);
+}
+
+double getCurrentScale(::HWND window)
+{
+  return static_cast<double>(::GetDpiForWindow(window)) / static_cast<double>(USER_DEFAULT_SCREEN_DPI);
+}
+
 void abort(unsigned int exitCode)
 {
   ::ExitProcess(exitCode);

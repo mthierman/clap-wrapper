@@ -17,7 +17,6 @@ struct HostWindow
   void setupStandaloneHost();
   void setupPlugin();
 
-  double getCurrentScale();
   bool setWindowSize(uint32_t width, uint32_t height);
 
   static LRESULT CALLBACK wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
