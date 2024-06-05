@@ -40,6 +40,7 @@ int safe_size(T value)
   return static_cast<U>(value);
 }
 
+void abort(uint64_t exitCode = EXIT_FAILURE);
 int messageLoop();
 std::string narrow(std::wstring wstring);
 std::wstring widen(std::string string);
@@ -49,4 +50,4 @@ void errorBox(std::initializer_list<std::string> args);
 ::HCURSOR loadCursorFromSystem(LPSTR name = IDC_ARROW);
 ::HICON loadIconFromSystem(LPSTR name = IDI_APPLICATION);
 ::HICON loadIconFromResource();
-}  // namespace freeaudio::clap_wrapper::standalone::windows
+}  // namespace freeaudio::clap_wrapper::standalone::windows::helpers

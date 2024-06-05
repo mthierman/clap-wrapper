@@ -2,6 +2,11 @@
 
 namespace freeaudio::clap_wrapper::standalone::windows::helpers
 {
+void abort(uint64_t exitCode)
+{
+  ::ExitProcess(exitCode);
+}
+
 int messageLoop()
 {
   MSG msg{};
@@ -109,4 +114,4 @@ void errorBox(std::initializer_list<std::string> args)
   return static_cast<::HICON>(
       ::LoadImageW(hInstance, MAKEINTRESOURCEW(1), IMAGE_ICON, 0, 0, LR_SHARED | LR_DEFAULTSIZE));
 }
-}  // namespace freeaudio::clap_wrapper::standalone::windows
+}  // namespace freeaudio::clap_wrapper::standalone::windows::helpers
