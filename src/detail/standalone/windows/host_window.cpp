@@ -49,7 +49,7 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin)
 
   setupPlugin();
 
-  m_pluginGui->show(m_plugin);
+  // m_pluginGui->show(m_plugin);
 
   helpers::activateWindow(m_hWnd.get());
 
@@ -165,6 +165,8 @@ LRESULT CALLBACK HostWindow::wndProc(::HWND hWnd, ::UINT uMsg, ::WPARAM wParam, 
   {
     switch (uMsg)
     {
+      case WM_SHOWWINDOW:
+        return self->onShowWindow(hWnd, uMsg, wParam, lParam);
       case WM_DPICHANGED:
         return self->onDpiChanged(hWnd, uMsg, wParam, lParam);
       case WM_WINDOWPOSCHANGED:
@@ -177,6 +179,20 @@ LRESULT CALLBACK HostWindow::wndProc(::HWND hWnd, ::UINT uMsg, ::WPARAM wParam, 
   }
 
   return ::DefWindowProcW(hWnd, uMsg, wParam, lParam);
+}
+
+int HostWindow::onShowWindow(::HWND hWnd, ::UINT uMsg, ::WPARAM wParam, ::LPARAM lParam)
+{
+  if (wParam)
+  {
+    m_pluginGui->show(m_plugin);
+  }
+  else
+  {
+    m_pluginGui->hide(m_plugin);
+  }
+
+  return 0;
 }
 
 int HostWindow::onDpiChanged(::HWND hWnd, ::UINT uMsg, ::WPARAM wParam, ::LPARAM lParam)
