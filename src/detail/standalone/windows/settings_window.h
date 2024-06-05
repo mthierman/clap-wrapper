@@ -9,8 +9,7 @@ struct SettingsWindow
 {
   SettingsWindow();
 
-  bool setWindowVisibility(bool visible);
-  bool getWindowVisibility();
+  void centerWindow();
 
   static LRESULT CALLBACK wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
   int onCreate(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

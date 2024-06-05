@@ -14,33 +14,17 @@ namespace freeaudio::clap_wrapper::standalone::windows
 {
 SettingsWindow::SettingsWindow()
 {
-  auto windowName{std::wstring(L"Audio/MIDI Settings")};
-  auto iconFromResource{helpers::loadIconFromResource()};
+  freeaudio::clap_wrapper::standalone::windows::helpers::createWindow(L"Audio/MIDI Settings", this);
 
-  ::WNDCLASSEXW wcex{sizeof(::WNDCLASSEXW)};
-  wcex.lpszClassName = windowName.c_str();
-  wcex.lpszMenuName = windowName.c_str();
-  wcex.lpfnWndProc = SettingsWindow::wndProc;
-  wcex.style = 0;
-  wcex.cbClsExtra = 0;
-  wcex.cbWndExtra = sizeof(intptr_t);
-  wcex.hInstance = nullptr;
-  wcex.hbrBackground = helpers::loadBrushFromSystem();
-  wcex.hCursor = helpers::loadCursorFromSystem();
-  wcex.hIcon = iconFromResource ? iconFromResource : helpers::loadIconFromSystem();
-  wcex.hIconSm = iconFromResource ? iconFromResource : helpers::loadIconFromSystem();
-
-  auto atom{::RegisterClassExW(&wcex)};
-
-  if (!atom)
+  if (!m_hWnd)
   {
-    helpers::errorBox({"Registering settings window failed"});
-    ::ExitProcess(EXIT_FAILURE);
+    helpers::errorBox({"Window creation failed"});
+    helpers::abort();
   }
+}
 
-  ::CreateWindowExW(0, windowName.c_str(), windowName.c_str(), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
-                    CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, nullptr, nullptr, nullptr, this);
-
+void centerWindow()
+{
   // ::MONITORINFO mi{sizeof(::MONITORINFO)};
   // ::GetMonitorInfoA(::MonitorFromWindow(m_hWnd.get(), MONITOR_DEFAULTTONEAREST), &mi);
   // int width{600};
@@ -48,20 +32,6 @@ SettingsWindow::SettingsWindow()
   // auto x = (static_cast<int>(mi.rcWork.right - mi.rcWork.left) - width) / 2;
   // auto y = (static_cast<int>(mi.rcWork.bottom - mi.rcWork.top) - height) / 2;
   // ::SetWindowPos(m_hWnd.get(), nullptr, x, y, width, height, 0);
-
-  setWindowVisibility(false);
-}
-
-bool SettingsWindow::setWindowVisibility(bool visible)
-{
-  ::ShowWindow(m_hWnd.get(), visible ? SW_SHOW : SW_HIDE);
-
-  return visible ? true : false;
-}
-
-bool SettingsWindow::getWindowVisibility()
-{
-  return ::IsWindowVisible(m_hWnd.get());
 }
 
 LRESULT CALLBACK SettingsWindow::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -101,7 +71,7 @@ int SettingsWindow::onCreate(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 int SettingsWindow::onClose(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  setWindowVisibility(false);
+  helpers::hideWindow(hWnd);
 
   return 0;
 }

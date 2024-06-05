@@ -224,7 +224,9 @@ int HostWindow::onSysCommand(::HWND hWnd, ::UINT uMsg, ::WPARAM wParam, ::LPARAM
   {
     case IDM_SETTINGS:
     {
-      m_settingsWindow.setWindowVisibility(!m_settingsWindow.getWindowVisibility());
+      helpers::checkWindowVisibility(m_settingsWindow.m_hWnd.get())
+          ? helpers::hideWindow(m_settingsWindow.m_hWnd.get())
+          : helpers::showWindow(m_settingsWindow.m_hWnd.get());
 
       return 0;
     }
