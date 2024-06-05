@@ -16,7 +16,7 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin)
   , m_pluginGui{m_clapPlugin->_ext._gui}
   , m_pluginState{m_clapPlugin->_ext._state}
 {
-  auto windowName{helpers::widen(OUTPUT_NAME)};
+  auto windowName{helpers::toUTF16(OUTPUT_NAME)};
   auto iconFromResource{helpers::loadIconFromResource()};
 
   ::WNDCLASSEXW wcex{sizeof(::WNDCLASSEXW)};

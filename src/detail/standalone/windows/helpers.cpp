@@ -34,7 +34,7 @@ int messageLoop()
   return EXIT_SUCCESS;
 }
 
-std::string narrow(std::wstring wstring)
+std::string toUTF8(std::wstring wstring)
 {
   if (wstring.empty()) return {};
 
@@ -53,7 +53,7 @@ std::string narrow(std::wstring wstring)
     return {};
 }
 
-std::wstring widen(std::string string)
+std::wstring toUTF16(std::string string)
 {
   if (string.empty()) return {};
 
@@ -80,7 +80,7 @@ void log(std::initializer_list<std::string> args)
     message.append(arg);
   }
 
-  ::OutputDebugStringW(widen(message).c_str());
+  ::OutputDebugStringW(toUTF16(message).c_str());
   ::OutputDebugStringW(L"\n");
 }
 
@@ -93,7 +93,7 @@ void messageBox(std::initializer_list<std::string> args)
     message.append(arg);
   }
 
-  ::MessageBoxW(nullptr, widen(message).c_str(), nullptr, MB_OK | MB_ICONASTERISK);
+  ::MessageBoxW(nullptr, toUTF16(message).c_str(), nullptr, MB_OK | MB_ICONASTERISK);
 }
 
 void errorBox(std::initializer_list<std::string> args)
@@ -105,7 +105,7 @@ void errorBox(std::initializer_list<std::string> args)
     message.append(arg);
   }
 
-  ::MessageBoxW(nullptr, widen(message).c_str(), nullptr, MB_OK | MB_ICONHAND);
+  ::MessageBoxW(nullptr, toUTF16(message).c_str(), nullptr, MB_OK | MB_ICONHAND);
 }
 
 ::HBRUSH loadBrushFromSystem(int name)

@@ -45,8 +45,8 @@ int safe_size(T value)
 void abort(uint64_t exitCode = EXIT_FAILURE);
 void quit(uint64_t exitCode = EXIT_SUCCESS);
 int messageLoop();
-std::string narrow(std::wstring wstring);
-std::wstring widen(std::string string);
+std::string toUTF8(std::wstring wstring);
+std::wstring toUTF16(std::string string);
 void log(std::initializer_list<std::string> args);
 void messageBox(std::initializer_list<std::string> args);
 void errorBox(std::initializer_list<std::string> args);
