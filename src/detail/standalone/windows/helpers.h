@@ -3,8 +3,10 @@
 #include <Windows.h>
 #include <wil/resource.h>
 
-#include <string>
+#include <initializer_list>
+#include <limits>
 #include <stdexcept>
+#include <string>
 
 #include "detail/standalone/entry.h"
 
@@ -41,6 +43,7 @@ int safe_size(T value)
 }
 
 void abort(uint64_t exitCode = EXIT_FAILURE);
+void quit(uint64_t exitCode = EXIT_SUCCESS);
 int messageLoop();
 std::string narrow(std::wstring wstring);
 std::wstring widen(std::string string);

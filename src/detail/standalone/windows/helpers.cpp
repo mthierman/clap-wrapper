@@ -7,9 +7,14 @@ void abort(uint64_t exitCode)
   ::ExitProcess(exitCode);
 }
 
+void quit(uint64_t exitCode)
+{
+  ::PostQuitMessage(exitCode);
+}
+
 int messageLoop()
 {
-  MSG msg{};
+  ::MSG msg{};
   int r{};
 
   while ((r = ::GetMessageW(&msg, nullptr, 0, 0)) != 0)
