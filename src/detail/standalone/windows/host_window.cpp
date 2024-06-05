@@ -83,7 +83,11 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin)
   }
 
   freeaudio::clap_wrapper::standalone::getStandaloneHost()->onRequestResize =
-      [this](uint32_t width, uint32_t height) { return setWindowSize(width, height); };
+      [this](uint32_t width, uint32_t height)
+  {
+    helpers::log({"DEBUG: onRequestResize called"});
+    return setWindowSize(width, height);
+  };
 
   if (!m_pluginGui->is_api_supported(m_plugin, CLAP_WINDOW_API_WIN32, false))
   {
