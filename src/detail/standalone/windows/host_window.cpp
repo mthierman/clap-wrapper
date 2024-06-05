@@ -145,6 +145,9 @@ bool HostWindow::getWindowVisibility()
 
 bool HostWindow::setWindowSize(uint32_t width, uint32_t height)
 {
+  helpers::log({"DEBUG: setWindowSize() ", "WIDTH - ", std::to_string(width), " HEIGHT - ",
+                std::to_string(height)});
+
   RECT r{0, 0, 0, 0};
   r.right = width;
   r.bottom = height;
