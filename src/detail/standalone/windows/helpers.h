@@ -44,6 +44,7 @@ void abort(uint64_t exitCode = EXIT_FAILURE);
 int messageLoop();
 std::string narrow(std::wstring wstring);
 std::wstring widen(std::string string);
+void log(std::initializer_list<std::string> args);
 void messageBox(std::initializer_list<std::string> args);
 void errorBox(std::initializer_list<std::string> args);
 ::HBRUSH loadBrushFromSystem(int name = BLACK_BRUSH);

@@ -66,6 +66,19 @@ std::wstring widen(std::string string)
     return {};
 }
 
+void log(std::initializer_list<std::string> args)
+{
+  std::string message;
+
+  for (const auto& arg : args)
+  {
+    message.append(arg);
+  }
+
+  ::OutputDebugStringW(widen(message).c_str());
+  ::OutputDebugStringW(L"\n");
+}
+
 void messageBox(std::initializer_list<std::string> args)
 {
   std::string message;
