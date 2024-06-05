@@ -88,7 +88,7 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin)
   if (!m_pluginGui->is_api_supported(m_plugin, CLAP_WINDOW_API_WIN32, false))
   {
     helpers::errorBox({"CLAP_WINDOW_API_WIN32 is not supported"});
-    ::ExitProcess(EXIT_FAILURE);
+    helpers::abort();
   }
 
   m_pluginGui->create(m_plugin, CLAP_WINDOW_API_WIN32, false);
