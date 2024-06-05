@@ -97,10 +97,9 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin)
 
   m_pluginGui->create(m_plugin, CLAP_WINDOW_API_WIN32, false);
 
-  auto setScale{setPluginScale()};
-
-  if (setScale)
+  if (auto setScale = m_pluginGui->set_scale(m_plugin, getCurrentScale()); setScale)
   {
+    helpers::log({"DEBUG: getCurrentScale() - ", std::to_string(getCurrentScale())});
     helpers::log({"DEBUG: setPluginScale returned true"});
   }
 
@@ -128,7 +127,7 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin)
     helpers::log(
         {"DEBUG: get_size() ", "WIDTH - ", std::to_string(width), " HEIGHT - ", std::to_string(height)});
 
-    setWindowSize(width, height);
+    setWindowSize(width * getCurrentScale(), height * getCurrentScale());
   }
 
   clap_window clapWindow;
@@ -154,6 +153,15 @@ bool HostWindow::setWindowVisibility(bool visible)
 bool HostWindow::getWindowVisibility()
 {
   return ::IsWindowVisible(m_hWnd.get());
+}
+
+double HostWindow::getCurrentScale()
+{
+  if (m_hWnd)
+  {
+    return static_cast<double>(::GetDpiForWindow(m_hWnd.get())) /
+           static_cast<double>(USER_DEFAULT_SCREEN_DPI);
+  }
 }
 
 bool HostWindow::setWindowSize(uint32_t width, uint32_t height)
@@ -183,17 +191,6 @@ bool HostWindow::setWindowSize(uint32_t width, uint32_t height)
   }
 }
 
-bool HostWindow::setPluginScale()
-{
-  if (m_plugin && m_pluginGui)
-  {
-    return m_pluginGui->set_scale(m_plugin, static_cast<double>(::GetDpiForWindow(m_hWnd.get())) /
-                                                static_cast<double>(USER_DEFAULT_SCREEN_DPI));
-  }
-
-  return false;
-}
-
 LRESULT CALLBACK HostWindow::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   auto self{helpers::instance_from_wnd_proc<HostWindow>(hWnd, uMsg, lParam)};
@@ -218,7 +215,7 @@ LRESULT CALLBACK HostWindow::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 
 int HostWindow::onDpiChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  setPluginScale();
+  m_pluginGui->set_scale(m_plugin, getCurrentScale());
 
   return 0;
 }
