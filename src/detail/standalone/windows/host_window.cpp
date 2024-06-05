@@ -188,19 +188,16 @@ int HostWindow::onDpiChanged(::HWND hWnd, ::UINT uMsg, ::WPARAM wParam, ::LPARAM
 
 int HostWindow::onWindowPosChanged(::HWND hWnd, ::UINT uMsg, ::WPARAM wParam, ::LPARAM lParam)
 {
-  if (m_plugin && m_pluginGui)
+  if (m_pluginGui->can_resize(m_plugin))
   {
-    if (m_pluginGui->can_resize(m_plugin))
-    {
-      ::RECT r{0, 0, 0, 0};
-      ::GetClientRect(hWnd, &r);
+    ::RECT r{0, 0, 0, 0};
+    ::GetClientRect(hWnd, &r);
 
-      uint32_t width = (r.right - r.left);
-      uint32_t height = (r.bottom - r.top);
+    uint32_t width = (r.right - r.left);
+    uint32_t height = (r.bottom - r.top);
 
-      m_pluginGui->adjust_size(m_plugin, &width, &height);
-      m_pluginGui->set_size(m_plugin, width, height);
-    }
+    m_pluginGui->adjust_size(m_plugin, &width, &height);
+    m_pluginGui->set_size(m_plugin, width, height);
   }
 
   return 0;
