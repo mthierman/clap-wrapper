@@ -1,5 +1,14 @@
 #include "helpers.h"
 
+namespace freeaudio::clap_wrapper::standalone::windows::helpers::details
+{
+auto CALLBACK DefaultWindowProcedure::wndProc(::HWND hWnd, ::UINT uMsg, ::WPARAM wParam,
+                                              ::LPARAM lParam) -> ::LRESULT
+{
+  return ::DefWindowProcW(hWnd, uMsg, wParam, lParam);
+}
+}  // namespace freeaudio::clap_wrapper::standalone::windows::helpers::details
+
 namespace freeaudio::clap_wrapper::standalone::windows::helpers
 {
 ::HMODULE getInstance()

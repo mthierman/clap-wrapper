@@ -10,8 +10,51 @@
 
 #include "detail/standalone/entry.h"
 
+namespace freeaudio::clap_wrapper::standalone::windows::helpers::details
+{
+struct DefaultWindowProcedure
+{
+  static auto CALLBACK wndProc(::HWND hWnd, ::UINT uMsg, ::WPARAM wParam, ::LPARAM lParam) -> ::LRESULT;
+};
+}  // namespace freeaudio::clap_wrapper::standalone::windows::helpers::details
+
 namespace freeaudio::clap_wrapper::standalone::windows::helpers
 {
+template <typename T = detail::DefaultWindowProcedure>
+auto registerWindowClass(const char* name, T* self = nullptr) -> const char*
+{
+  ::WNDCLASSEXA windowClass{sizeof(::WNDCLASSEXA)};
+
+  auto hInstance{getInstance()};
+
+  if (!::GetClassInfoExA(hInstance, name, &windowClass))
+  {
+    auto iconFromResource{loadIconFromResource()};
+
+    windowClass.lpszClassName = name;
+    windowClass.lpszMenuName = nullptr;
+    windowClass.lpfnWndProc = self ? self->wndProc : ::DefWindowProcA;
+    windowClass.style = 0;
+    windowClass.cbClsExtra = 0;
+    windowClass.cbWndExtra = sizeof(intptr_t);
+    windowClass.hInstance = hInstance;
+    windowClass.hbrBackground = loadBrushFromSystem();
+    windowClass.hCursor = loadCursorFromSystem();
+    windowClass.hIcon = iconFromResource ? iconFromResource : loadIconFromSystem();
+    windowClass.hIconSm = iconFromResource ? iconFromResource : loadIconFromSystem();
+
+    auto atom{::RegisterClassExA(&windowClass)};
+
+    if (!atom)
+    {
+      helpers::errBox({"Window registration failed"});
+      ::ExitProcess(EXIT_FAILURE);
+    }
+  }
+
+  return name;
+}
+
 template <typename T>
 T* instance_from_wnd_proc(HWND hWnd, UINT uMsg, LPARAM lParam)
 {
