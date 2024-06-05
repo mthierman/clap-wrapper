@@ -49,8 +49,6 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin)
 
   setupPlugin();
 
-  // m_pluginGui->show(m_plugin);
-
   helpers::activateWindow(m_hWnd.get());
 
   freeaudio::clap_wrapper::standalone::mainStartAudio();
