@@ -46,6 +46,7 @@ U safe_size(T value)
   return static_cast<U>(value);
 }
 
+::HMODULE getInstance();
 void abort(unsigned int exitCode = EXIT_FAILURE);
 void quit(unsigned int exitCode = EXIT_SUCCESS);
 int messageLoop();

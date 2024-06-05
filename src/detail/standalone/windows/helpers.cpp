@@ -2,6 +2,14 @@
 
 namespace freeaudio::clap_wrapper::standalone::windows::helpers
 {
+::HMODULE getInstance()
+{
+  ::HMODULE hInstance;
+  ::GetModuleHandleExW(0, nullptr, &hInstance);
+
+  return hInstance;
+}
+
 void abort(unsigned int exitCode)
 {
   ::ExitProcess(exitCode);
