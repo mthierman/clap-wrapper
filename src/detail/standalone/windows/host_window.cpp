@@ -17,34 +17,11 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin)
   , m_pluginState{m_clapPlugin->_ext._state}
 {
   auto windowName{helpers::toUTF16(OUTPUT_NAME)};
-  auto iconFromResource{helpers::loadIconFromResource()};
 
-  ::WNDCLASSEXW wcex{sizeof(::WNDCLASSEXW)};
-  wcex.lpszClassName = windowName.c_str();
-  wcex.lpszMenuName = windowName.c_str();
-  wcex.lpfnWndProc = HostWindow::wndProc;
-  wcex.style = 0;
-  wcex.cbClsExtra = 0;
-  wcex.cbWndExtra = sizeof(intptr_t);
-  wcex.hInstance = nullptr;
-  wcex.hbrBackground = helpers::loadBrushFromSystem();
-  wcex.hCursor = helpers::loadCursorFromSystem();
-  wcex.hIcon = iconFromResource ? iconFromResource : helpers::loadIconFromSystem();
-  wcex.hIconSm = iconFromResource ? iconFromResource : helpers::loadIconFromSystem();
+  auto window{
+      freeaudio::clap_wrapper::standalone::windows::helpers::createWindow(windowName.c_str(), this)};
 
-  auto atom{::RegisterClassExW(&wcex)};
-
-  if (!atom)
-  {
-    helpers::errorBox({"Registering host window failed"});
-    helpers::abort();
-  }
-
-  ::CreateWindowExW(0, windowName.c_str(), windowName.c_str(), WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
-                    CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, nullptr, nullptr,
-                    nullptr, this);
-
-  auto hMenu{::GetSystemMenu(m_hWnd.get(), FALSE)};
+  auto hMenu{::GetSystemMenu(window, FALSE)};
 
   ::MENUITEMINFOW seperator{sizeof(::MENUITEMINFOW)};
   seperator.fMask = MIIM_FTYPE;
@@ -199,6 +176,9 @@ LRESULT CALLBACK HostWindow::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
   {
     switch (uMsg)
     {
+      case WM_CREATE:
+        helpers::messageBox({"WM_CREATE"});
+        return 0;
       case WM_DPICHANGED:
         return self->onDpiChanged(hWnd, uMsg, wParam, lParam);
       case WM_WINDOWPOSCHANGED:

@@ -55,6 +55,16 @@ auto registerWindowClass(const wchar_t* name, T* self = nullptr) -> const wchar_
   return name;
 }
 
+template <typename T = detail::DefaultWindowProcedure>
+auto createWindow(const wchar_t* name = L"Window", T* self = nullptr) -> ::HWND
+{
+  registerWindowClass(name, self);
+
+  return ::CreateWindowExW(0, name, name, WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN, CW_USEDEFAULT,
+                           CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, nullptr, nullptr, getInstance(),
+                           self);
+}
+
 template <typename T>
 T* instance_from_wnd_proc(HWND hWnd, UINT uMsg, LPARAM lParam)
 {
