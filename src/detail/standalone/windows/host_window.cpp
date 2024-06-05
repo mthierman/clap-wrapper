@@ -131,9 +131,9 @@ void HostWindow::setupPlugin(::HWND window)
 
 bool HostWindow::setWindowSize(uint32_t width, uint32_t height)
 {
-  ::RECT r{0, 0, 0, 0};
-  r.right = width;
-  r.bottom = height;
+  ::RECT rect{0, 0, 0, 0};
+  rect.right = width;
+  rect.bottom = height;
 
   if (!m_hWnd)
   {
@@ -141,10 +141,10 @@ bool HostWindow::setWindowSize(uint32_t width, uint32_t height)
   }
 
   ::AdjustWindowRectExForDpi(
-      &r, ::GetWindowLongPtrW(m_hWnd.get(), GWL_STYLE), ::GetMenu(m_hWnd.get()) != nullptr,
+      &rect, ::GetWindowLongPtrW(m_hWnd.get(), GWL_STYLE), ::GetMenu(m_hWnd.get()) != nullptr,
       ::GetWindowLongPtrW(m_hWnd.get(), GWL_EXSTYLE), ::GetDpiForWindow(m_hWnd.get()));
 
-  ::SetWindowPos(m_hWnd.get(), nullptr, 0, 0, (r.right - r.left), (r.bottom - r.top),
+  ::SetWindowPos(m_hWnd.get(), nullptr, 0, 0, (rect.right - rect.left), (rect.bottom - rect.top),
                  SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE);
 
   return true;
