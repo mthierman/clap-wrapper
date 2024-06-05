@@ -44,6 +44,19 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin)
                     CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, nullptr, nullptr,
                     nullptr, this);
 
+  setupMenu();
+
+  setupStandaloneHost();
+
+  setupPlugin();
+
+  setWindowVisibility(true);
+
+  freeaudio::clap_wrapper::standalone::mainStartAudio();
+}
+
+void HostWindow::setupMenu()
+{
   auto hMenu{::GetSystemMenu(m_hWnd.get(), FALSE)};
 
   ::MENUITEMINFOW seperator{sizeof(::MENUITEMINFOW)};
@@ -81,10 +94,16 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin)
     ::InsertMenuItemW(hMenu, 7, TRUE, &resetState);
     ::InsertMenuItemW(hMenu, 8, TRUE, &seperator);
   }
+}
 
+void HostWindow::setupStandaloneHost()
+{
   freeaudio::clap_wrapper::standalone::getStandaloneHost()->onRequestResize =
       [this](uint32_t width, uint32_t height) { return setWindowSize(width, height); };
+}
 
+void HostWindow::setupPlugin()
+{
   if (!m_pluginGui->is_api_supported(m_plugin, CLAP_WINDOW_API_WIN32, false))
   {
     helpers::errorBox({"CLAP_WINDOW_API_WIN32 is not supported"});
@@ -129,10 +148,6 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin)
   m_pluginGui->set_parent(m_plugin, &clapWindow);
 
   m_pluginGui->show(m_plugin);
-
-  setWindowVisibility(true);
-
-  freeaudio::clap_wrapper::standalone::mainStartAudio();
 }
 
 bool HostWindow::setWindowVisibility(bool visible)
