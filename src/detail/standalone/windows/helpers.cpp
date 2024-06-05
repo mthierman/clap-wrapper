@@ -2,12 +2,12 @@
 
 namespace freeaudio::clap_wrapper::standalone::windows::helpers
 {
-void abort(uint64_t exitCode)
+void abort(unsigned int exitCode)
 {
   ::ExitProcess(exitCode);
 }
 
-void quit(uint64_t exitCode)
+void quit(unsigned int exitCode)
 {
   ::PostQuitMessage(exitCode);
 }

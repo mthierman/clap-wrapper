@@ -46,8 +46,8 @@ U safe_size(T value)
   return static_cast<U>(value);
 }
 
-void abort(uint64_t exitCode = EXIT_FAILURE);
-void quit(uint64_t exitCode = EXIT_SUCCESS);
+void abort(unsigned int exitCode = EXIT_FAILURE);
+void quit(unsigned int exitCode = EXIT_SUCCESS);
 int messageLoop();
 std::string toUTF8(std::wstring wstring);
 std::wstring toUTF16(std::string string);
