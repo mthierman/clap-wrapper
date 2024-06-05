@@ -108,10 +108,8 @@ void HostWindow::setupPlugin(::HWND window)
   if (m_pluginGui->can_resize(m_plugin))
   {
     // We can restore size here
-    // width = previousWidth();
-    // height = previousHeight();
-    // pluginGui->adjust_size(plugin, &width, &height);
-    // pluginGui->set_size(plugin, width, height);
+    // pluginGui->adjust_size(plugin, &previousWidth, &previousHeight);
+    // pluginGui->set_size(plugin, previousWidth, previousHeight);
   }
   else
   {
@@ -134,9 +132,6 @@ void HostWindow::setupPlugin(::HWND window)
 
 bool HostWindow::setWindowSize(uint32_t width, uint32_t height)
 {
-  helpers::log({"DEBUG: setWindowSize() ", "WIDTH - ", std::to_string(width), " HEIGHT - ",
-                std::to_string(height)});
-
   RECT r{0, 0, 0, 0};
   r.right = width;
   r.bottom = height;
