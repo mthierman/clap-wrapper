@@ -47,6 +47,10 @@ U safe_size(T value)
 }
 
 ::HMODULE getInstance();
+bool activateWindow(::HWND window);
+bool showWindow(::HWND window);
+bool hideWindow(::HWND window);
+
 void abort(unsigned int exitCode = EXIT_FAILURE);
 void quit(unsigned int exitCode = EXIT_SUCCESS);
 int messageLoop();

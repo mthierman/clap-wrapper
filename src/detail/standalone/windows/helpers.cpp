@@ -10,6 +10,21 @@ namespace freeaudio::clap_wrapper::standalone::windows::helpers
   return hInstance;
 }
 
+bool activateWindow(HWND window)
+{
+  return ::ShowWindow(window, SW_NORMAL);
+}
+
+bool showWindow(HWND window)
+{
+  return ::ShowWindow(window, SW_SHOW);
+}
+
+bool hideWindow(HWND window)
+{
+  return ::ShowWindow(window, SW_HIDE);
+}
+
 void abort(unsigned int exitCode)
 {
   ::ExitProcess(exitCode);
