@@ -34,10 +34,14 @@ T* instance_from_wnd_proc(HWND hWnd, UINT uMsg, LPARAM lParam)
 }
 
 template <typename T, typename U>
-int safe_size(T value)
+U safe_size(T value)
 {
-  constexpr int max{std::numeric_limits<U>::max()};
-  if (value > static_cast<T>(max)) throw std::overflow_error("Unsafe size");
+  constexpr U max{std::numeric_limits<U>::max()};
+
+  if (value > static_cast<T>(max))
+  {
+    throw std::overflow_error("Unsafe size");
+  }
 
   return static_cast<U>(value);
 }
