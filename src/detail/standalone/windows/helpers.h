@@ -103,6 +103,7 @@ auto createMessageWindow(T* self) -> ::HWND
                            getInstance(), self);
 }
 
+void log(std::initializer_list<std::string> args);
 void abort(uint64_t exitCode = EXIT_FAILURE);
 ::HMODULE getInstance();
 bool activateWindow(::HWND window);

@@ -135,6 +135,9 @@ bool HostWindow::setWindowSize(uint32_t width, uint32_t height)
   r.right = width;
   r.bottom = height;
 
+  freeaudio::clap_wrapper::standalone::windows::helpers::log(
+      {"setWindowSize: ", "WIDTH - ", std::to_string(width), " HEIGHT - ", std::to_string(height)});
+
   if (m_hWnd)
   {
     ::AdjustWindowRectExForDpi(

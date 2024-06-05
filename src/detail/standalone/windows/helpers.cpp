@@ -11,6 +11,19 @@ auto CALLBACK DefaultWindowProcedure::wndProc(::HWND hWnd, ::UINT uMsg, ::WPARAM
 
 namespace freeaudio::clap_wrapper::standalone::windows::helpers
 {
+void log(std::initializer_list<std::string> args)
+{
+  std::string message;
+
+  for (const auto& arg : args)
+  {
+    message.append(arg);
+  }
+
+  ::OutputDebugStringW(widen(message).c_str());
+  ::OutputDebugStringW(L"\n");
+}
+
 void abort(uint64_t exitCode)
 {
   ::ExitProcess(exitCode);
