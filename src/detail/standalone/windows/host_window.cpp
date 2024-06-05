@@ -178,7 +178,7 @@ LRESULT CALLBACK HostWindow::wndProc(::HWND hWnd, ::UINT uMsg, ::WPARAM wParam, 
 
 int HostWindow::onDpiChanged(::HWND hWnd, ::UINT uMsg, ::WPARAM wParam, ::LPARAM lParam)
 {
-  m_pluginGui->set_scale(m_plugin, helpers::getCurrentScale(m_hWnd.get()));
+  m_pluginGui->set_scale(m_plugin, helpers::getCurrentScale(hWnd));
 
   return 0;
 }
@@ -189,7 +189,7 @@ int HostWindow::onWindowPosChanged(::HWND hWnd, ::UINT uMsg, ::WPARAM wParam, ::
   {
     if (m_pluginGui->can_resize(m_plugin))
     {
-      RECT r{0, 0, 0, 0};
+      ::RECT r{0, 0, 0, 0};
       ::GetClientRect(hWnd, &r);
 
       uint32_t width = (r.right - r.left);
@@ -314,7 +314,7 @@ int HostWindow::onDestroy(::HWND hWnd, ::UINT uMsg, ::WPARAM wParam, ::LPARAM lP
 
   freeaudio::clap_wrapper::standalone::mainFinish();
 
-  ::PostQuitMessage(0);
+  helpers::quit();
 
   return 0;
 }
