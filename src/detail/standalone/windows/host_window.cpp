@@ -27,7 +27,7 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin)
 
   m_pluginGui->show(m_plugin);
 
-  setWindowVisibility(true);
+  helpers::activateWindow(m_hWnd.get());
 
   freeaudio::clap_wrapper::standalone::mainStartAudio();
 }
@@ -131,18 +131,6 @@ void HostWindow::setupPlugin()
   clapWindow.win32 = static_cast<void*>(m_hWnd.get());
 
   m_pluginGui->set_parent(m_plugin, &clapWindow);
-}
-
-bool HostWindow::setWindowVisibility(bool visible)
-{
-  ::ShowWindow(m_hWnd.get(), visible ? SW_SHOW : SW_HIDE);
-
-  return visible ? true : false;
-}
-
-bool HostWindow::getWindowVisibility()
-{
-  return ::IsWindowVisible(m_hWnd.get());
 }
 
 double HostWindow::getCurrentScale()

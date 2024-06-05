@@ -39,6 +39,11 @@ bool closeWindow(::HWND window)
   return ::CloseWindow(window);
 }
 
+bool checkWindowVisibility(::HWND window)
+{
+  return ::IsWindowVisible(window);
+}
+
 void abort(unsigned int exitCode)
 {
   ::ExitProcess(exitCode);

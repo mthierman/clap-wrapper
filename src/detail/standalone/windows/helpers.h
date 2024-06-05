@@ -104,6 +104,7 @@ bool activateWindow(::HWND window);
 bool showWindow(::HWND window);
 bool hideWindow(::HWND window);
 bool closeWindow(::HWND window);
+bool checkWindowVisibility(::HWND window);
 
 void abort(unsigned int exitCode = EXIT_FAILURE);
 void quit(unsigned int exitCode = EXIT_SUCCESS);
