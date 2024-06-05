@@ -16,10 +16,8 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin)
   , m_pluginGui{m_clapPlugin->_ext._gui}
   , m_pluginState{m_clapPlugin->_ext._state}
 {
-  auto windowName{helpers::toUTF16(OUTPUT_NAME)};
-
-  auto window{
-      freeaudio::clap_wrapper::standalone::windows::helpers::createWindow(windowName.c_str(), this)};
+  auto window{freeaudio::clap_wrapper::standalone::windows::helpers::createWindow(
+      helpers::toUTF16(OUTPUT_NAME).c_str(), this)};
 
   auto hMenu{::GetSystemMenu(window, FALSE)};
 
