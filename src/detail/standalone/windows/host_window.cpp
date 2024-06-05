@@ -132,7 +132,7 @@ void HostWindow::setupPlugin(::HWND window)
 
 bool HostWindow::setWindowSize(uint32_t width, uint32_t height)
 {
-  RECT r{0, 0, 0, 0};
+  ::RECT r{0, 0, 0, 0};
   r.right = width;
   r.bottom = height;
 
@@ -154,7 +154,7 @@ bool HostWindow::setWindowSize(uint32_t width, uint32_t height)
   }
 }
 
-LRESULT CALLBACK HostWindow::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK HostWindow::wndProc(::HWND hWnd, ::UINT uMsg, ::WPARAM wParam, ::LPARAM lParam)
 {
   auto self{helpers::instance_from_wnd_proc<HostWindow>(hWnd, uMsg, lParam)};
 
@@ -176,14 +176,14 @@ LRESULT CALLBACK HostWindow::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
   return ::DefWindowProcW(hWnd, uMsg, wParam, lParam);
 }
 
-int HostWindow::onDpiChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+int HostWindow::onDpiChanged(::HWND hWnd, ::UINT uMsg, ::WPARAM wParam, ::LPARAM lParam)
 {
   m_pluginGui->set_scale(m_plugin, helpers::getCurrentScale(m_hWnd.get()));
 
   return 0;
 }
 
-int HostWindow::onWindowPosChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+int HostWindow::onWindowPosChanged(::HWND hWnd, ::UINT uMsg, ::WPARAM wParam, ::LPARAM lParam)
 {
   if (m_plugin && m_pluginGui)
   {
@@ -203,7 +203,7 @@ int HostWindow::onWindowPosChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
   return 0;
 }
 
-int HostWindow::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+int HostWindow::onSysCommand(::HWND hWnd, ::UINT uMsg, ::WPARAM wParam, ::LPARAM lParam)
 {
   switch (wParam)
   {
@@ -303,7 +303,7 @@ int HostWindow::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
   return ::DefWindowProcW(hWnd, uMsg, wParam, lParam);
 }
 
-int HostWindow::onDestroy(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+int HostWindow::onDestroy(::HWND hWnd, ::UINT uMsg, ::WPARAM wParam, ::LPARAM lParam)
 {
   if (m_plugin && m_pluginGui)
   {

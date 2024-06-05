@@ -20,11 +20,11 @@ struct HostWindow
 
   bool setWindowSize(uint32_t width, uint32_t height);
 
-  static LRESULT CALLBACK wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-  int onDpiChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-  int onWindowPosChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-  int onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-  int onDestroy(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+  static LRESULT CALLBACK wndProc(::HWND hWnd, ::UINT uMsg, ::WPARAM wParam, ::LPARAM lParam);
+  int onDpiChanged(::HWND hWnd, ::UINT uMsg, ::WPARAM wParam, ::LPARAM lParam);
+  int onWindowPosChanged(::HWND hWnd, ::UINT uMsg, ::WPARAM wParam, ::LPARAM lParam);
+  int onSysCommand(::HWND hWnd, ::UINT uMsg, ::WPARAM wParam, ::LPARAM lParam);
+  int onDestroy(::HWND hWnd, ::UINT uMsg, ::WPARAM wParam, ::LPARAM lParam);
 
   std::shared_ptr<Clap::Plugin> m_clapPlugin;
   const clap_plugin_t* m_plugin;
