@@ -127,7 +127,7 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin)
     helpers::log(
         {"DEBUG: get_size() ", "WIDTH - ", std::to_string(width), " HEIGHT - ", std::to_string(height)});
 
-    setWindowSize(width * getCurrentScale(), height * getCurrentScale());
+    setWindowSize(width, height);
   }
 
   clap_window clapWindow;
