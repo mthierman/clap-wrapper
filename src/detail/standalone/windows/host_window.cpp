@@ -93,7 +93,12 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin)
 
   m_pluginGui->create(m_plugin, CLAP_WINDOW_API_WIN32, false);
 
-  setPluginScale();
+  auto setScale{setPluginScale()};
+
+  if (setScale)
+  {
+    helpers::log({"DEBUG: setPluginScale returned true"});
+  }
 
   uint32_t width{0};
   uint32_t height{0};
@@ -115,6 +120,10 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin)
                             WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
 
     m_pluginGui->get_size(m_plugin, &width, &height);
+
+    helpers::log(
+        {"DEBUG: get_size() ", "WIDTH - ", std::to_string(width), " HEIGHT - ", std::to_string(height)});
+
     setWindowSize(width, height);
   }
 
