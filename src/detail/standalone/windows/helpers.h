@@ -8,7 +8,7 @@
 
 #include "detail/standalone/entry.h"
 
-namespace freeaudio::clap_wrapper::standalone::windows
+namespace freeaudio::clap_wrapper::standalone::windows::helpers
 {
 template <typename T>
 T* instance_from_wnd_proc(HWND hWnd, UINT uMsg, LPARAM lParam)

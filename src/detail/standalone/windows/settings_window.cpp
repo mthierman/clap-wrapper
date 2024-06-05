@@ -15,7 +15,7 @@ namespace freeaudio::clap_wrapper::standalone::windows
 SettingsWindow::SettingsWindow()
 {
   auto windowName{std::wstring(L"Audio/MIDI Settings")};
-  auto iconFromResource{loadIconFromResource()};
+  auto iconFromResource{helpers::loadIconFromResource()};
 
   ::WNDCLASSEXW wcex{sizeof(::WNDCLASSEXW)};
   wcex.lpszClassName = windowName.c_str();
@@ -25,16 +25,16 @@ SettingsWindow::SettingsWindow()
   wcex.cbClsExtra = 0;
   wcex.cbWndExtra = sizeof(intptr_t);
   wcex.hInstance = nullptr;
-  wcex.hbrBackground = loadBrushFromSystem();
-  wcex.hCursor = loadCursorFromSystem();
-  wcex.hIcon = iconFromResource ? iconFromResource : loadIconFromSystem();
-  wcex.hIconSm = iconFromResource ? iconFromResource : loadIconFromSystem();
+  wcex.hbrBackground = helpers::loadBrushFromSystem();
+  wcex.hCursor = helpers::loadCursorFromSystem();
+  wcex.hIcon = iconFromResource ? iconFromResource : helpers::loadIconFromSystem();
+  wcex.hIconSm = iconFromResource ? iconFromResource : helpers::loadIconFromSystem();
 
   auto atom{::RegisterClassExW(&wcex)};
 
   if (!atom)
   {
-    errorBox({"Registering settings window failed"});
+    helpers::errorBox({"Registering settings window failed"});
     ::ExitProcess(EXIT_FAILURE);
   }
 
@@ -66,7 +66,7 @@ bool SettingsWindow::getWindowVisibility()
 
 LRESULT CALLBACK SettingsWindow::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  auto self{instance_from_wnd_proc<SettingsWindow>(hWnd, uMsg, lParam)};
+  auto self{helpers::instance_from_wnd_proc<SettingsWindow>(hWnd, uMsg, lParam)};
 
   if (self)
   {

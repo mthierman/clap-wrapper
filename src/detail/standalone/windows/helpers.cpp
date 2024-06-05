@@ -1,6 +1,6 @@
 #include "helpers.h"
 
-namespace freeaudio::clap_wrapper::standalone::windows
+namespace freeaudio::clap_wrapper::standalone::windows::helpers
 {
 int messageLoop()
 {
