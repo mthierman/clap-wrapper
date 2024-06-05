@@ -19,11 +19,23 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin)
   auto window{freeaudio::clap_wrapper::standalone::windows::helpers::createWindow(
       helpers::toUTF16(OUTPUT_NAME).c_str(), this)};
 
+  if (!window)
+  {
+    helpers::errorBox({"Window creation failed"});
+    helpers::abort();
+  }
+
   setupMenu(window);
 
   setupStandaloneHost();
 
-  setupPlugin();
+  if (!checkApi())
+  {
+    helpers::errorBox({"CLAP_WINDOW_API_WIN32 is not supported"});
+    helpers::abort();
+  }
+
+  setupPlugin(window);
 
   m_pluginGui->show(m_plugin);
 
@@ -32,9 +44,9 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin)
   freeaudio::clap_wrapper::standalone::mainStartAudio();
 }
 
-void HostWindow::setupMenu(::HWND hWnd)
+void HostWindow::setupMenu(::HWND window)
 {
-  auto hMenu{::GetSystemMenu(hWnd, FALSE)};
+  auto hMenu{::GetSystemMenu(window, FALSE)};
 
   ::MENUITEMINFOW seperator{sizeof(::MENUITEMINFOW)};
   seperator.fMask = MIIM_FTYPE;
@@ -79,22 +91,16 @@ void HostWindow::setupStandaloneHost()
       [this](uint32_t width, uint32_t height) { return setWindowSize(width, height); };
 }
 
-void HostWindow::setupPlugin()
+bool HostWindow::checkApi()
 {
-  if (!m_pluginGui->is_api_supported(m_plugin, CLAP_WINDOW_API_WIN32, false))
-  {
-    helpers::errorBox({"CLAP_WINDOW_API_WIN32 is not supported"});
-    helpers::abort();
-  }
+  return m_pluginGui->is_api_supported(m_plugin, CLAP_WINDOW_API_WIN32, false);
+}
 
+void HostWindow::setupPlugin(::HWND window)
+{
   m_pluginGui->create(m_plugin, CLAP_WINDOW_API_WIN32, false);
 
-  if (auto setScale{m_pluginGui->set_scale(m_plugin, helpers::getCurrentScale(m_hWnd.get()))}; setScale)
-  {
-    helpers::log(
-        {"DEBUG: getCurrentScale() - ", std::to_string(helpers::getCurrentScale(m_hWnd.get()))});
-    helpers::log({"DEBUG: setPluginScale returned true"});
-  }
+  m_pluginGui->set_scale(m_plugin, helpers::getCurrentScale(window));
 
   uint32_t width{0};
   uint32_t height{0};
