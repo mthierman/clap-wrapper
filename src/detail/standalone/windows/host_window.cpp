@@ -16,10 +16,10 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin)
   , m_pluginGui{m_clapPlugin->_ext._gui}
   , m_pluginState{m_clapPlugin->_ext._state}
 {
-  freeaudio::clap_wrapper::standalone::windows::helpers::createWindow(
-      helpers::toUTF16(OUTPUT_NAME).c_str(), this);
+  auto window{freeaudio::clap_wrapper::standalone::windows::helpers::createWindow(
+      helpers::toUTF16(OUTPUT_NAME).c_str(), this)};
 
-  setupMenu();
+  setupMenu(window);
 
   setupStandaloneHost();
 
@@ -27,14 +27,14 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin)
 
   m_pluginGui->show(m_plugin);
 
-  helpers::activateWindow(m_hWnd.get());
+  helpers::activateWindow(window);
 
   freeaudio::clap_wrapper::standalone::mainStartAudio();
 }
 
-void HostWindow::setupMenu()
+void HostWindow::setupMenu(::HWND hWnd)
 {
-  auto hMenu{::GetSystemMenu(m_hWnd.get(), FALSE)};
+  auto hMenu{::GetSystemMenu(hWnd, FALSE)};
 
   ::MENUITEMINFOW seperator{sizeof(::MENUITEMINFOW)};
   seperator.fMask = MIIM_FTYPE;
@@ -76,11 +76,7 @@ void HostWindow::setupMenu()
 void HostWindow::setupStandaloneHost()
 {
   freeaudio::clap_wrapper::standalone::getStandaloneHost()->onRequestResize =
-      [this](uint32_t width, uint32_t height)
-  {
-    helpers::log({"DEBUG: onRequestResize called"});
-    return setWindowSize(width, height);
-  };
+      [this](uint32_t width, uint32_t height) { return setWindowSize(width, height); };
 }
 
 void HostWindow::setupPlugin()
@@ -93,7 +89,7 @@ void HostWindow::setupPlugin()
 
   m_pluginGui->create(m_plugin, CLAP_WINDOW_API_WIN32, false);
 
-  if (auto setScale = m_pluginGui->set_scale(m_plugin, helpers::getCurrentScale(m_hWnd.get())); setScale)
+  if (auto setScale{m_pluginGui->set_scale(m_plugin, helpers::getCurrentScale(m_hWnd.get()))}; setScale)
   {
     helpers::log(
         {"DEBUG: getCurrentScale() - ", std::to_string(helpers::getCurrentScale(m_hWnd.get()))});
@@ -169,9 +165,6 @@ LRESULT CALLBACK HostWindow::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
   {
     switch (uMsg)
     {
-      case WM_CREATE:
-        helpers::messageBox({"WM_CREATE"});
-        return 0;
       case WM_DPICHANGED:
         return self->onDpiChanged(hWnd, uMsg, wParam, lParam);
       case WM_WINDOWPOSCHANGED:

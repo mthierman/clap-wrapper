@@ -13,7 +13,7 @@ struct HostWindow
 {
   HostWindow(std::shared_ptr<Clap::Plugin> plugin);
 
-  void setupMenu();
+  void setupMenu(::HWND hWnd);
   void setupStandaloneHost();
   void setupPlugin();
 
