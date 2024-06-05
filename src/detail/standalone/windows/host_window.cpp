@@ -16,17 +16,12 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin)
   , m_pluginGui{m_clapPlugin->_ext._gui}
   , m_pluginState{m_clapPlugin->_ext._state}
 {
-  auto window{freeaudio::clap_wrapper::standalone::windows::helpers::createWindow(
-      helpers::toUTF16(OUTPUT_NAME).c_str(), this)};
+  freeaudio::clap_wrapper::standalone::windows::helpers::createWindow(
+      helpers::toUTF16(OUTPUT_NAME).c_str(), this);
 
   setupMenu();
 
-  freeaudio::clap_wrapper::standalone::getStandaloneHost()->onRequestResize =
-      [this](uint32_t width, uint32_t height)
-  {
-    helpers::log({"DEBUG: onRequestResize called"});
-    return setWindowSize(width, height);
-  };
+  setupStandaloneHost();
 
   if (!m_pluginGui->is_api_supported(m_plugin, CLAP_WINDOW_API_WIN32, false))
   {
@@ -121,6 +116,16 @@ void HostWindow::setupMenu()
     ::InsertMenuItemW(hMenu, 7, TRUE, &resetState);
     ::InsertMenuItemW(hMenu, 8, TRUE, &seperator);
   }
+}
+
+void HostWindow::setupStandaloneHost()
+{
+  freeaudio::clap_wrapper::standalone::getStandaloneHost()->onRequestResize =
+      [this](uint32_t width, uint32_t height)
+  {
+    helpers::log({"DEBUG: onRequestResize called"});
+    return setWindowSize(width, height);
+  };
 }
 
 bool HostWindow::setWindowVisibility(bool visible)
