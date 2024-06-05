@@ -13,9 +13,9 @@ struct HostWindow
 {
   HostWindow(std::shared_ptr<Clap::Plugin> plugin);
 
-  void setupMenu(::HWND window);
+  void setupMenu();
   void setupStandaloneHost();
-  void setupPlugin(::HWND window);
+  void setupPlugin();
   bool checkApi();
 
   bool setWindowSize(uint32_t width, uint32_t height);

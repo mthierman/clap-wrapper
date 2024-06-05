@@ -16,16 +16,16 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin)
   , m_pluginGui{m_clapPlugin->_ext._gui}
   , m_pluginState{m_clapPlugin->_ext._state}
 {
-  auto window{freeaudio::clap_wrapper::standalone::windows::helpers::createWindow(
-      helpers::toUTF16(OUTPUT_NAME).c_str(), this)};
+  freeaudio::clap_wrapper::standalone::windows::helpers::createWindow(
+      helpers::toUTF16(OUTPUT_NAME).c_str(), this);
 
-  if (!window)
+  if (!m_hWnd)
   {
     helpers::errorBox({"Window creation failed"});
     helpers::abort();
   }
 
-  setupMenu(window);
+  setupMenu();
 
   setupStandaloneHost();
 
@@ -41,18 +41,18 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin)
     helpers::abort();
   }
 
-  setupPlugin(window);
+  setupPlugin();
 
   m_pluginGui->show(m_plugin);
 
-  helpers::activateWindow(window);
+  helpers::activateWindow(m_hWnd.get());
 
   freeaudio::clap_wrapper::standalone::mainStartAudio();
 }
 
-void HostWindow::setupMenu(::HWND window)
+void HostWindow::setupMenu()
 {
-  auto hMenu{::GetSystemMenu(window, FALSE)};
+  auto hMenu{::GetSystemMenu(m_hWnd.get(), FALSE)};
 
   ::MENUITEMINFOW seperator{sizeof(::MENUITEMINFOW)};
   seperator.fMask = MIIM_FTYPE;
@@ -102,11 +102,11 @@ bool HostWindow::checkApi()
   return m_pluginGui->is_api_supported(m_plugin, CLAP_WINDOW_API_WIN32, false);
 }
 
-void HostWindow::setupPlugin(::HWND window)
+void HostWindow::setupPlugin()
 {
   m_pluginGui->create(m_plugin, CLAP_WINDOW_API_WIN32, false);
 
-  m_pluginGui->set_scale(m_plugin, helpers::getCurrentScale(window));
+  m_pluginGui->set_scale(m_plugin, helpers::getCurrentScale(m_hWnd.get()));
 
   uint32_t width{0};
   uint32_t height{0};
@@ -130,7 +130,7 @@ void HostWindow::setupPlugin(::HWND window)
 
   clap_window clapWindow;
   clapWindow.api = CLAP_WINDOW_API_WIN32;
-  clapWindow.win32 = static_cast<void*>(window);
+  clapWindow.win32 = static_cast<void*>(m_hWnd.get());
 
   m_pluginGui->set_parent(m_plugin, &clapWindow);
 }
