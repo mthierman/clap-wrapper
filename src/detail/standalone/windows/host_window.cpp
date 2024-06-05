@@ -29,6 +29,12 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin)
 
   setupStandaloneHost();
 
+  if (!m_pluginGui)
+  {
+    helpers::errorBox({"Plugin GUI is null"});
+    helpers::abort();
+  }
+
   if (!checkApi())
   {
     helpers::errorBox({"CLAP_WINDOW_API_WIN32 is not supported"});
