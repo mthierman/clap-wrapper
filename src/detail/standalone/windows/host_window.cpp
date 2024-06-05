@@ -305,9 +305,7 @@ int HostWindow::onSysCommand(::HWND hWnd, ::UINT uMsg, ::WPARAM wParam, ::LPARAM
 
 int HostWindow::onDestroy(::HWND hWnd, ::UINT uMsg, ::WPARAM wParam, ::LPARAM lParam)
 {
-  m_pluginGui->hide(m_plugin);
   m_pluginGui->destroy(m_plugin);
-  m_clapPlugin.reset();
 
   freeaudio::clap_wrapper::standalone::mainFinish();
 
