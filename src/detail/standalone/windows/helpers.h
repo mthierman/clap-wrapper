@@ -8,7 +8,7 @@
 
 #include "detail/standalone/entry.h"
 
-namespace freeaudio::clap_wrapper::standalone::windows
+namespace freeaudio::clap_wrapper::standalone::windows::helpers
 {
 template <typename T>
 T* instance_from_wnd_proc(HWND hWnd, UINT uMsg, LPARAM lParam)
@@ -41,6 +41,8 @@ int safe_size(T value)
 }
 
 int messageLoop();
+uint64_t getCurrentDpi(::HWND hWnd);
+double getCurrentScale(::HWND hWnd);
 std::string narrow(std::wstring wstring);
 std::wstring widen(std::string string);
 void messageBox(std::initializer_list<std::string> args);

@@ -1,6 +1,6 @@
 #include "helpers.h"
 
-namespace freeaudio::clap_wrapper::standalone::windows
+namespace freeaudio::clap_wrapper::standalone::windows::helpers
 {
 int messageLoop()
 {
@@ -22,6 +22,16 @@ int messageLoop()
   }
 
   return EXIT_SUCCESS;
+}
+
+uint64_t getCurrentDpi(::HWND hWnd)
+{
+  return ::GetDpiForWindow(hWnd);
+}
+
+double getCurrentScale(::HWND hWnd)
+{
+  return static_cast<double>(::GetDpiForWindow(hWnd)) / static_cast<double>(USER_DEFAULT_SCREEN_DPI);
 }
 
 std::string narrow(std::wstring wstring)

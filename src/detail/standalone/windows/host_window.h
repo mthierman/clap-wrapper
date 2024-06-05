@@ -16,7 +16,7 @@ struct HostWindow
   bool setWindowVisibility(bool visible);
   bool getWindowVisibility();
   bool setWindowSize(uint32_t width, uint32_t height);
-  bool setPluginScale();
+  bool setPluginScale(double scale = 1.0);
 
   static LRESULT CALLBACK wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
   int onDpiChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

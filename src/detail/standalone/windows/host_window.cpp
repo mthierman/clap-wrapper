@@ -16,8 +16,8 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin)
   , m_pluginGui{m_clapPlugin->_ext._gui}
   , m_pluginState{m_clapPlugin->_ext._state}
 {
-  auto windowName{widen(OUTPUT_NAME)};
-  auto iconFromResource{loadIconFromResource()};
+  auto windowName{helpers::widen(OUTPUT_NAME)};
+  auto iconFromResource{helpers::loadIconFromResource()};
 
   ::WNDCLASSEXW wcex{sizeof(::WNDCLASSEXW)};
   wcex.lpszClassName = windowName.c_str();
@@ -27,16 +27,16 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin)
   wcex.cbClsExtra = 0;
   wcex.cbWndExtra = sizeof(intptr_t);
   wcex.hInstance = nullptr;
-  wcex.hbrBackground = loadBrushFromSystem();
-  wcex.hCursor = loadCursorFromSystem();
-  wcex.hIcon = iconFromResource ? iconFromResource : loadIconFromSystem();
-  wcex.hIconSm = iconFromResource ? iconFromResource : loadIconFromSystem();
+  wcex.hbrBackground = helpers::loadBrushFromSystem();
+  wcex.hCursor = helpers::loadCursorFromSystem();
+  wcex.hIcon = iconFromResource ? iconFromResource : helpers::loadIconFromSystem();
+  wcex.hIconSm = iconFromResource ? iconFromResource : helpers::loadIconFromSystem();
 
   auto atom{::RegisterClassExW(&wcex)};
 
   if (!atom)
   {
-    errorBox({"Registering host window failed"});
+    helpers::errorBox({"Registering host window failed"});
     ::ExitProcess(EXIT_FAILURE);
   }
 
@@ -87,13 +87,13 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin)
 
   if (!m_pluginGui->is_api_supported(m_plugin, CLAP_WINDOW_API_WIN32, false))
   {
-    errorBox({"CLAP_WINDOW_API_WIN32 is not supported"});
+    helpers::errorBox({"CLAP_WINDOW_API_WIN32 is not supported"});
     ::ExitProcess(EXIT_FAILURE);
   }
 
   m_pluginGui->create(m_plugin, CLAP_WINDOW_API_WIN32, false);
 
-  setPluginScale();
+  setPluginScale(helpers::getCurrentDpi(m_hWnd.get()));
 
   uint32_t width{0};
   uint32_t height{0};
@@ -110,13 +110,17 @@ HostWindow::HostWindow(std::shared_ptr<Clap::Plugin> clapPlugin)
   else
   {
     // We can't resize, so disable WS_THICKFRAME and WS_MAXIMIZEBOX
-    ::SetWindowLongPtrW(m_hWnd.get(), GWL_STYLE,
-                        ::GetWindowLongPtrW(m_hWnd.get(), GWL_STYLE) & ~WS_OVERLAPPEDWINDOW |
-                            WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
+    // ::SetWindowLongPtrW(m_hWnd.get(), GWL_STYLE,
+    //                     ::GetWindowLongPtrW(m_hWnd.get(), GWL_STYLE) & ~WS_OVERLAPPEDWINDOW |
+    //                         WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
 
     m_pluginGui->get_size(m_plugin, &width, &height);
     setWindowSize(width, height);
   }
+
+  // setPluginScale(freeaudio::clap_wrapper::standalone::windows::getCurrentScale(m_hWnd.get()));
+
+  // setPluginScale(1.25);
 
   clap_window clapWindow;
   clapWindow.api = CLAP_WINDOW_API_WIN32;
@@ -167,20 +171,14 @@ bool HostWindow::setWindowSize(uint32_t width, uint32_t height)
   }
 }
 
-bool HostWindow::setPluginScale()
+bool HostWindow::setPluginScale(double scale)
 {
-  if (m_plugin && m_pluginGui)
-  {
-    return m_pluginGui->set_scale(m_plugin, static_cast<double>(::GetDpiForWindow(m_hWnd.get())) /
-                                                static_cast<double>(USER_DEFAULT_SCREEN_DPI));
-  }
-
-  return false;
+  return m_pluginGui->set_scale(m_plugin, scale);
 }
 
 LRESULT CALLBACK HostWindow::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  auto self{instance_from_wnd_proc<HostWindow>(hWnd, uMsg, lParam)};
+  auto self{helpers::instance_from_wnd_proc<HostWindow>(hWnd, uMsg, lParam)};
 
   if (self)
   {
@@ -202,7 +200,7 @@ LRESULT CALLBACK HostWindow::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 
 int HostWindow::onDpiChanged(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  setPluginScale();
+  setPluginScale(helpers::getCurrentScale(m_hWnd.get()));
 
   return 0;
 }
@@ -268,7 +266,7 @@ int HostWindow::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         }
         catch (const fs::filesystem_error& e)
         {
-          errorBox({"Unable to save state: ", e.what()});
+          helpers::errorBox({"Unable to save state: ", e.what()});
         }
       }
 
@@ -308,7 +306,7 @@ int HostWindow::onSysCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         }
         catch (const fs::filesystem_error& e)
         {
-          errorBox({"Unable to load state: ", e.what()});
+          helpers::errorBox({"Unable to load state: ", e.what()});
         }
       }
 
