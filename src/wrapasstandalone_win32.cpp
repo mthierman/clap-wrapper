@@ -10,19 +10,19 @@ int main(int argc, char* argv[])
   extern const clap_plugin_entry clap_entry;
   entry = &clap_entry;
 #else
-  auto clapFilename{std::string(HOSTED_CLAP_NAME).append(".clap")};
-  LOG << "Loading " << clapFilename << std::endl;
+  auto clapName{std::string(HOSTED_CLAP_NAME)};
+  LOG << "Loading " << clapName << std::endl;
 
-  auto library{Clap::Library()};
+  auto lib{Clap::Library()};
 
   for (const auto& searchPaths : Clap::getValidCLAPSearchPaths())
   {
-    auto clapPath{searchPaths / clapFilename};
+    auto clapPath{searchPaths / (clapName + ".clap")};
 
     if (fs::exists(clapPath) && !entry)
     {
-      library.load(clapPath);
-      entry = library._pluginEntry;
+      lib.load(clapPath);
+      entry = lib._pluginEntry;
     }
   }
 #endif

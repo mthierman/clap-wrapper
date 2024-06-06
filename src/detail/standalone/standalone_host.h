@@ -126,9 +126,6 @@ struct StandaloneHost : Clap::IHost
     TRACE;
   }
 
-  bool saveDefaultPluginState(const fs::path &intoDir, const fs::path &withName);
-  bool loadDefaultPluginState(const fs::path &intoDir, const fs::path &withName);
-
   bool saveStandaloneAndPluginSettings(const fs::path &intoDir, const fs::path &withName);
   bool tryLoadStandaloneAndPluginSettings(const fs::path &fromDir, const fs::path &withName);
 

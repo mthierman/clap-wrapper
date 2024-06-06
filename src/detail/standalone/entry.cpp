@@ -55,13 +55,21 @@ std::shared_ptr<Clap::Plugin> mainCreatePlugin(const clap_plugin_entry *ee, cons
 
   plugin->initialize();
 
-  standaloneHost->saveDefaultPluginState(fs::temp_directory_path(),
-                                         std::string(plugin->_plugin->desc->id).append(".clapwrapper"));
-
   auto pt = getStandaloneSettingsPath();
   if (pt.has_value())
   {
     auto loadPath = *pt / plugin->_plugin->desc->id;
+
+    try
+    {
+      LOG << "Trying to save default clap wrapper settings" << std::endl;
+      standaloneHost->saveStandaloneAndPluginSettings(loadPath, "defaults.clapwrapper");
+    }
+    catch (const fs::filesystem_error &e)
+    {
+      // Oh well - whatcha gonna do?
+    }
+
     try
     {
       if (fs::exists(loadPath / "settings.clapwrapper"))

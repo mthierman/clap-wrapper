@@ -310,8 +310,25 @@ int HostWindow::onSysCommand(::HWND hWnd, ::UINT uMsg, ::WPARAM wParam, ::LPARAM
 
     case IDM_RESET_STATE:
     {
-      freeaudio::clap_wrapper::standalone::getStandaloneHost()->loadDefaultPluginState(
-          fs::temp_directory_path(), std::string(m_plugin->desc->id).append(".clapwrapper"));
+      auto pt{freeaudio::clap_wrapper::standalone::getStandaloneSettingsPath()};
+
+      if (pt.has_value())
+      {
+        auto loadPath{*pt / m_plugin->desc->id};
+
+        try
+        {
+          if (fs::exists(loadPath / "defaults.clapwrapper"))
+          {
+            freeaudio::clap_wrapper::standalone::getStandaloneHost()->tryLoadStandaloneAndPluginSettings(
+                loadPath, "defaults.clapwrapper");
+          }
+        }
+        catch (const fs::filesystem_error& e)
+        {
+          //
+        }
+      }
 
       return 0;
     }
