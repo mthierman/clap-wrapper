@@ -121,6 +121,8 @@ void StandaloneHost::clapProcess(void *pOutput, const void *pInput, uint32_t fra
   process.in_events = &inputEvents;
   process.out_events = &outputEvents;
   process.frames_count = frameCount;
+  process.audio_inputs_count = 0;
+  process.audio_outputs_count = 0;
 
   assert(frameCount < utilityBufferSize);
   if (frameCount >= utilityBufferSize)
@@ -299,6 +301,7 @@ static int64_t clapwrite(const clap_ostream *s, const void *buffer, uint64_t siz
 {
   auto ofs = static_cast<std::ofstream *>(s->ctx);
   ofs->write((const char *)buffer, size);
+
   return size;
 }
 
@@ -313,6 +316,46 @@ static int64_t clapread(const struct clap_istream *s, void *buffer, uint64_t siz
   if (ifs->rdstate() & std::ios::eofbit) return ifs->gcount();
 
   return -1;
+}
+
+bool StandaloneHost::saveDefaultPluginState(const fs::path &intoDir, const fs::path &withName)
+{
+  std::ofstream ofs(intoDir / withName, std::ios::out | std::ios::binary);
+  if (!ofs.is_open())
+  {
+    LOG << "Unable to open for writing " << (intoDir / withName).u8string() << std::endl;
+    return false;
+  }
+  if (!clapPlugin || !clapPlugin->_ext._state)
+  {
+    return false;
+  }
+  clap_ostream cos{};
+  cos.ctx = &ofs;
+  cos.write = clapwrite;
+  clapPlugin->_ext._state->save(clapPlugin->_plugin, &cos);
+
+  return true;
+}
+
+bool StandaloneHost::loadDefaultPluginState(const fs::path &intoDir, const fs::path &withName)
+{
+  std::ifstream ifs(intoDir / withName, std::ios::in | std::ios::binary);
+  if (!ifs.is_open())
+  {
+    LOG << "Unable to open for reading " << (intoDir / withName).u8string() << std::endl;
+    return false;
+  }
+  if (!clapPlugin || !clapPlugin->_ext._state)
+  {
+    return false;
+  }
+  clap_istream cis{};
+  cis.ctx = &ifs;
+  cis.read = clapread;
+  clapPlugin->_ext._state->load(clapPlugin->_plugin, &cis);
+
+  return true;
 }
 
 bool StandaloneHost::saveStandaloneAndPluginSettings(const fs::path &intoDir, const fs::path &withName)

@@ -55,6 +55,9 @@ std::shared_ptr<Clap::Plugin> mainCreatePlugin(const clap_plugin_entry *ee, cons
 
   plugin->initialize();
 
+  standaloneHost->saveDefaultPluginState(fs::temp_directory_path(),
+                                         std::string(plugin->_plugin->desc->id).append(".clapwrapper"));
+
   auto pt = getStandaloneSettingsPath();
   if (pt.has_value())
   {
