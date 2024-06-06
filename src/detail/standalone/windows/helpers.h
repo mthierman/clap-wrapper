@@ -66,7 +66,7 @@ auto createWindow(const wchar_t* name = L"Window", T* self = nullptr) -> ::HWND
 }
 
 template <typename T>
-T* instance_from_wnd_proc(HWND hWnd, UINT uMsg, LPARAM lParam)
+T* instanceFromWndProc(HWND hWnd, UINT uMsg, LPARAM lParam)
 {
   T* self{nullptr};
 
@@ -87,7 +87,7 @@ T* instance_from_wnd_proc(HWND hWnd, UINT uMsg, LPARAM lParam)
 }
 
 template <typename T, typename U>
-U safe_size(T value)
+U checkSafeSize(T value)
 {
   constexpr U max{std::numeric_limits<U>::max()};
 
@@ -103,6 +103,7 @@ U safe_size(T value)
 bool activateWindow(::HWND window);
 bool showWindow(::HWND window);
 bool hideWindow(::HWND window);
+void centerWindow(::HWND window, int width, int height);
 bool closeWindow(::HWND window);
 bool checkWindowVisibility(::HWND window);
 unsigned int getCurrentDpi(::HWND window);

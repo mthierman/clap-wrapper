@@ -9,8 +9,6 @@ struct SettingsWindow
 {
   SettingsWindow();
 
-  void centerWindow();
-
   static LRESULT CALLBACK wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
   int onCreate(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
   int onClose(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

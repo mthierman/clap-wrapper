@@ -158,7 +158,7 @@ bool HostWindow::setWindowSize(uint32_t width, uint32_t height)
 
 LRESULT CALLBACK HostWindow::wndProc(::HWND hWnd, ::UINT uMsg, ::WPARAM wParam, ::LPARAM lParam)
 {
-  auto self{helpers::instance_from_wnd_proc<HostWindow>(hWnd, uMsg, lParam)};
+  auto self{helpers::instanceFromWndProc<HostWindow>(hWnd, uMsg, lParam)};
 
   if (self)
   {

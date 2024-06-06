@@ -21,22 +21,16 @@ SettingsWindow::SettingsWindow()
     helpers::errorBox({"Settings Window creation failed"});
     helpers::abort();
   }
-}
 
-void centerWindow()
-{
-  // ::MONITORINFO mi{sizeof(::MONITORINFO)};
-  // ::GetMonitorInfoA(::MonitorFromWindow(m_hWnd.get(), MONITOR_DEFAULTTONEAREST), &mi);
-  // int width{600};
-  // int height{400};
-  // auto x = (static_cast<int>(mi.rcWork.right - mi.rcWork.left) - width) / 2;
-  // auto y = (static_cast<int>(mi.rcWork.bottom - mi.rcWork.top) - height) / 2;
-  // ::SetWindowPos(m_hWnd.get(), nullptr, x, y, width, height, 0);
+  int width{400};
+  int height{360};
+
+  helpers::centerWindow(m_hWnd.get(), 400, 360);
 }
 
 LRESULT CALLBACK SettingsWindow::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  auto self{helpers::instance_from_wnd_proc<SettingsWindow>(hWnd, uMsg, lParam)};
+  auto self{helpers::instanceFromWndProc<SettingsWindow>(hWnd, uMsg, lParam)};
 
   if (self)
   {

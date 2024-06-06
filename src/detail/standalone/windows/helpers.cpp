@@ -34,6 +34,22 @@ bool hideWindow(::HWND window)
   return ::ShowWindow(window, SW_HIDE);
 }
 
+void centerWindow(::HWND window, int width, int height)
+{
+  ::MONITORINFO mi{sizeof(::MONITORINFO)};
+  ::GetMonitorInfoW(::MonitorFromWindow(window, MONITOR_DEFAULTTONEAREST), &mi);
+
+  auto monitorWidth{checkSafeSize<long, int>(mi.rcWork.right - mi.rcWork.left)};
+  auto monitorHeight{checkSafeSize<long, int>(mi.rcWork.bottom - mi.rcWork.top)};
+
+  if (monitorWidth > width && monitorHeight > height)
+  {
+    auto x{(monitorWidth - width) / 2};
+    auto y{(monitorHeight - height) / 2};
+    ::SetWindowPos(window, nullptr, x, y, width, height, 0);
+  }
+}
+
 bool closeWindow(::HWND window)
 {
   return ::CloseWindow(window);
@@ -90,7 +106,7 @@ std::string toUTF8(std::wstring wstring)
 {
   if (wstring.empty()) return {};
 
-  auto safeSize{safe_size<size_t, int>(wstring.length())};
+  auto safeSize{checkSafeSize<size_t, int>(wstring.length())};
 
   auto length{::WideCharToMultiByte(CP_UTF8, WC_NO_BEST_FIT_CHARS | WC_ERR_INVALID_CHARS, wstring.data(),
                                     safeSize, nullptr, 0, nullptr, nullptr)};
@@ -109,7 +125,7 @@ std::wstring toUTF16(std::string string)
 {
   if (string.empty()) return {};
 
-  auto safeSize{safe_size<size_t, int>(string.length())};
+  auto safeSize{checkSafeSize<size_t, int>(string.length())};
 
   auto length{::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, string.data(), safeSize, nullptr, 0)};
 
