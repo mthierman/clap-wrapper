@@ -612,7 +612,7 @@ Plugin::Plugin(const clap_plugin_entry* entry)
   }
 
   plugin.clap = freeaudio::clap_wrapper::standalone::mainCreatePlugin(entry, PLUGIN_ID, PLUGIN_INDEX,
-                                                                      argc, &argv[0]);
+                                                                      argc, argv.data());
 
   plugin.plugin = plugin.clap->_plugin;
   plugin.gui = plugin.clap->_ext._gui;
