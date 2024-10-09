@@ -45,7 +45,7 @@ int wWinMain(::HINSTANCE, ::HINSTANCE, wchar_t*, int)
   auto clapPlugin{freeaudio::clap_wrapper::standalone::mainCreatePlugin(entry, PLUGIN_ID, PLUGIN_INDEX,
                                                                         args.first, argv.data())};
 
-  freeaudio::clap_wrapper::standalone::windows_standalone::Plugin plugin{clapPlugin, args.first, argv.data()};
+  freeaudio::clap_wrapper::standalone::windows_standalone::Plugin plugin{clapPlugin};
 
   return freeaudio::clap_wrapper::standalone::windows_standalone::run();
 }

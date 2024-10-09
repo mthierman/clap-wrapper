@@ -607,10 +607,9 @@ void SystemMenu::populate(::HWND hwnd)
   }
 }
 
-Plugin::Plugin(std::shared_ptr<Clap::Plugin> clapPlugin, int argc, char** argv)
+Plugin::Plugin(std::shared_ptr<Clap::Plugin> clapPlugin)
 {
   plugin.clap = clapPlugin;
-
   plugin.plugin = plugin.clap->_plugin;
   plugin.gui = plugin.clap->_ext._gui;
   plugin.state = plugin.clap->_ext._state;

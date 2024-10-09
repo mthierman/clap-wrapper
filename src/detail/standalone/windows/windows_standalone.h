@@ -373,7 +373,7 @@ struct Plugin final : public Window
     const clap_plugin_state_t* state;
   };
 
-  explicit Plugin(std::shared_ptr<Clap::Plugin> clapPlugin, int argc, char** argv);
+  explicit Plugin(std::shared_ptr<Clap::Plugin> clapPlugin);
 
   std::optional<clap_gui_resize_hints> getResizeHints();
   void refreshLayout();
