@@ -33,7 +33,16 @@ int wWinMain(::HINSTANCE, ::HINSTANCE, wchar_t*, int)
     return 3;
   }
 
-  freeaudio::clap_wrapper::standalone::windows_standalone::Plugin plugin{entry};
+  auto args{freeaudio::clap_wrapper::standalone::windows_standalone::getArgs()};
+
+  std::vector<char*> argv;
+
+  for (size_t i = 0; i < args.first; i++)
+  {
+    argv.emplace_back(args.second[i].data());
+  }
+
+  freeaudio::clap_wrapper::standalone::windows_standalone::Plugin plugin{entry, args.first, argv.data()};
 
   return freeaudio::clap_wrapper::standalone::windows_standalone::run();
 }
