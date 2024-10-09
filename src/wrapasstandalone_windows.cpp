@@ -42,7 +42,10 @@ int wWinMain(::HINSTANCE, ::HINSTANCE, wchar_t*, int)
     argv.emplace_back(args.second[i].data());
   }
 
-  freeaudio::clap_wrapper::standalone::windows_standalone::Plugin plugin{entry, args.first, argv.data()};
+  auto clapPlugin{freeaudio::clap_wrapper::standalone::mainCreatePlugin(entry, PLUGIN_ID, PLUGIN_INDEX,
+                                                                        args.first, argv.data())};
+
+  freeaudio::clap_wrapper::standalone::windows_standalone::Plugin plugin{clapPlugin, args.first, argv.data()};
 
   return freeaudio::clap_wrapper::standalone::windows_standalone::run();
 }
