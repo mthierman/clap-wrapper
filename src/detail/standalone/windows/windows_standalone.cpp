@@ -591,10 +591,21 @@ void SystemMenu::populate(::HWND hwnd)
   }
 }
 
-Plugin::Plugin(const clap_plugin_entry* entry, int argc, char** argv)
+Plugin::Plugin(const clap_plugin_entry* entry)
 {
-  plugin.clap =
-      freeaudio::clap_wrapper::standalone::mainCreatePlugin(entry, PLUGIN_ID, PLUGIN_INDEX, argc, argv);
+  int argc{0};
+  wil::unique_hlocal_ptr<wchar_t*[]> args;
+  args.reset(::CommandLineToArgvW(::GetCommandLineW(), &argc));
+
+  std::vector<char*> argv;
+
+  for (int i = 0; i < argc; i++)
+  {
+    argv.emplace_back(toUTF8(args[i]).data());
+  }
+
+  plugin.clap = freeaudio::clap_wrapper::standalone::mainCreatePlugin(entry, PLUGIN_ID, PLUGIN_INDEX,
+                                                                      argc, &argv[0]);
 
   plugin.plugin = plugin.clap->_plugin;
   plugin.gui = plugin.clap->_ext._gui;

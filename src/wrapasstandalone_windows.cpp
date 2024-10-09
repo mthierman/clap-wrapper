@@ -1,6 +1,6 @@
 #include "detail/standalone/windows/windows_standalone.h"
 
-int main(int argc, char** argv)
+int wWinMain(::HINSTANCE, ::HINSTANCE, wchar_t*, int)
 {
   auto coUninitialize{wil::CoInitializeEx(COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE)};
 
@@ -33,7 +33,7 @@ int main(int argc, char** argv)
     return 3;
   }
 
-  freeaudio::clap_wrapper::standalone::windows_standalone::Plugin plugin{entry, argc, argv};
+  freeaudio::clap_wrapper::standalone::windows_standalone::Plugin plugin{entry};
 
   return freeaudio::clap_wrapper::standalone::windows_standalone::run();
 }
