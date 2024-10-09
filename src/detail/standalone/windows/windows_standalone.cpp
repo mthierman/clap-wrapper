@@ -597,18 +597,18 @@ Plugin::Plugin(const clap_plugin_entry* entry)
   wil::unique_hlocal_ptr<wchar_t*[]> args;
   args.reset(::CommandLineToArgvW(::GetCommandLineW(), &argc));
 
-  std::vector<std::string> convertedArgs;
+  std::vector<std::string> u8args;
 
   for (int i = 0; i < argc; i++)
   {
-    convertedArgs.emplace_back(toUTF8(args[i]));
+    u8args.emplace_back(toUTF8(args[i]));
   }
 
   std::vector<char*> argv;
 
   for (int i = 0; i < argc; i++)
   {
-    argv.emplace_back(convertedArgs[i].data());
+    argv.emplace_back(u8args[i].data());
   }
 
   plugin.clap = freeaudio::clap_wrapper::standalone::mainCreatePlugin(entry, PLUGIN_ID, PLUGIN_INDEX,
